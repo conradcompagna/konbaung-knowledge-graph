@@ -1,0 +1,217 @@
+<FIXED_PREFIX_BEGIN>
+
+# BURMESE CHRONICLE TRIPLE AUGMENTATION
+
+## Task
+
+You are augmenting open-coded subject-predicate-object triples extracted from Burmese royal chronicle prose for quantitative and interpretive historical research. The primary extraction is complete. Do not create, replace, or delete triples. For each existing triple, recover additional arguments and metadata that belong directly to its existing relation.
+
+Treat each triple as the core of a semantic frame. The main subject, predicate, and object may omit other participants, objects, dates, places, quantities, causes, purposes, methods, procedures, legal or evidentiary bases, and results. Read the full page and enrich the existing frame with these missing elements.
+
+The runtime input contains:
+
+1. `EXISTING_SUMMARY_READ_ONLY`, interpretive context only;
+2. `TARGET_PAGE_TEXT`, the only source for Burmese output spans;
+3. `EXISTING_TRIPLES_READ_ONLY`, the triples to augment.
+
+Preserve every existing triple ID, subject, predicate, object, label, gloss, evidence passage, and metadata value. Do not repeat the first-pass analysis. Do not invent a new relation when the page contains information outside the existing triples.
+
+## Whole-page reading
+
+Read the entire page before producing output. Burmese chronicle prose frequently distributes one event across adjacent clauses. Its subject or object may be omitted, a date may govern several following actions, and a place or quantity may occur outside a triple's current evidence excerpt. Attach information from elsewhere on the page only when it unambiguously belongs to the same event or relation.
+
+Every Burmese span returned must occur verbatim in `TARGET_PAGE_TEXT`. Do not modernize spelling, repair OCR, or translate English concepts back into Burmese. Use the smallest complete span that preserves the argument's meaning. Longer clauses are appropriate for causes, purposes, procedures, conditions, or results. Ignore headers, footers, page numbers, citations, publisher text, isolated punctuation, and OCR debris.
+
+## Exhaustive but nonredundant coverage
+
+For every existing triple, inspect all six enrichment families:
+
+1. time;
+2. location;
+3. quantity;
+4. other subjects;
+5. other objects;
+6. auxiliary arguments.
+
+Do not stop after finding one category or one item. A triple may have several dates, locations, quantities, participants, and auxiliary arguments. Return every distinct addition that materially improves reconstruction or analysis of the existing relation.
+
+Do not repeat the main subject or object, unchanged existing metadata, or the predicate in paraphrased form. Do not return overlapping versions of the same fact. Do not list both a collective and all its members unless the individual identities add useful information. Skip a triple entirely when it has no useful additions.
+
+## Existing metadata operations
+
+Time, location, and quantity items require `operation`.
+
+Use `add` for a genuinely new item. Use `replace` only when an existing value is truncated, incorrectly bounded, wrongly categorized, or combines unlike information. For replacement, copy the exact old value into `replaces` and briefly explain the correction in `note`. Never replace metadata merely to reword its English gloss.
+
+## Time
+
+Capture every explicit time expression governing the triple, including calendar or regnal dates, month/day expressions, relative or anaphoric dates, times of day, durations, deadlines, frequencies, and sequence markers.
+
+Give each a concise role such as `calendar_date`, `month_day`, `relative_date`, `anaphoric_date`, `time_of_day`, `duration`, `deadline`, `start_time`, `end_time`, or `sequence_marker`.
+
+A date stated once may govern multiple subsequent clauses. Attach it to each governed triple. Capture literal expressions such as "that day" when present. Resolve an earlier date only when the page makes the reference unambiguous; keep the actual Burmese span and explain resolution in `note`. Do not calculate dates from outside knowledge. Editorial Gregorian dates may be used only when they clearly identify the same event and are labeled editorial in `note`.
+
+## Locations
+
+Capture each place directly involved in the relation and distinguish its role: `event_site`, `hearing_site`, `ritual_site`, `palace_space`, `administrative_center`, `jurisdiction`, `origin`, `destination`, `route`, `transit_point`, `resource_zone`, `record_source_location`, `office_location`, `object_location`, `place_of_submission`, `place_of_inspection`, `place_of_construction`, or `place_of_conflict`.
+
+Do not treat a place embedded in a title, office, ethnicity, or group name as the event location. A destination differs from an event site; a record-source office differs from a hearing site; a route differs from both. Preserve these distinctions rather than flattening all places into one category.
+
+## Quantities
+
+Capture all quantities measuring the relation's scale, value, rate, duration, composition, or result. Include the counted noun or measurement phrase when necessary. Preserve qualifiers such as more than, only, approximately, each, or double.
+
+Use specific roles such as `total_amount`, `reported_amount`, `unreported_amount`, `concealed_amount`, `confirmed_amount`, `personnel_count`, `troop_count`, `animal_count`, `object_count`, `money_amount`, `restitution_value`, `tax_rate`, `multiplier`, `valuation_basis`, `dimension`, `distance`, `duration_amount`, `deficit`, or `surplus`. State in `measures` what is counted, valued, or measured.
+
+Different quantities concerning one commodity remain separate when they have different functions. For example, total logs moved, logs reported, logs concealed, logs confirmed, the assessment multiplier, and restitution value are six analytically distinct quantities.
+
+## Other subjects
+
+`other_subjects` are additional participants occupying a subject-like role in the same relation: co-agents, authorizers, issuers, commanders, supervisors, inspectors, adjudicators, readers, announcers, senders, messengers, scribes, representatives, intermediaries, witnesses, escorts, providers, petitioners, reporting parties, or implementing officials.
+
+They need not be grammatical subjects of the immediate clause, but they must participate directly in the semantic frame. Give each a concise semantic `role` and a useful CamelCase `open_type`. Do not repeat the main subject under a longer title or appositional name. A separate actor performing a separate event is not an auxiliary subject.
+
+## Other objects
+
+`other_objects` are additional patients, themes, transferred items, inspected things, records, messages, recipients, beneficiaries, destinations, affected parties, granted offices, titles, territories, or coordinated list members governed by the same relation.
+
+Give each a concise semantic `role` and CamelCase `open_type`. Recover omitted members when the predicate governs a coordinated list but the main object captures only one member or a generic class. Do not split a primary object that already contains the complete list unless individual indexing adds substantive value.
+
+## Auxiliary arguments
+
+`auxiliary_arguments` capture non-core roles explaining the relation's circumstances, logic, authority, procedure, or effect. Each requires an exact Burmese span, an English gloss, an ALL_CAPS `argument_type`, and a concise CamelCase `open_type`.
+
+Useful argument types include:
+
+- `CAUSE`, `REASON`, `PURPOSE`, `MOTIVE`, `TRIGGER`;
+- `CONDITION`, `PRECONDITION`, `EXCEPTION`, `OBLIGATION`, `PROHIBITION`;
+- `METHOD`, `MEANS`, `INSTRUMENT`, `PROCEDURE`, `ROUTE`, `MANNER`, `ACCOMPANIMENT`, `MEDIATOR`;
+- `AUTHORITY_BASIS`, `LEGAL_BASIS`, `ADMINISTRATIVE_BASIS`, `RITUAL_BASIS`, `JURISDICTIONAL_BASIS`, `VALUATION_BASIS`;
+- `EVIDENCE_BASIS`, `RECORD_SOURCE`, `TESTIMONY`, `COMPARISON_STANDARD`, `FINDING`, `MESSAGE_CONTENT`;
+- `ORIGIN`, `DESTINATION`, `DIRECTION`, `RECIPIENT`, `BENEFICIARY`;
+- `RESULT`, `CONSEQUENCE`, `OUTCOME`, `FOLLOW_UP`, `SEQUENCE`, `RESULTING_STATUS`.
+
+Participant roles should normally be other subjects or objects, not auxiliary arguments. Concrete tools and vehicles may be auxiliary `INSTRUMENT`s. Documents may be objects when acted upon, or `EVIDENCE_BASIS` when they justify a judgment. Choose the role that best represents the existing predicate.
+
+## Semantic attachment
+
+Reconstruct what each existing predicate asserts before attaching metadata. Ask:
+
+1. Who authorizes, performs, transmits, supervises, witnesses, or receives this action?
+2. What else is transferred, inspected, compared, granted, commanded, recorded, or affected?
+3. Which time expressions govern it?
+4. Which locations function as site, source, destination, route, or jurisdiction?
+5. Which quantities measure allegation, confirmed finding, resources, payment, duration, or result?
+6. What caused or motivated it?
+7. What purpose did it serve?
+8. Under what condition, law, custom, order, or evidentiary standard did it occur?
+9. By what method, instrument, procedure, route, or intermediary?
+10. What result or consequence followed?
+
+Attach an item only when the page directly supports its connection to that triple. Shared context may enrich multiple triples when it truly governs each. An omitted grammatical subject may be resolved from chronicle context, but every returned Burmese span must still be copied from the page.
+
+## Compact examples
+
+Existing triple:
+
+```json
+{"id":"t1","s":"royal council span","p":"ENFORCES_RESTITUTION_FROM","o":"company span","time":"date span","place":"hearing-site span","quantity":null}
+```
+
+The page also states that copied forest records were compared with workers' testimony, more than fifty-six thousand logs were confirmed concealed, compensation was calculated at twice the duty rate, a herald proclaimed the judgment, and payment followed law and custom. A correct augmentation adds the record-source office as a location; the concealed-log count, multiplier, and restitution amount as separate quantities; participating officials and representatives as other subjects; the compared records and testimony as other objects; and the comparison, proclamation, valuation formula, and legal custom as auxiliary arguments. It does not repeat the council, company, date, or hearing site.
+
+Example structure:
+
+```json
+{
+  "triple_id":"t1",
+  "locations":[{"operation":"add","span":"literal source-office span","gloss":"source office","role":"record_source_location"}],
+  "quantities":[
+    {"operation":"add","span":"literal count span","gloss":"more than 56,000 logs","role":"confirmed_amount","measures":"concealed logs"},
+    {"operation":"add","span":"literal multiplier span","gloss":"twice the duty rate","role":"multiplier","measures":"restitution assessment"}
+  ],
+  "other_subjects":[{"span":"literal herald span","gloss":"royal herald","role":"reader","open_type":"JudgmentProclaimingHerald"}],
+  "other_objects":[{"span":"literal register span","gloss":"copied forest register","role":"record_compared","open_type":"ExternalForestRegister"}],
+  "auxiliary_arguments":[
+    {"span":"literal comparison clause","gloss":"records were jointly compared","argument_type":"EVIDENCE_BASIS","open_type":"CrossRecordVerification"},
+    {"span":"literal legal phrase","gloss":"according to law and custom","argument_type":"LEGAL_BASIS","open_type":"CustomaryLegalEnforcement"}
+  ]
+}
+```
+
+For a royal dispatch triple, destinations, separate mission purposes, delegated officials, funds, transport, and inspected or procured objects may all enrich the same frame. Existing destinations or funds must not be repeated unchanged.
+
+For tribute involving several named elephants, an inherited date may enrich `time`; each animal's measurement may enrich `quantities`; individual names may enrich `other_objects` when the main object is only a generic "royal elephants" span; and inspecting officials may enrich `other_subjects`. The ruler's appositional style is not another subject, and towns embedded in officials' titles are not event locations.
+
+## General decision rules
+
+The purpose of augmentation is analytical recovery, not grammatical decoration. An addition is useful when it changes what a researcher can know, count, compare, map, sequence, or interpret about the relation. Names of participating institutions, offices, intermediaries, resources, destinations, legal standards, evidence sources, methods, and outcomes are generally useful. Honorific repetition, ornamental epithets, punctuation, and generic verbal auxiliaries are not useful by themselves.
+
+Maintain the distinction between an entity and the role it performs. A named official who reads a judgment is an `other_subject` with role `reader`; the clause describing the reading is an auxiliary `PROCEDURE`. A document being compared is an `other_object`; the comparison clause is an auxiliary `EVIDENCE_BASIS`. A boat used to transport a delegation is usually an auxiliary `INSTRUMENT`; the destination is a location. A sum transferred is an `other_object` if it is the theme of transfer and may also be quantity metadata when its numerical value independently supports quantitative analysis. Avoid duplicating the exact same span in both places unless these distinct analytical functions genuinely require it.
+
+Distinguish authorization from execution. Royal orders, commands, permissions, and formal mandates are `AUTHORITY_BASIS` when they authorize an existing relation. The ruler or council issuing that order may be an `other_subject` only if it directly participates in the same semantic frame and is not already the main subject. The official carrying out the action may be an `implementing_official`, while a messenger merely transmitting it may be a `messenger` or `intermediary`.
+
+Distinguish procedure from evidence. Steps such as sending an officer, convening participants, reading a decree, recording testimony, or comparing registers are `PROCEDURE` or `METHOD`. A petition, register, testimony, report, observation, or comparison that establishes the truth of a finding is `EVIDENCE_BASIS`, `RECORD_SOURCE`, or `TESTIMONY`. The same process can have both procedural and evidentiary significance, but do not duplicate identical text unless both roles add necessary information.
+
+Distinguish institution, representative, and affected party. A foreign consul appearing for a company is a `representative`, not the company itself. A broker facilitating proceedings is an `intermediary`. Workers whose losses motivate an inquiry may be an `affected_party` or `reporting_party`. Ministers sitting in judgment may be `adjudicator`s or `institutional_participant`s. Preserve these differences because they reveal how authority and mediation operate.
+
+Distinguish object identity from object description. When a generic main object represents several named items, recover names as `individual_list_member`s if they support indexing or comparison. Measurements, colors, materials, and ornament should be included only when historically meaningful or quantitatively useful. Do not turn every adjective into metadata.
+
+## Scope and coordination
+
+Chronicle clauses commonly contain serial verbs and long coordinated lists. Determine whether the existing predicate summarizes the whole chain or only one action. Attach all complements governed by the summarized relation, but do not absorb participants from a neighboring independent event merely because the clauses are adjacent.
+
+When a single order directs several officials to perform several connected purposes, preserve the delegation, each distinct destination, each mission purpose, the funds or resources supplied, and the vehicle or route. When separate orders or unrelated events merely share a date, keep them separate and enrich only the triple representing each event.
+
+Anaphoric expressions such as "that day," "there," "those officials," or "the aforementioned matter" require full-page resolution. Preserve the literal Burmese anaphor when it is itself useful metadata. Do not fabricate a Burmese expansion. A person inferred as agent from royal grammar may explain semantic attachment, but augmentation output still requires an exact page span representing that participant.
+
+## Additional examples
+
+### Dispatch frame
+
+Suppose an existing triple records that two sovereigns dispatched a delegation, with one destination and one amount already present. The same passage states that the delegation was sent to make offerings at a pagoda, purchase unusual goods, inspect a white elephant in another city, and travel aboard a named royal vessel.
+
+A correct augmentation may include:
+
+- the second city as a `destination` location;
+- the pagoda as a `ritual_site` location;
+- the offerings, unusual goods, and white elephant as distinct `other_objects` with roles such as `transferred_item`, `procured_item`, and `inspected_object`;
+- the named royal vessel as an auxiliary `INSTRUMENT`;
+- the clauses expressing donation, procurement, and inspection as separate `PURPOSE` arguments.
+
+It must not repeat the delegation, the already recorded first destination, or the existing money amount. If the main object already contains every member of the delegation, those officials are not `other_subjects`. If the date includes a fuller explicit year component omitted from existing metadata, use `replace` and identify the old span exactly.
+
+### Tribute frame
+
+Suppose an existing triple states that a tributary ruler submitted royal elephants and already records a quantity of four animals. The passage names all four, gives their dimensions, states "that same day," and says elephant-department officials inspected and incorporated them.
+
+For the ruler's submission triple, the four names may be `other_objects` because the primary object is generic; dimensions are separate quantity items with role `dimension`; "that same day" is time metadata; and inspection may be a `PROCEDURE` or `FOLLOW_UP` only if it belongs to the represented submission process. For a separate existing inspection triple, the elephant officials must not be repeated if they are already its main subject, but the same date and dimensions may still enrich it. Never treat a territorial name embedded in the ruler's title as the submission site.
+
+### Negative examples
+
+Do not add a town as `event_site` solely because it appears inside an official's title. Do not add an appositional royal name as a co-agent of the same ruler. Do not return an existing quantity unchanged. Do not convert a relation's English gloss into a Burmese argument. Do not attach all people named on the page to every triple. Do not classify an entire evidence paragraph as `METHOD` when a shorter procedural clause is sufficient. Do not create additions solely to fill every category.
+
+## Final per-triple audit
+
+Before output, perform this audit silently for each triple:
+
+1. Restate the existing relation internally without changing it.
+2. Locate its complete event frame across the page.
+3. List candidate times and remove those that govern other events.
+4. List candidate locations and assign precise spatial roles.
+5. List every numerical expression in the frame and distinguish what each measures.
+6. List all direct participants and separate main endpoints from additional subjects and objects.
+7. Identify causes, purposes, conditions, authority, methods, instruments, evidence, and results.
+8. Compare candidates with existing metadata and endpoints.
+9. Remove duplicates, decorative details, and uncertain attachments.
+10. Verify each remaining Burmese span against the target page.
+
+Completeness means that a researcher can reconstruct the qualified existing relation without rereading the whole page. It does not mean reproducing the page or creating new graph edges.
+
+## Output
+
+Return valid JSON only, matching the supplied structured-output schema. Group additions by existing triple ID and preserve input order. Omit nulls, empty strings, empty arrays, unchanged values, and triples with no additions. `coverage_report` is one concise sentence and must not overstate certainty.
+
+Before returning, verify that every Burmese span occurs in `TARGET_PAGE_TEXT`, every item belongs to the existing relation, all useful categories were considered for every triple, and no main endpoint or unchanged metadata was repeated.
+
+<FIXED_PREFIX_END>

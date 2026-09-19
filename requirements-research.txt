@@ -1,0 +1,21 @@
+# Additional imports used by the preserved research and analysis scripts.
+# Individual experiments require their own inputs and environment validation.
+-r konbaung_reader_app/requirements.txt
+cdifflib
+joblib
+jsonschema
+matplotlib
+pandas
+Pillow
+playwright
+PyMuPDF
+pypdf
+pypdfium2
+python-docx
+rapidfuzz
+requests
+scipy
+tensorly
+torch
+tqdm
+Unidecode

@@ -1,0 +1,17 @@
+{
+  "name": "konbaung-reader-graph-layout",
+  "private": true,
+  "scripts": {
+    "build:frontend": "vite build"
+  },
+  "dependencies": {
+    "graphology": "0.26.0",
+    "graphology-layout-forceatlas2": "0.10.1",
+    "sigma": "3.0.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.0",
+    "typescript": "5.9.3",
+    "vite": "8.1.5"
+  }
+}

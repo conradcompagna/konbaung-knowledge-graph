@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ api_name }}</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1f2a31;
+      --muted: #5d6871;
+      --line: #cbd2d7;
+      --paper: #ffffff;
+      --ground: #edf0f2;
+      --header: #20272d;
+      --header-muted: #c4cbd0;
+      --accent: #8c3139;
+      --accent-dark: #6f2229;
+      --code: #253039;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding-top: 36px;
+      background: var(--ground);
+      color: var(--ink);
+      font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    .site-nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 1200;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 18px;
+      padding: 3px 18px;
+      background: #11171c;
+      color: #eef2f4;
+      border-bottom: 1px solid #3a444c;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 100%;
+      margin-left: auto;
+      overflow-x: auto;
+    }
+    .site-nav-links a {
+      padding: 4px 9px;
+      border-radius: 3px;
+      color: #d5dce0;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .site-nav-links a:hover { background: #293139; color: #fff; }
+    .site-nav-links a.active { background: #8e2f37; color: #fff; }
+    .site-nav-links a:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+    main { width: min(100% - 32px, 940px); margin: 0 auto; padding: 38px 0 64px; }
+    .intro, .reference, .rules, .examples, .limits { border: 1px solid var(--line); background: var(--paper); }
+    .intro { padding: clamp(22px, 5vw, 42px); border-top: 5px solid var(--accent); }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      margin-bottom: 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 6vw, 46px);
+      line-height: 1.08;
+    }
+    h2 {
+      margin-bottom: 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      line-height: 1.15;
+    }
+    h3 { margin-bottom: 5px; font-size: 15px; }
+    .lede { max-width: 68ch; margin-bottom: 26px; color: #45525c; font-size: 17px; }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+    .fact { min-height: 72px; padding: 11px 13px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .fact span { display: block; margin-bottom: 2px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .fact strong { font-size: 14px; }
+    .fact a { color: var(--accent-dark); text-underline-offset: 2px; }
+    section { margin-top: 30px; }
+    .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .section-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+    .endpoint-list { border-top: 1px solid var(--line); }
+    .endpoint {
+      display: grid;
+      grid-template-columns: 58px minmax(220px, 1fr) minmax(230px, 1.2fr);
+      gap: 16px;
+      align-items: baseline;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-top: 0;
+      background: var(--paper);
+    }
+    .method {
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background: #e4efeb;
+      color: #20563e;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+    code { font-family: "SFMono-Regular", Consolas, monospace; }
+    .path { overflow-wrap: anywhere; color: #26353f; font-size: 13px; font-weight: 700; }
+    .endpoint p { margin: 0; color: #53616a; font-size: 13px; }
+    .rules { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .rule { padding: 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .rule:nth-child(2n) { border-right: 0; }
+    .rule:nth-last-child(-n + 2) { border-bottom: 0; }
+    .rule p { margin-bottom: 0; color: #526069; font-size: 14px; }
+    .examples { padding: 20px; }
+    pre {
+      overflow-x: auto;
+      margin: 0;
+      padding: 17px;
+      background: var(--code);
+      color: #f6f8f9;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .limits {
+      display: flex;
+      gap: 12px;
+      padding: 15px 18px;
+      border-left: 4px solid var(--accent);
+      color: #48565f;
+    }
+    .limits strong { color: var(--ink); }
+    footer { margin-top: 30px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 720px) {
+      .site-nav { padding: 3px 10px; }
+      .site-nav-links { width: 100%; margin-left: 0; }
+      .site-nav-links a { padding: 4px 7px; white-space: nowrap; }
+      .facts, .rules { grid-template-columns: 1fr; }
+      .fact, .rule { border-right: 0; }
+      .rule:nth-last-child(-n + 2) { border-bottom: 1px solid var(--line); }
+      .rule:last-child { border-bottom: 0; }
+      .endpoint { grid-template-columns: 52px 1fr; gap: 8px; }
+      .endpoint p { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav-links">
+      <a href="/reader">Neural Reader</a>
+      <a href="/chronicles">Konbaung Chronicle Reader</a>
+      <a href="/knowledge-graph">Knowledge Graph</a>
+      <a class="active" aria-current="page" href="/api/v1/docs">Graph API</a>
+    </div>
+  </nav>
+
+  <main>
+    <article class="intro">
+      <p class="eyebrow">Public research interface · Version {{ api_version }}</p>
+      <h1>Knowledge Graph API</h1>
+      <p class="lede">Read-only access to the reader’s V3 claims, thematic categories, and related entity or relation labels. Responses retain source-page provenance.</p>
+      <div class="facts" aria-label="API facts">
+        <div class="fact"><span>Base URL</span><strong><code>/api/v1</code></strong></div>
+        <div class="fact"><span>Format</span><strong><a href="{{ url_for('public_graph_api.openapi') }}">JSON · OpenAPI 3.1</a></strong></div>
+        <div class="fact"><span>Page size</span><strong>Up to 100 records</strong></div>
+      </div>
+    </article>
+
+    <section>
+      <div class="section-heading">
+        <h2>Endpoints</h2>
+        <p>All endpoints are read-only.</p>
+      </div>
+      <div class="endpoint-list">
+        <article class="endpoint">
+          <span class="method">GET</span>
+          <code class="path">/api/v1/tags</code>
+          <p>Find raw entity or relation labels before filtering claims.</p>
+        </article>
+        <article class="endpoint">
+          <span class="method">GET</span>
+          <code class="path">/api/v1/tags/{kind}/{tag_id}/similar</code>
+          <p>Rank same-kind labels by embedding similarity.</p>
+        </article>
+        <article class="endpoint">
+          <span class="method">GET</span>
+          <code class="path">/api/v1/triples</code>
+          <p>Filter provenance-preserving V3 claims.</p>
+        </article>
+        <article class="endpoint">
+          <span class="method">GET</span>
+          <code class="path">/api/v1/triples/{claim_id}</code>
+          <p>Retrieve one claim with its source context.</p>
+        </article>
+        <article class="endpoint">
+          <span class="method">GET</span>
+          <code class="path">/api/v1/thematic-patterns</code>
+          <p>Aggregate matching claims by thematic category pattern.</p>
+        </article>
+        <article class="endpoint">
+          <span class="method">GET</span>
+          <code class="path">/api/v1/categories</code>
+          <p>List the controlled entity and relation categories.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Query rules</h2>
+      <div class="rules">
+        <article class="rule">
+          <h3>Raw labels</h3>
+          <p>Use <code>subject</code>, <code>predicate</code>, <code>object</code>, or the corresponding <code>*_contains</code> filter. Repeat a filter to form an OR union.</p>
+        </article>
+        <article class="rule">
+          <h3>Categories</h3>
+          <p>Use <code>subject_category</code>, <code>relation_category</code>, and <code>object_category</code> for thematic patterns. Category values combine with other filter types.</p>
+        </article>
+        <article class="rule">
+          <h3>Source scope</h3>
+          <p>Limit claims to <code>volume</code> and <code>page</code>, an inclusive <code>start_page</code>/<code>end_page</code> range, or one <code>sentence_id</code>.</p>
+        </article>
+        <article class="rule">
+          <h3>Paging</h3>
+          <p>Pass <code>pagination.nextCursor</code> back as <code>cursor</code> with unchanged filters. Use <code>include_text=true</code> only when sentence text is needed.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Examples</h2>
+      <div class="examples">
+        <pre><code># Find a raw label
+curl "https://burmeseneuralreader.com/api/v1/tags?kind=entity&amp;q=Hsinbyushin&amp;limit=20"
+
+# Find claims for an entity tag
+curl "https://burmeseneuralreader.com/api/v1/triples?entity_tag_id=ENTITY_TAG_ID&amp;limit=25"
+
+# Aggregate a page range by thematic pattern
+curl "https://burmeseneuralreader.com/api/v1/thematic-patterns?volume=vol2&amp;start_page=235&amp;end_page=245&amp;limit=25"</code></pre>
+      </div>
+    </section>
+
+    <section class="limits">
+      <strong>Scope</strong>
+      <span>Collection pages contain at most 100 records. Queries are bounded and read-only; arbitrary SPARQL is not exposed.</span>
+    </section>
+
+    <footer>
+      {{ api_name }} {{ api_version }} · Raw labels are preserved rather than treated as identity claims.
+    </footer>
+  </main>
+</body>
+</html>

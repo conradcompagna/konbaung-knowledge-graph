@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Konbaung Chronicle Reader</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='chronicles.css') }}?v=20260822d">
+</head>
+<body>
+  <div id="chronicle-app" class="app-shell">
+    <nav class="site-nav" aria-label="Primary">
+      <div class="site-nav-links">
+        <a data-site-section="reader" href="/reader">Neural Reader</a>
+        <a data-site-section="chronicles" href="/chronicles"{% if not initial_graph_open %} class="active" aria-current="page"{% endif %}>Konbaung Chronicle Reader</a>
+        <a data-site-section="knowledge-graph" href="/knowledge-graph"{% if initial_graph_open %} class="active" aria-current="page"{% endif %}>Knowledge Graph</a>
+        <a data-site-section="api" href="/api/v1/docs">Graph API</a>
+      </div>
+    </nav>
+    <header class="app-header">
+      <div class="brand-block">
+        <div class="brand-title">Konbaung Chronicle Reader</div>
+        <div class="brand-subtitle">Burmese Neural Reader</div>
+      </div>
+
+      <nav class="toolbar" aria-label="Chronicle navigation">
+        <label class="field-group">
+          <span>Volume</span>
+          <select id="volume-select" aria-label="Volume"></select>
+        </label>
+        <button id="previous-page" class="icon-button" type="button" title="Previous page" aria-label="Previous page">&larr;</button>
+        <label class="page-field">
+          <span class="sr-only">Page</span>
+          <input id="page-input" type="number" inputmode="numeric" aria-label="Page number">
+          <span id="page-position" class="page-position"></span>
+        </label>
+        <button id="next-page" class="icon-button" type="button" title="Next page" aria-label="Next page">&rarr;</button>
+        <button id="graph-toggle" type="button">Knowledge graph</button>
+      </nav>
+    </header>
+
+    <div id="app-message" class="app-message" role="status" aria-live="polite"></div>
+
+    <main id="workspace" class="workspace">
+      <section class="reader-pane" aria-label="Burmese chronicle page">
+        <div class="reader-meta">
+          <div>
+            <strong id="page-heading">Loading page...</strong>
+            <span id="annotation-count"></span>
+          </div>
+        </div>
+        <div id="text-scroll" class="text-scroll">
+          <div id="canonical-text" class="canonical-text" lang="my"></div>
+          <svg id="relation-overlay" class="relation-overlay" aria-hidden="true">
+            <defs>
+              <marker id="relation-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 Z"></path>
+              </marker>
+            </defs>
+            <path id="relation-path"></path>
+          </svg>
+        </div>
+      </section>
+
+      <aside id="inspector-pane" class="inspector-pane" aria-label="Page information">
+        <section class="inspector-section summary-section">
+          <div class="section-heading">
+            <h2>Page Summary</h2>
+          </div>
+          <div id="summary-text" class="summary-text"></div>
+        </section>
+
+        <section class="inspector-section triples-section">
+          <h2>Annotations</h2>
+          <div id="triple-list" class="triple-list"></div>
+        </section>
+      </aside>
+    </main>
+
+    <section id="graph-workspace" class="graph-workspace" aria-label="Knowledge graph explorer" hidden>
+      <header class="graph-header">
+        <div>
+          <strong id="graph-heading">Knowledge graph</strong>
+          <span id="graph-counts" class="graph-counts"></span>
+        </div>
+        <div class="graph-header-actions">
+          <details id="graph-pages-panel" class="graph-page-picker">
+            <summary>Pages</summary>
+            <div class="graph-page-popover">
+              <label class="graph-page-field">
+                <span>Volume</span>
+                <select id="graph-page-volume">
+                  <option value="vol1">Volume I</option>
+                  <option value="vol2">Volume II</option>
+                  <option value="vol3">Volume III</option>
+                </select>
+              </label>
+              <section class="graph-page-section">
+                <strong>Single page</strong>
+                <div class="graph-page-row">
+                  <button id="graph-page-prev" type="button" title="Previous available page" aria-label="Previous available page">&larr;</button>
+                  <select id="graph-page-number" aria-label="Page number"></select>
+                  <button id="graph-page-next" type="button" title="Next available page" aria-label="Next available page">&rarr;</button>
+                  <button id="graph-page-load" type="button">Show</button>
+                </div>
+              </section>
+              <section class="graph-page-section">
+                <strong>Page range</strong>
+                <div class="graph-range-row">
+                  <label>
+                    <span>From</span>
+                    <select id="graph-range-start"></select>
+                  </label>
+                  <label>
+                    <span>To</span>
+                    <select id="graph-range-end"></select>
+                  </label>
+                </div>
+                <button id="graph-range-load" type="button">Show all triples in range</button>
+              </section>
+              <div id="graph-page-status" class="graph-page-status"></div>
+            </div>
+          </details>
+          <label class="graph-scope-control">
+            <span>Scope</span>
+            <select id="graph-scope">
+              <option value="page">Current page</option>
+              <option value="range" hidden>Page range</option>
+              <option value="vol1">Volume I</option>
+              <option value="vol2">Volume II</option>
+              <option value="vol3">Volume III</option>
+              <option value="corpus">Full corpus</option>
+              <option value="focus" hidden>Focused slice</option>
+            </select>
+          </label>
+          <button id="graph-zoom-out" type="button" title="Zoom out (keyboard −)" aria-label="Zoom out">&minus;</button>
+          <button id="graph-zoom-in" type="button" title="Zoom in (keyboard +)" aria-label="Zoom in">+</button>
+          <button id="graph-fit" type="button">Fit graph</button>
+          <label id="graph-show-all-control" class="graph-show-all-control" hidden>
+            <input id="graph-show-all" type="checkbox">
+            <span>Show entire graph</span>
+          </label>
+          <button id="graph-close" class="icon-button" type="button" title="Back to reader" aria-label="Back to reader">&times;</button>
+        </div>
+      </header>
+
+      <div class="graph-layout">
+        <aside class="graph-browser" aria-label="Graph search">
+          <details id="graph-browser-panel" class="graph-panel">
+            <summary id="graph-browser-summary">Filter themes</summary>
+            <div class="graph-panel-body">
+              <div id="graph-theme-controls" class="graph-theme-controls">
+                <div class="graph-field">
+                  <span class="graph-field-caption">Entity group A <em>(check several to bundle them)</em></span>
+                  <div class="graph-category-picker">
+                    <input id="graph-entity-categories-filter" class="graph-category-filter" type="search" placeholder="Filter categories" aria-label="Filter Entity group A filters">
+                    <div id="graph-entity-categories" class="graph-category-list" role="group" aria-label="Entity group A filters"></div>
+                    <div class="graph-category-foot">
+                      <span id="graph-entity-categories-count" class="graph-category-count">None checked</span>
+                      <button id="graph-entity-categories-clear" type="button" disabled>Clear</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph-field">
+                  <span class="graph-field-caption">Relation categories <em>(check several to bundle them)</em></span>
+                  <div class="graph-category-picker">
+                    <input id="graph-relation-categories-filter" class="graph-category-filter" type="search" placeholder="Filter categories" aria-label="Filter Relation category filters">
+                    <div id="graph-relation-categories" class="graph-category-list" role="group" aria-label="Relation category filters"></div>
+                    <div class="graph-category-foot">
+                      <span id="graph-relation-categories-count" class="graph-category-count">None checked</span>
+                      <button id="graph-relation-categories-clear" type="button" disabled>Clear</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph-field">
+                  <span class="graph-field-caption">Entity group B <em>(check several to bundle them)</em></span>
+                  <div class="graph-category-picker">
+                    <input id="graph-object-categories-filter" class="graph-category-filter" type="search" placeholder="Filter categories" aria-label="Filter Entity group B filters">
+                    <div id="graph-object-categories" class="graph-category-list" role="group" aria-label="Entity group B filters"></div>
+                    <div class="graph-category-foot">
+                      <span id="graph-object-categories-count" class="graph-category-count">None checked</span>
+                      <button id="graph-object-categories-clear" type="button" disabled>Clear</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph-field-row">
+                  <label class="graph-field">
+                    <span>Direction</span>
+                    <select id="graph-theme-direction">
+                      <option value="either">A &harr; B (either direction)</option>
+                      <option value="ab">A &rarr; B only</option>
+                      <option value="ba">B &rarr; A only</option>
+                    </select>
+                  </label>
+                  <label class="graph-field graph-theme-granularity-field">
+                    <span>Minimum pattern instances</span>
+                    <input id="graph-theme-granularity" type="range" min="1" max="50" step="1" value="5">
+                    <output id="graph-theme-granularity-value" for="graph-theme-granularity">5+</output>
+                  </label>
+                </div>
+                <div class="graph-theme-actions">
+                  <button id="graph-theme-apply" class="primary-button" type="button">Apply selection</button>
+                  <button id="graph-theme-clear" type="button">Clear</button>
+                </div>
+                <section class="graph-theme-similar" aria-label="Similar statement patterns">
+                  <h3>Similar statement patterns</h3>
+                  <p id="graph-theme-similar-anchor" class="graph-note">Apply or click a subject, relation, or object category to set the anchor pattern.</p>
+                  <label class="graph-field graph-similarity-threshold">
+                    <span>Minimum pattern similarity</span>
+                    <input id="graph-theme-similarity" type="range" min="0" max="100" step="1" value="50">
+                    <output id="graph-theme-similarity-value" for="graph-theme-similarity">50%</output>
+                  </label>
+                  <div class="graph-theme-similar-actions">
+                    <button id="graph-theme-similar" type="button" disabled>Find similar patterns</button>
+                    <button id="graph-theme-similar-clear" type="button" disabled>Clear</button>
+                  </div>
+                  <p id="graph-theme-similar-note" class="graph-note"></p>
+                  <div id="graph-theme-similar-results" class="graph-theme-similar-results"></div>
+                  <button id="graph-theme-similar-apply" class="primary-button" type="button" disabled>Add checked patterns to the graph selection</button>
+                </section>
+              </div>
+            </div>
+          </details>
+
+          <details id="graph-filtered-tags-panel" class="graph-panel">
+            <summary id="graph-filtered-tags-summary">Filter tags</summary>
+            <div class="graph-panel-body">
+              <div class="graph-filtered-tags-controls">
+                <p id="graph-filtered-tags-note" class="graph-note">Listing every low-level tag in the current scope. Apply subject, relation, or object categories in Filter themes to narrow the bucket.</p>
+                <label class="graph-field">
+                  <span>Tag bucket</span>
+                  <select id="graph-filtered-tags-role" aria-label="Filtered tag role"></select>
+                </label>
+                <div class="graph-filtered-tags-search">
+                  <label class="graph-field">
+                    <span>Search tags in this bucket</span>
+                    <input id="graph-filtered-tags-search" type="search" placeholder="Type a low-level tag">
+                  </label>
+                  <button id="graph-filtered-tags-search-button" type="button">Search</button>
+                </div>
+                <div class="graph-filtered-tags-actions">
+                  <button id="graph-filtered-tags-select-page" type="button" disabled>Select page</button>
+                  <button id="graph-filtered-tags-clear" type="button" disabled>Clear checked</button>
+                </div>
+                <section class="graph-tag-similar" aria-label="Similar tags">
+                  <label class="graph-field graph-similarity-threshold">
+                    <span>Minimum tag similarity</span>
+                    <input id="graph-filtered-tags-similarity" type="range" min="0" max="100" step="0.5" value="92">
+                    <output id="graph-filtered-tags-similarity-value" for="graph-filtered-tags-similarity">92%</output>
+                  </label>
+                  <div class="graph-filtered-tags-actions">
+                    <button id="graph-filtered-tags-similar" type="button" disabled>Find similar to checked</button>
+                    <button id="graph-filtered-tags-similar-clear" type="button" disabled>Back to frequency</button>
+                  </div>
+                  <p id="graph-filtered-tags-similar-note" class="graph-note">Check one or more tags, then rank this bucket by embedding similarity to their averaged vector.</p>
+                </section>
+                <div id="graph-filtered-tags-results" class="graph-filtered-tags-results"></div>
+                <div class="graph-filtered-tags-pagination" aria-label="Filtered tag pages">
+                  <button id="graph-filtered-tags-prev" type="button" disabled>Previous</button>
+                  <span id="graph-filtered-tags-page">0 tags</span>
+                  <button id="graph-filtered-tags-next" type="button" disabled>Next</button>
+                </div>
+                <button id="graph-filtered-tags-apply" class="primary-button" type="button" disabled>Filter graph by checked tags</button>
+                <button id="graph-filtered-tags-release" type="button" hidden>Release the applied tag filter</button>
+                <p id="graph-filtered-tags-selection-note" class="graph-note">Up to 100 checked tags can be combined. Tags within one role are unioned; different roles intersect.</p>
+              </div>
+            </div>
+          </details>
+
+        </aside>
+
+        <div id="graph-stage" class="graph-stage">
+          <div id="graph-canvas" tabindex="0" role="application" aria-label="Interactive directed knowledge graph"></div>
+          <div id="graph-loading" class="graph-loading" hidden>Loading graph…</div>
+          <div class="graph-legend" aria-hidden="true">
+            <span><i class="legend-node"></i> <b id="graph-node-legend">entity category</b></span>
+            <span><i class="legend-edge"></i> <b id="graph-edge-legend">power mechanism</b></span>
+          </div>
+        </div>
+
+        <aside class="graph-detail" aria-label="Selected graph item">
+          <details id="graph-detail-panel" class="graph-panel">
+            <summary>Inspector</summary>
+            <div class="graph-panel-body">
+              <div id="graph-detail-content" class="graph-detail-content">
+                Select a node or edge to inspect it.
+              </div>
+            </div>
+          </details>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <div id="hover-popup" class="hover-popup" role="tooltip" hidden></div>
+
+  <script>
+    window.__CHRONICLE_INITIAL__ = {
+      volumeId: {{ initial_volume|tojson }},
+      pageNumber: {{ initial_page|tojson }},
+      graphOpen: {{ initial_graph_open|tojson }}
+    };
+  </script>
+  <script src="{{ url_for('static', filename='graph.js') }}"></script>
+  <script src="{{ url_for('static', filename='chronicles.js') }}?v=20260822d"></script>
+</body>
+</html>
