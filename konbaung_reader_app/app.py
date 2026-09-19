@@ -43,7 +43,9 @@ class TokenGloss(BaseModel):
 
 
 class SegmentedPageGlosses(BaseModel):
-    tokens: list[TokenGloss] = Field(description="One Burmese token and English gloss per input token.")
+    tokens: list[TokenGloss] = Field(
+        description="One Burmese token and English gloss per input token."
+    )
 
 
 def exact_segmented_gloss_schema(token_count: int) -> type[SegmentedPageGlosses]:
@@ -67,6 +69,7 @@ def validate_raw_gloss_fields(payload: Any) -> None:
     for index, item in enumerate(payload["tokens"]):
         if not isinstance(item, dict) or set(item) != {"my", "en"}:
             raise ValueError(f"Gemini token {index} must contain only my and en")
+
 
 app = Flask(
     __name__,
@@ -108,7 +111,9 @@ def read_env_value(path: Path, key: str) -> str:
 
 
 def gemini_api_key() -> str:
-    return os.getenv("GEMINI_API_KEY", "").strip() or read_env_value(DEFAULT_ENV_FILE, "GEMINI_API_KEY")
+    return os.getenv("GEMINI_API_KEY", "").strip() or read_env_value(
+        DEFAULT_ENV_FILE, "GEMINI_API_KEY"
+    )
 
 
 def translation_cache_path(volume_id: str, page_number: int) -> Path:
@@ -219,10 +224,7 @@ def cached_gloss_payload(
         cached["segmentationHash"] = segmentation_hash
         write_cached_translation(volume_id, page_number, cached)
     cached_pairs = {
-        "tokens": [
-            {"my": token["my"], "en": token["en"]}
-            for token in cached["tokens"]
-        ]
+        "tokens": [{"my": token["my"], "en": token["en"]} for token in cached["tokens"]]
     }
     validate_raw_gloss_fields(cached_pairs)
     cached_glosses = SegmentedPageGlosses.model_validate(cached_pairs)
@@ -259,7 +261,9 @@ def materialize_token_glosses(
 ) -> list[dict[str, Any]]:
     missing = [index for index in range(len(tokens)) if index not in aligned]
     if missing:
-        raise ValueError(f"Gemini left {len(missing)} of {len(tokens)} tokens unglossed; first missing index {missing[0]}")
+        raise ValueError(
+            f"Gemini left {len(missing)} of {len(tokens)} tokens unglossed; first missing index {missing[0]}"
+        )
     return [
         {
             "i": index,
@@ -272,7 +276,9 @@ def materialize_token_glosses(
     ]
 
 
-def validate_token_glosses(glosses: SegmentedPageGlosses, tokens: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def validate_token_glosses(
+    glosses: SegmentedPageGlosses, tokens: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
     return materialize_token_glosses(align_token_glosses(glosses, tokens), tokens)
 
 
@@ -332,7 +338,7 @@ def root():
 def chronicles_root():
     index = corpus.index()
     first_volume = index["volumes"][0]
-    return redirect(f'/chronicles/{first_volume["id"]}/{first_volume["availablePages"][0]}')
+    return redirect(f"/chronicles/{first_volume['id']}/{first_volume['availablePages'][0]}")
 
 
 @app.get("/chronicles/<volume_id>/<int:page_number>")
@@ -358,9 +364,7 @@ def chronicles_page(volume_id: str, page_number: int):
 def knowledge_graph_root():
     index = corpus.index()
     first_volume = index["volumes"][0]
-    return redirect(
-        f'/knowledge-graph/{first_volume["id"]}/{first_volume["availablePages"][0]}'
-    )
+    return redirect(f"/knowledge-graph/{first_volume['id']}/{first_volume['availablePages'][0]}")
 
 
 # A page-scoped graph URL opens the same graph implementation used by the
@@ -421,9 +425,7 @@ def category_scope_arguments() -> dict[str, object]:
         start_page = request.args.get("startPage")
         end_page = request.args.get("endPage")
         if not volume_id or start_page is None or end_page is None:
-            raise ValueError(
-                "Range scope requires volumeId, startPage, and endPage"
-            )
+            raise ValueError("Range scope requires volumeId, startPage, and endPage")
         arguments.update(
             volume_id=volume_id,
             start_page=int(start_page),
@@ -445,16 +447,12 @@ def graph_category_filtered_tags():
         anchor_ids = request.args.getlist("similarTo")
         anchor_labels = [
             record["tag"]
-            for record in (
-                graph.resolve_tags(anchor_kind, anchor_ids) if anchor_ids else []
-            )
+            for record in (graph.resolve_tags(anchor_kind, anchor_ids) if anchor_ids else [])
         ]
 
         def applied_tag_labels(name, kind):
             ids = category_filter_values(name)
-            return [
-                record["tag"] for record in (graph.resolve_tags(kind, ids) if ids else [])
-            ]
+            return [record["tag"] for record in (graph.resolve_tags(kind, ids) if ids else [])]
 
         payload = axial_graph.filtered_tags(
             role=role,
@@ -495,9 +493,7 @@ def graph_category_filtered_tags():
 def graph_category_similar_patterns():
     def applied_pattern_tags(name, kind):
         ids = category_filter_values(name)
-        return [
-            record["tag"] for record in (graph.resolve_tags(kind, ids) if ids else [])
-        ]
+        return [record["tag"] for record in (graph.resolve_tags(kind, ids) if ids else [])]
 
     try:
         return jsonify(
@@ -505,9 +501,7 @@ def graph_category_similar_patterns():
                 subject_ids=category_filter_values("subject"),
                 relation_ids=category_filter_values("relation"),
                 object_ids=category_filter_values("object"),
-                minimum_similarity=float(
-                    request.args.get("minSimilarity", "0.9")
-                ),
+                minimum_similarity=float(request.args.get("minSimilarity", "0.9")),
                 limit=int(request.args.get("limit", "50")),
                 direction=request.args.get("direction", "ab"),
                 subject_tag_labels=applied_pattern_tags("subjectTag", "entity"),
@@ -532,32 +526,20 @@ def graph_category_filtered_tags_topology():
             raise ValueError("Select at least one filtered tag")
         if len(subject_ids) + len(relation_ids) + len(object_ids) > 100:
             raise ValueError("Select no more than 100 filtered tags")
-        subject_records = (
-            graph.resolve_tags("entity", subject_ids) if subject_ids else []
-        )
-        relation_records = (
-            graph.resolve_tags("relation", relation_ids) if relation_ids else []
-        )
-        object_records = (
-            graph.resolve_tags("entity", object_ids) if object_ids else []
-        )
+        subject_records = graph.resolve_tags("entity", subject_ids) if subject_ids else []
+        relation_records = graph.resolve_tags("relation", relation_ids) if relation_ids else []
+        object_records = graph.resolve_tags("entity", object_ids) if object_ids else []
         return jsonify(
             axial_graph.topology(
                 subject_ids=category_filter_values("subjectCategory"),
                 relation_ids=category_filter_values("relationCategory"),
                 object_ids=category_filter_values("objectCategory"),
                 raw_subject_tag_ids=subject_ids,
-                raw_subject_tag_labels=[
-                    record["tag"] for record in subject_records
-                ],
+                raw_subject_tag_labels=[record["tag"] for record in subject_records],
                 raw_relation_tag_ids=relation_ids,
-                raw_relation_tag_labels=[
-                    record["tag"] for record in relation_records
-                ],
+                raw_relation_tag_labels=[record["tag"] for record in relation_records],
                 raw_object_tag_ids=object_ids,
-                raw_object_tag_labels=[
-                    record["tag"] for record in object_records
-                ],
+                raw_object_tag_labels=[record["tag"] for record in object_records],
                 direction=request.args.get("direction", "ab"),
                 **category_scope_arguments(),
             )
@@ -587,9 +569,7 @@ def graph_category_tags_topology():
         return error_response(str(exc), 404)
 
 
-@app.get(
-    "/api/graph/categories/topology/page/<volume_id>/<int:page_number>"
-)
+@app.get("/api/graph/categories/topology/page/<volume_id>/<int:page_number>")
 def graph_category_page_topology(volume_id: str, page_number: int):
     try:
         return jsonify(
@@ -605,10 +585,7 @@ def graph_category_page_topology(volume_id: str, page_number: int):
         return error_response(str(exc), 400)
 
 
-@app.get(
-    "/api/graph/categories/topology/range/"
-    "<volume_id>/<int:start_page>/<int:end_page>"
-)
+@app.get("/api/graph/categories/topology/range/<volume_id>/<int:start_page>/<int:end_page>")
 def graph_category_range_topology(
     volume_id: str,
     start_page: int,
@@ -648,29 +625,17 @@ def graph_category_evidence():
     try:
         raw_tag_ids = category_filter_values("tagId")
         raw_kind = request.args.get("tagKind") if raw_tag_ids else None
-        raw_tag_records = (
-            graph.resolve_tags(raw_kind or "", raw_tag_ids)
-            if raw_tag_ids
-            else []
-        )
+        raw_tag_records = graph.resolve_tags(raw_kind or "", raw_tag_ids) if raw_tag_ids else []
         raw_subject_ids = category_filter_values("subjectTag")
         raw_relation_ids = category_filter_values("relationTag")
         raw_object_ids = category_filter_values("objectTag")
         raw_subject_records = (
-            graph.resolve_tags("entity", raw_subject_ids)
-            if raw_subject_ids
-            else []
+            graph.resolve_tags("entity", raw_subject_ids) if raw_subject_ids else []
         )
         raw_relation_records = (
-            graph.resolve_tags("relation", raw_relation_ids)
-            if raw_relation_ids
-            else []
+            graph.resolve_tags("relation", raw_relation_ids) if raw_relation_ids else []
         )
-        raw_object_records = (
-            graph.resolve_tags("entity", raw_object_ids)
-            if raw_object_ids
-            else []
-        )
+        raw_object_records = graph.resolve_tags("entity", raw_object_ids) if raw_object_ids else []
         return jsonify(
             axial_graph.evidence(
                 request.args.get("source", ""),
@@ -678,32 +643,18 @@ def graph_category_evidence():
                 relation_ids=category_filter_values("relation"),
                 raw_kind=raw_kind,
                 raw_labels=[record["tag"] for record in raw_tag_records],
-                raw_subject_labels=[
-                    record["tag"] for record in raw_subject_records
-                ],
-                raw_relation_labels=[
-                    record["tag"] for record in raw_relation_records
-                ],
-                raw_object_labels=[
-                    record["tag"] for record in raw_object_records
-                ],
+                raw_subject_labels=[record["tag"] for record in raw_subject_records],
+                raw_relation_labels=[record["tag"] for record in raw_relation_records],
+                raw_object_labels=[record["tag"] for record in raw_object_records],
                 scope=request.args.get("scope", "corpus"),
                 volume_id=request.args.get("volumeId"),
                 page_number=(
-                    int(request.args["pageNumber"])
-                    if "pageNumber" in request.args
-                    else None
+                    int(request.args["pageNumber"]) if "pageNumber" in request.args else None
                 ),
                 start_page=(
-                    int(request.args["startPage"])
-                    if "startPage" in request.args
-                    else None
+                    int(request.args["startPage"]) if "startPage" in request.args else None
                 ),
-                end_page=(
-                    int(request.args["endPage"])
-                    if "endPage" in request.args
-                    else None
-                ),
+                end_page=(int(request.args["endPage"]) if "endPage" in request.args else None),
                 offset=int(request.args.get("offset", "0")),
                 limit=int(request.args.get("limit", "20")),
             )
@@ -767,10 +718,7 @@ def graph_page_topology(volume_id: str, page_number: int):
         return error_response(str(exc), 400)
 
 
-@app.get(
-    "/api/graph/topology/range/"
-    "<volume_id>/<int:start_page>/<int:end_page>"
-)
+@app.get("/api/graph/topology/range/<volume_id>/<int:start_page>/<int:end_page>")
 def graph_page_range_topology(
     volume_id: str,
     start_page: int,

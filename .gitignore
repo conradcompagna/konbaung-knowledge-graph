@@ -84,11 +84,16 @@ stanza_resources/
 dict_sqlite/
 sandbox_adapter_bank_deps/
 
-!konbaung_translated_sentence_annotation_prompt.backup_shortened_20260713.md
 
 /konbaung_reader_app/data/
 /konbaung_reader_app/static/data/
 
-# Private manuscript and editorial outputs
-/article/paper_evidence_organization_2026-09-11/
-/article/argument_sift_2026-09-11/
+
+# Reproducible frontend output and private research inputs/results
+/konbaung_reader_app/static/build/
+/research/inputs/
+/research/recovered_source/
+/research/results/
+/article/
+
+.ruff_cache/

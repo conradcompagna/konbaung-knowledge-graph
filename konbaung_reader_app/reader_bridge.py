@@ -58,7 +58,11 @@ def _dictionary_display_fields(base: dict[str, Any]) -> tuple[list[str], list[st
         _append_unique(definitions, definition[: embedded[0].start()])
         for match_index, match in enumerate(embedded):
             _append_unique(parts_of_speech, match.group(1).lower())
-            end = embedded[match_index + 1].start() if match_index + 1 < len(embedded) else len(definition)
+            end = (
+                embedded[match_index + 1].start()
+                if match_index + 1 < len(embedded)
+                else len(definition)
+            )
             _append_unique(definitions, definition[match.end() : end])
 
     return romanizations, parts_of_speech, definitions
@@ -79,7 +83,7 @@ class BurmeseReaderBridge:
         with self._lock:
             if self._module is not None:
                 return self._module
-            module_path = self.reader_root / "newserverPDF21split.py"
+            module_path = self.reader_root / "app.py"
             if not module_path.exists():
                 raise FileNotFoundError(f"Burmese Neural Reader module not found: {module_path}")
 
@@ -123,7 +127,9 @@ class BurmeseReaderBridge:
             island_spans.append((run_start, len(segments)))
         offsets = module._build_segment_offsets(segmentation_text, segments)
         if offsets is None:
-            raise ValueError("The external segmenter returned tokens that could not be mapped to canonical text")
+            raise ValueError(
+                "The external segmenter returned tokens that could not be mapped to canonical text"
+            )
 
         entries: list[dict[str, Any]] = []
         token_records: list[dict[str, Any]] = []

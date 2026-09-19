@@ -112,9 +112,7 @@ class PublicApiTests(unittest.TestCase):
         self.assertEqual(neighbors.status_code, 200)
         similar = neighbors.get_json()
         self.assertEqual(similar["anchor"]["id"], anchor["id"])
-        self.assertTrue(
-            all(item["similarity"] >= 0.9 for item in similar["data"])
-        )
+        self.assertTrue(all(item["similarity"] >= 0.9 for item in similar["data"]))
 
     def test_twenty_embedding_tags_form_a_complete_paginated_union(self):
         tag_ids = self.brahmin_tag_ids(20)
@@ -129,9 +127,7 @@ class PublicApiTests(unittest.TestCase):
         cursor = payload["pagination"]["nextCursor"]
         while cursor:
             next_query = [*base_query, ("cursor", cursor)]
-            page = self.client.get(
-                "/api/v1/triples", query_string=next_query
-            ).get_json()
+            page = self.client.get("/api/v1/triples", query_string=next_query).get_json()
             ids.extend(item["id"] for item in page["data"])
             cursor = page["pagination"]["nextCursor"]
         self.assertEqual(len(ids), 74)
@@ -205,14 +201,10 @@ class PublicApiTests(unittest.TestCase):
 
     def test_invalid_filters_and_query_bound_cursor(self):
         self.assertEqual(
-            self.client.get(
-                "/api/v1/triples", query_string={"page": 47}
-            ).status_code,
+            self.client.get("/api/v1/triples", query_string={"page": 47}).status_code,
             400,
         )
-        unknown = self.client.get(
-            "/api/v1/triples", query_string={"subjet": "King"}
-        )
+        unknown = self.client.get("/api/v1/triples", query_string={"subjet": "King"})
         self.assertEqual(unknown.status_code, 400)
         self.assertEqual(unknown.get_json()["error"]["code"], "invalid_request")
         missing_tag = self.client.get(
@@ -239,9 +231,7 @@ class PublicApiTests(unittest.TestCase):
         app.config["PUBLIC_API_KEYS"] = "research-secret"
         self.assertEqual(self.client.get("/api/v1/stats").status_code, 401)
         self.assertEqual(self.client.get("/api/v1/docs").status_code, 200)
-        authorized = self.client.get(
-            "/api/v1/stats", headers={"X-API-Key": "research-secret"}
-        )
+        authorized = self.client.get("/api/v1/stats", headers={"X-API-Key": "research-secret"})
         self.assertEqual(authorized.status_code, 200)
 
         app.config["PUBLIC_API_KEYS"] = ""

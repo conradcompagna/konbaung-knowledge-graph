@@ -1,18 +1,13 @@
-# Publication contents
+# Repository contents
 
 ## Included
 
-OCR, translation, extraction, schema and repair tools, prompts, graph-building and analysis code, reader/API frontend and backend, tests, and hosting templates.
+OCR and extraction pipelines, prompts, corpus compilers, entity resolution, graph/API application, frontend source, statistical analysis code, and tests.
 
-## Kept outside this repository
+## External resources
 
-The proprietary RDF export and Oxigraph store, all equivalent claim/corpus exports, source scans and OCR text, embeddings, entity-resolution results, annotations, and generated research outputs.
+RDF/N-Quads exports, Oxigraph databases, extracted triples, source scans, corpus exports, embedding matrices, private research/editorial material, and generated analytical output. The research dataset remains proprietary; no dataset license is granted by publishing this software.
 
-All projects also exclude live environment files, credentials, private keys,
-logs, local environments, dependency installations, backup copies, and original
-Git history. Configuration examples contain empty credentials or explicit local
-example values. Upstream component notices are preserved.
+Live environment files, credentials, private keys, logs, installed dependencies, local environments, backup copies, and generated outputs are excluded. Configuration examples require your own settings. Third-party notices are preserved in [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
-This is a fresh source snapshot. Publication adjustments remove operational
-defaults and describe external resources; they do not change the deployed sites.
-See [setup](SETUP.md) for requirements and validation limits.
+The GitHub code is maintained separately from the deployed sites and original development workspaces. See [setup](SETUP.md) for inputs, build steps, and validation limits.

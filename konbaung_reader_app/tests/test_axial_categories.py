@@ -29,16 +29,10 @@ class AxialCategoryTests(unittest.TestCase):
         catalog = self.client.get("/api/graph/categories/catalog").get_json()
         self.assertEqual(len(catalog["entities"]), 52)
         self.assertEqual(len(catalog["relations"]), 81)
-        self.assertFalse(
-            any(category["provisional"] for category in catalog["entities"])
-        )
-        self.assertFalse(
-            any(category["provisional"] for category in catalog["relations"])
-        )
+        self.assertFalse(any(category["provisional"] for category in catalog["entities"]))
+        self.assertFalse(any(category["provisional"] for category in catalog["relations"]))
 
-        page = self.client.get(
-            "/api/chronicles/page/vol1/216?triples=v3"
-        ).get_json()
+        page = self.client.get("/api/chronicles/page/vol1/216?triples=v3").get_json()
         collapsed = [
             endpoint["id"]
             for annotation in page["annotations"]
@@ -52,9 +46,7 @@ class AxialCategoryTests(unittest.TestCase):
         self.assertIn("E37", collapsed)
         self.assertFalse(any(tag.startswith(("NE", "NR")) for tag in collapsed))
 
-        diorama_page = self.client.get(
-            "/api/chronicles/page/vol2/217?triples=v3"
-        ).get_json()
+        diorama_page = self.client.get("/api/chronicles/page/vol2/217?triples=v3").get_json()
         diorama_tags = {
             endpoint["id"]
             for annotation in diorama_page["annotations"]
@@ -67,14 +59,10 @@ class AxialCategoryTests(unittest.TestCase):
         }
         self.assertIn("E31", diorama_tags)
         self.assertIn("R65", diorama_tags)
-        self.assertFalse(
-            any(tag.startswith(("NE", "NR")) for tag in diorama_tags)
-        )
+        self.assertFalse(any(tag.startswith(("NE", "NR")) for tag in diorama_tags))
 
     def test_chunk_retried_page_categories_are_resolved(self):
-        page = self.client.get(
-            "/api/chronicles/page/vol1/206?triples=v3"
-        ).get_json()
+        page = self.client.get("/api/chronicles/page/vol1/206?triples=v3").get_json()
         self.assertEqual(
             page["diagnostics"]["axialUnresolvedAnnotationCount"],
             0,
@@ -85,9 +73,7 @@ class AxialCategoryTests(unittest.TestCase):
         self.assertIsNone(axial["reason"])
 
     def test_category_overview_is_complete_thematic_metagraph(self):
-        overview = self.client.get(
-            "/api/graph/categories/topology/overview/corpus"
-        ).get_json()
+        overview = self.client.get("/api/graph/categories/topology/overview/corpus").get_json()
         self.assertTrue(overview["categoryMode"])
         self.assertEqual(overview["schemaVersion"], 5)
         self.assertEqual(overview["layout"]["kind"], "thematic")
@@ -106,10 +92,7 @@ class AxialCategoryTests(unittest.TestCase):
         self.assertEqual(overview["claimCount"], 27129)
         self.assertEqual(overview["entityMentionCount"], 54258)
         self.assertEqual(
-            sum(
-                category["mentionCount"]
-                for category in overview["entityCategories"]
-            ),
+            sum(category["mentionCount"] for category in overview["entityCategories"]),
             54258,
         )
         self.assertEqual(
@@ -158,9 +141,7 @@ class AxialCategoryTests(unittest.TestCase):
         self.assertTrue(any(pattern[4] == 0 for pattern in filtered["patterns"]))
 
     def test_redone_dense_page_contributes_every_triple_to_category_graph(self):
-        topology = self.client.get(
-            "/api/graph/categories/topology/page/vol2/32"
-        ).get_json()
+        topology = self.client.get("/api/graph/categories/topology/page/vol2/32").get_json()
         self.assertEqual(topology["claimCount"], 165)
         self.assertEqual(topology["entityMentionCount"], 330)
         self.assertEqual(len(topology["patterns"]), 6050)

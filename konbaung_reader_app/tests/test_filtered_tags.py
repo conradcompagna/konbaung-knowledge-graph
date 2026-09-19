@@ -44,9 +44,7 @@ class FilteredTagsTests(unittest.TestCase):
             query_string=self.theme_query(q="alaung", limit=100),
         ).get_json()
         self.assertTrue(searched["items"])
-        self.assertTrue(
-            all("alaung" in item["label"].casefold() for item in searched["items"])
-        )
+        self.assertTrue(all("alaung" in item["label"].casefold() for item in searched["items"]))
 
     def test_tag_pages_are_stable_and_never_exceed_one_hundred(self):
         first = self.client.get(
@@ -67,8 +65,7 @@ class FilteredTagsTests(unittest.TestCase):
         self.assertTrue(first["pagination"]["hasMore"])
         self.assertEqual(second["pagination"]["offset"], 100)
         self.assertFalse(
-            {item["id"] for item in first["items"]}
-            & {item["id"] for item in second["items"]}
+            {item["id"] for item in first["items"]} & {item["id"] for item in second["items"]}
         )
 
     def test_checked_tags_union_within_role_and_intersect_across_roles(self):
@@ -160,16 +157,11 @@ class FilteredTagsTests(unittest.TestCase):
         self.assertGreater(body["pagination"]["total"], 0)
         self.assertEqual(body["matchingClaimCount"], len(axial_graph.records))
 
-        empty_topology = self.client.get(
-            "/api/graph/categories/topology/filtered-tags"
-        )
+        empty_topology = self.client.get("/api/graph/categories/topology/filtered-tags")
         self.assertEqual(empty_topology.status_code, 400)
 
     def test_similar_to_ranks_a_bucket_by_averaged_tag_vectors(self):
-        anchors = [
-            graph.by_label["entity"][label]["baseKey"]
-            for label in ("King", "Alaungpaya")
-        ]
+        anchors = [graph.by_label["entity"][label]["baseKey"] for label in ("King", "Alaungpaya")]
         response = self.client.get(
             "/api/graph/categories/tags",
             query_string=[
@@ -195,8 +187,7 @@ class FilteredTagsTests(unittest.TestCase):
     def test_applied_tag_filters_narrow_the_other_role_buckets(self):
         spellings = ["Alaungpaya", "Alaungmintaya", "Alaungmintayagyi"]
         applied = [
-            ("subjectTag", graph.by_label["entity"][label]["baseKey"])
-            for label in spellings
+            ("subjectTag", graph.by_label["entity"][label]["baseKey"]) for label in spellings
         ]
 
         def bucket(role, narrow):
@@ -210,12 +201,8 @@ class FilteredTagsTests(unittest.TestCase):
         for role in ("relation", "object"):
             wide = bucket(role, False)
             narrow = bucket(role, True)
-            self.assertLess(
-                narrow["pagination"]["total"], wide["pagination"]["total"]
-            )
-            self.assertLess(
-                narrow["matchingClaimCount"], wide["matchingClaimCount"]
-            )
+            self.assertLess(narrow["pagination"]["total"], wide["pagination"]["total"])
+            self.assertLess(narrow["matchingClaimCount"], wide["matchingClaimCount"])
             self.assertEqual(sorted(narrow["narrowedBy"]), ["subject"])
             self.assertEqual(sorted(narrow["narrowedBy"]["subject"]), sorted(spellings))
 
@@ -228,14 +215,11 @@ class FilteredTagsTests(unittest.TestCase):
         )
 
         # Every claim behind the narrowed buckets really is one of this king's.
-        narrowed_relations = {
-            item["label"] for item in bucket("relation", True)["items"]
-        }
+        narrowed_relations = {item["label"] for item in bucket("relation", True)["items"]}
         subjects_for_relations = {
             record["subject"]
             for record in axial_graph.records
-            if record["predicate"] in narrowed_relations
-            and record["subject"] in set(spellings)
+            if record["predicate"] in narrowed_relations and record["subject"] in set(spellings)
         }
         self.assertTrue(subjects_for_relations)
 
@@ -253,9 +237,7 @@ class FilteredTagsTests(unittest.TestCase):
         body = response.get_json()
         self.assertEqual(body["anchor"]["subjects"], ["E01"])
         self.assertEqual(body["anchor"]["relations"], ["R01"])
-        self.assertEqual(
-            sorted(body["comparedRoles"]), ["object", "relation", "subject"]
-        )
+        self.assertEqual(sorted(body["comparedRoles"]), ["object", "relation", "subject"])
         scores = [item["similarity"] for item in body["items"]]
         self.assertTrue(scores)
         self.assertEqual(scores, sorted(scores, reverse=True))
@@ -268,8 +250,7 @@ class FilteredTagsTests(unittest.TestCase):
                 record["categories"]["o"],
             )
             for record in axial_graph.records
-            if record["categories"]["s"] == "E01"
-            and record["categories"]["r"] == "R01"
+            if record["categories"]["s"] == "E01" and record["categories"]["r"] == "R01"
         }
         self.assertEqual(body["anchor"]["patternCount"], len(anchor_patterns))
         for item in body["items"]:

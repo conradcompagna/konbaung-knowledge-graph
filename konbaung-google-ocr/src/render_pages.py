@@ -2,6 +2,7 @@ import sys
 import fitz  # pymupdf
 from pathlib import Path
 
+
 def render_pdf(pdf_path: str, book_id: str, dpi: int = 350, max_pages: int = None):
     out_dir = Path(__file__).resolve().parent.parent / "data" / "rendered_pages" / book_id
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -17,15 +18,17 @@ def render_pdf(pdf_path: str, book_id: str, dpi: int = 350, max_pages: int = Non
     for i in range(n_pages):
         page = doc[i]
         pix = page.get_pixmap(matrix=mat)
-        out_path = out_dir / f"page_{i+1:04d}.png"
+        out_path = out_dir / f"page_{i + 1:04d}.png"
         pix.save(str(out_path))
         print(f"rendered {out_path}")
 
     doc.close()
     print(f"done: {n_pages} pages -> {out_dir}")
 
+
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--pdf", required=True)
     ap.add_argument("--book-id", required=True)

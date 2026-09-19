@@ -41,9 +41,7 @@ class SemanticSearchTests(unittest.TestCase):
         self.assertEqual(payload["anchor"]["frequency"], anchor["frequency"])
         self.assertEqual(payload["minimumSimilarity"], 0.9)
         self.assertLessEqual(len(payload["results"]), 99)
-        self.assertTrue(
-            all(item["similarity"] >= 0.90 for item in payload["results"])
-        )
+        self.assertTrue(all(item["similarity"] >= 0.90 for item in payload["results"]))
         self.assertTrue(all(item["kind"] == "entity" for item in payload["results"]))
 
     def test_selected_tags_return_the_complete_union_graph(self):
@@ -62,7 +60,7 @@ class SemanticSearchTests(unittest.TestCase):
         selected = [anchor["id"], neighbors[0]["id"]]
         response = self.client.get(
             "/api/graph/topology/tags",
-            query_string=[("kind", "entity"), *(('id', value) for value in selected)],
+            query_string=[("kind", "entity"), *(("id", value) for value in selected)],
         )
         self.assertEqual(response.status_code, 200)
         payload = response.get_json()
@@ -124,8 +122,7 @@ class SemanticSearchTests(unittest.TestCase):
         self.assertTrue(evidence["items"])
         self.assertTrue(
             all(
-                item["subject"] in selected_labels
-                or item["object"] in selected_labels
+                item["subject"] in selected_labels or item["object"] in selected_labels
                 for item in evidence["items"]
             )
         )

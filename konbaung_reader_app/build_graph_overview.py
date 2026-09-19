@@ -255,8 +255,7 @@ def _layout_leaf(
                 method="force",
             )
             positions = {
-                node_id: np.asarray(spring[node_id], dtype=np.float64)
-                for node_id in node_ids
+                node_id: np.asarray(spring[node_id], dtype=np.float64) for node_id in node_ids
             }
     position_array = np.asarray([positions[node_id] for node_id in node_ids])
     radius_array = np.asarray([radii[node_id] for node_id in node_ids])
@@ -318,9 +317,7 @@ def _layout_component(
     else:
         quotient = nx.Graph()
         quotient.add_nodes_from(range(len(leaves)))
-        for source, target, attributes in graph.subgraph(component_ids).edges(
-            data=True
-        ):
+        for source, target, attributes in graph.subgraph(component_ids).edges(data=True):
             left = node_to_leaf[source]
             right = node_to_leaf[target]
             if left == right:
@@ -377,33 +374,19 @@ def _layout_component(
                 dtype=np.float64,
             )
             layout_radii = np.asarray(
-                [
-                    math.hypot(layout["width"], layout["height"]) / 2
-                    for layout in local_layouts
-                ],
+                [math.hypot(layout["width"], layout["height"]) / 2 for layout in local_layouts],
                 dtype=np.float64,
             )
             desired_centers = np.zeros(
                 (len(local_layouts), 2),
                 dtype=np.float64,
             )
-            ring_order = [
-                leaf_index
-                for leaf_index in topology_order
-                if leaf_index != root
-            ]
+            ring_order = [leaf_index for leaf_index in topology_order if leaf_index != root]
             cursor = 0
             previous_outer = float(layout_radii[root])
             while cursor < len(ring_order):
-                maximum_remaining = max(
-                    float(layout_radii[index])
-                    for index in ring_order[cursor:]
-                )
-                ring_radius = (
-                    previous_outer
-                    + maximum_remaining
-                    + COMMUNITY_GAP
-                )
+                maximum_remaining = max(float(layout_radii[index]) for index in ring_order[cursor:])
+                ring_radius = previous_outer + maximum_remaining + COMMUNITY_GAP
                 ring: list[int] = []
                 spans: list[float] = []
                 span_total = 0.0
@@ -412,11 +395,7 @@ def _layout_component(
                     span = 2 * math.asin(
                         min(
                             0.98,
-                            (
-                                float(layout_radii[leaf_index])
-                                + COMMUNITY_GAP / 2
-                            )
-                            / ring_radius,
+                            (float(layout_radii[leaf_index]) + COMMUNITY_GAP / 2) / ring_radius,
                         )
                     )
                     if ring and span_total + span > math.pi * 1.75:
@@ -434,15 +413,11 @@ def _layout_component(
                         math.sin(angle) * ring_radius,
                     ]
                     angle += span / 2 + spacing
-                previous_outer = ring_radius + max(
-                    float(layout_radii[index])
-                    for index in ring
-                )
+                previous_outer = ring_radius + max(float(layout_radii[index]) for index in ring)
             centers = desired_centers - layout_centers
         else:
             total_area = sum(
-                (layout["width"] + COMMUNITY_GAP)
-                * (layout["height"] + COMMUNITY_GAP)
+                (layout["width"] + COMMUNITY_GAP) * (layout["height"] + COMMUNITY_GAP)
                 for layout in local_layouts
             )
             target_width = max(
@@ -480,9 +455,7 @@ def _layout_component(
             )
             centers = np.zeros((len(leaves), 2), dtype=np.float64)
             for leaf_index in range(len(local_layouts)):
-                centers[leaf_index] = (
-                    offsets[leaf_index] - packed_center
-                )
+                centers[leaf_index] = offsets[leaf_index] - packed_center
 
     positions: dict[str, np.ndarray] = {}
     communities: list[dict[str, Any]] = []
@@ -546,8 +519,7 @@ def _pack_components(layouts: list[dict[str, Any]]) -> None:
         group: list[dict[str, Any]],
     ) -> tuple[float, float]:
         total_area = sum(
-            (layout["width"] + COMPONENT_GAP)
-            * (layout["height"] + COMPONENT_GAP)
+            (layout["width"] + COMPONENT_GAP) * (layout["height"] + COMPONENT_GAP)
             for layout in group
         )
         target_width = max(
@@ -601,10 +573,7 @@ def _pack_components(layouts: list[dict[str, Any]]) -> None:
         dtype=np.float64,
     )
     for layout in layouts[1:]:
-        layout["offset"] = tuple(
-            np.asarray(layout["offset"], dtype=np.float64)
-            + island_origin
-        )
+        layout["offset"] = tuple(np.asarray(layout["offset"], dtype=np.float64) + island_origin)
 
     packed_bounds = []
     for layout in layouts:
@@ -634,10 +603,7 @@ def _pack_components(layouts: list[dict[str, Any]]) -> None:
         dtype=np.float64,
     )
     for layout in layouts:
-        layout["offset"] = tuple(
-            np.asarray(layout["offset"], dtype=np.float64)
-            - overall_center
-        )
+        layout["offset"] = tuple(np.asarray(layout["offset"], dtype=np.float64) - overall_center)
 
 
 def _community_port(
@@ -714,11 +680,7 @@ def _scope_source(
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     if scope == "corpus":
         return node_records, list(all_edges.values())
-    nodes = [
-        record
-        for record in node_records
-        if scope in node_volumes[record["baseKey"]]
-    ]
+    nodes = [record for record in node_records if scope in node_volumes[record["baseKey"]]]
     edges = [
         {
             **edge,
@@ -737,15 +699,10 @@ def _build_scope_atlas(
 ) -> dict[str, Any]:
     node_ids = [record["baseKey"] for record in node_records]
     labels = {record["baseKey"]: record["tag"] for record in node_records}
-    frequencies = {
-        record["baseKey"]: int(record["frequency"]) for record in node_records
-    }
+    frequencies = {record["baseKey"]: int(record["frequency"]) for record in node_records}
     radii = {node_id: bubble_radius(labels[node_id]) for node_id in node_ids}
     graph = _weighted_graph(node_ids, edges)
-    components = [
-        set(component)
-        for component in nx.connected_components(graph)
-    ]
+    components = [set(component) for component in nx.connected_components(graph)]
     components.sort(key=lambda value: (-len(value), min(value)))
     component_layouts = [
         _layout_component(
@@ -779,10 +736,7 @@ def _build_scope_atlas(
             community_rows.append(
                 [
                     component_index,
-                    " / ".join(
-                        labels[node_id]
-                        for node_id in community["labelNodes"]
-                    ),
+                    " / ".join(labels[node_id] for node_id in community["labelNodes"]),
                     len(community["ids"]),
                     round(minimum_x + offset[0], 4),
                     round(minimum_y + offset[1], 4),
@@ -835,16 +789,11 @@ def _build_scope_atlas(
             record["baseKey"],
         ),
     )
-    node_indexes = {
-        record["baseKey"]: index for index, record in enumerate(ordered_nodes)
-    }
+    node_indexes = {record["baseKey"]: index for index, record in enumerate(ordered_nodes)}
     node_rows: list[list[Any]] = []
     for record in ordered_nodes:
         node_id = record["baseKey"]
-        priority = (
-            math.log2(frequencies[node_id] + 1) * 2.0
-            + math.log2(graph.degree(node_id) + 1)
-        )
+        priority = math.log2(frequencies[node_id] + 1) * 2.0 + math.log2(graph.degree(node_id) + 1)
         node_rows.append(
             [
                 node_id,
@@ -884,9 +833,7 @@ def _build_scope_atlas(
             item[0][1],
         ),
     )
-    bundle_indexes = {
-        key: index for index, (key, _) in enumerate(ordered_bundles)
-    }
+    bundle_indexes = {key: index for index, (key, _) in enumerate(ordered_bundles)}
     quotient = nx.Graph()
     for (source_community, target_community), record in ordered_bundles:
         pair = tuple(sorted((source_community, target_community)))
@@ -908,9 +855,7 @@ def _build_scope_atlas(
     overview_keys: set[tuple[int, int]] = set()
     for pair in overview_pairs:
         candidates = [
-            (key, record)
-            for key, record in ordered_bundles
-            if tuple(sorted(key)) == pair
+            (key, record) for key, record in ordered_bundles if tuple(sorted(key)) == pair
         ]
         overview_keys.add(
             min(

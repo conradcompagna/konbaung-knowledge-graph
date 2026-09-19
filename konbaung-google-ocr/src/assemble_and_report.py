@@ -4,6 +4,7 @@ from pathlib import Path
 
 MYANMAR_RE = re.compile(r"[က-႟ꩠ-ꩿꧠ-꧿]")
 
+
 def run(book_id: str):
     base = Path(__file__).resolve().parent.parent / "data"
     json_dir = base / "ocr_json" / book_id
@@ -54,16 +55,18 @@ def run(book_id: str):
             or (avg_conf is not None and avg_conf < 0.6)
         )
 
-        rows.append({
-            "page_number": page_num,
-            "char_count": char_count,
-            "myanmar_char_count": myanmar_chars,
-            "myanmar_char_ratio": round(myanmar_ratio, 3),
-            "avg_word_confidence": round(avg_conf, 3) if avg_conf is not None else "",
-            "empty_page": empty_page,
-            "suspicious_page": suspicious,
-            "has_error": has_error,
-        })
+        rows.append(
+            {
+                "page_number": page_num,
+                "char_count": char_count,
+                "myanmar_char_count": myanmar_chars,
+                "myanmar_char_ratio": round(myanmar_ratio, 3),
+                "avg_word_confidence": round(avg_conf, 3) if avg_conf is not None else "",
+                "empty_page": empty_page,
+                "suspicious_page": suspicious,
+                "has_error": has_error,
+            }
+        )
 
     full_book_path = base / "ocr_text" / book_id / f"{book_id}_full.txt"
     full_book_path.write_text("\n".join(full_text_parts), encoding="utf-8")
@@ -113,8 +116,10 @@ def run(book_id: str):
     print(f"Empty pages: {empty_pages}, Suspicious pages: {suspicious_pages}")
     print(f"Avg Myanmar ratio: {avg_myanmar_ratio:.3f}")
 
+
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--book-id", required=True)
     args = ap.parse_args()

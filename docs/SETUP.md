@@ -1,12 +1,12 @@
 # Setup and external resources
 
-The source tree preserves the pipeline's relative layout. A fresh clone contains neither the proprietary corpus nor a graph database, and therefore does not provide a working corpus-backed reader by itself.
+A fresh clone contains neither the proprietary corpus nor a graph database, and therefore does not provide a working corpus-backed reader by itself.
 
 ## Reader application
 
-Use Python 3.12 and Node.js. Create and activate a virtual environment. Install the runtime requirements from `konbaung_reader_app/requirements.txt` and the Burmese reader's dependencies when using dictionary segmentation.
+Use Python 3.12 and Node.js 22. Create and activate a virtual environment. Install the runtime requirements from `konbaung_reader_app/requirements.txt` and the Burmese reader's dependencies when using dictionary segmentation.
 
-Clone `burmese-neural-reader` beside this repository, or set `BURMESE_READER_ROOT` to its root. The existing adapter imports `newserverPDF21split.py` and initializes only its dictionary segmentation path. The Burmese dictionaries must be provisioned separately.
+Clone `burmese-neural-reader` beside this repository, or set `BURMESE_READER_ROOT` to its root. The existing adapter imports `app.py` and initializes only its dictionary segmentation path. The Burmese dictionaries must be provisioned separately.
 
 From `konbaung_reader_app`:
 
@@ -15,6 +15,8 @@ python -m pip install -r requirements.txt
 npm ci
 npm run build:frontend
 ```
+
+The build writes ignored files under `static/build/`. The reader template loads `build/graph.js`; deploy these generated files with the application after building.
 
 Before `python app.py`, provision the corpus, graph store, and embeddings expected by `graph_schema.py`, `corpus.py`, and `axial_store.py`. These files deliberately remain external:
 
@@ -31,8 +33,10 @@ Place your own environment configuration in this repository's `.env` or export i
 
 Extraction, translation, embeddings, and classification issue paid cloud requests when explicitly run. Read each script's CLI and selected input/output paths before execution. `requirements-research.txt` lists the additional libraries imported by research and analysis scripts; it does not supply model weights or datasets.
 
-## Tests
+## Checks
 
-Python tests under `tests/` and `konbaung_reader_app/tests/` and Playwright specifications describe corpus, API, and UI behavior. Most graph tests depend on the omitted canonical dataset. Do not interpret source syntax checks or a frontend build as a completed corpus-backed integration test.
+Run `python -m unittest discover -s tests/unit -v` from the repository root. These eight synthetic source-alignment tests require no private dataset. Install `ruff==0.16.8`, then run `ruff check .` and `ruff format --check .` for the Python checks used in CI.
 
-The database build refuses to overwrite an existing graph directory. Use separately provisioned development resources, never the live website's storage, for testing or rebuilding.
+The tests under `tests/integration/` and `konbaung_reader_app/tests/` require the omitted canonical dataset and a separately configured graph-backed reader. The frontend build and unit tests do not execute those integrations.
+
+The database build refuses to overwrite an existing graph directory. Use a separate development graph store when building or testing. See the [pipeline guide](../pipeline/README.md) for organized entrypoints and resource requirements.

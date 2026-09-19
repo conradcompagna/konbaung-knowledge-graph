@@ -23,9 +23,7 @@ class AxialCategoryStore:
         self.relations = {item["id"]: item for item in self._catalog["relations"]}
         self.records = [
             json.loads(line)
-            for line in (root / "triples.jsonl").read_text(
-                encoding="utf-8"
-            ).splitlines()
+            for line in (root / "triples.jsonl").read_text(encoding="utf-8").splitlines()
             if line.strip()
         ]
         self._embeddings: Any | None = None
@@ -66,9 +64,7 @@ class AxialCategoryStore:
         norms = np.linalg.norm(matrix, axis=1, keepdims=True)
         return matrix / np.where(norms > 0, norms, 1.0)
 
-    def _mean_tag_vector(
-        self, kind: str, labels: Iterable[str]
-    ) -> np.ndarray | None:
+    def _mean_tag_vector(self, kind: str, labels: Iterable[str]) -> np.ndarray | None:
         vectors = [
             vector
             for vector in (self._tag_vector(kind, label) for label in labels)
@@ -80,9 +76,7 @@ class AxialCategoryStore:
         norm = float(np.linalg.norm(mean))
         return mean / norm if norm > 0 else None
 
-    def _role_centroids(
-        self, records: Iterable[dict[str, Any]]
-    ) -> dict[str, np.ndarray | None]:
+    def _role_centroids(self, records: Iterable[dict[str, Any]]) -> dict[str, np.ndarray | None]:
         selected = list(records)
         return {
             role: self._mean_tag_vector(
@@ -118,13 +112,10 @@ class AxialCategoryStore:
                 if vector is not None:
                     sums[role][pattern_id] += vector
         self._role_means = {
-            role: np.mean(self._normalize_rows(matrix), axis=0)
-            for role, matrix in sums.items()
+            role: np.mean(self._normalize_rows(matrix), axis=0) for role, matrix in sums.items()
         }
         self._pattern_centroids = {
-            role: self._normalize_rows(
-                self._normalize_rows(matrix) - self._role_means[role]
-            )
+            role: self._normalize_rows(self._normalize_rows(matrix) - self._role_means[role])
             for role, matrix in sums.items()
         }
         return self._pattern_centroids
@@ -182,9 +173,7 @@ class AxialCategoryStore:
             end_page=end_page,
         )
         if not subjects and not relations and not objects:
-            raise ValueError(
-                "Apply at least one subject, relation, or object category first"
-            )
+            raise ValueError("Apply at least one subject, relation, or object category first")
         if not anchor_records:
             raise ValueError("The applied categories match no claims in this scope")
         minimum_similarity = float(minimum_similarity)
@@ -193,9 +182,7 @@ class AxialCategoryStore:
         limit = self._bounded_limit(limit, 200)
 
         anchor_centroids = self._role_centroids(anchor_records)
-        available_roles = [
-            role for role, vector in anchor_centroids.items() if vector is not None
-        ]
+        available_roles = [role for role, vector in anchor_centroids.items() if vector is not None]
         if not available_roles:
             raise ValueError("The applied categories have no embedded raw tags")
 
@@ -209,9 +196,7 @@ class AxialCategoryStore:
         scoped_counts: Counter[int] = Counter()
         for record in scoped_records:
             tags = record["categories"]
-            scoped_counts[
-                self.pattern_index[(tags["s"], tags["r"], tags["o"])]
-            ] += 1
+            scoped_counts[self.pattern_index[(tags["s"], tags["r"], tags["o"])]] += 1
         anchor_patterns = {
             self.pattern_index[
                 (
@@ -227,8 +212,7 @@ class AxialCategoryStore:
         scores = np.mean(
             np.stack(
                 [
-                    centroids[role]
-                    @ self._centred_anchor(role, anchor_centroids[role])
+                    centroids[role] @ self._centred_anchor(role, anchor_centroids[role])
                     for role in available_roles
                 ]
             ),
@@ -237,8 +221,7 @@ class AxialCategoryStore:
         candidates = [
             pattern_id
             for pattern_id in scoped_counts
-            if pattern_id not in anchor_patterns
-            and float(scores[pattern_id]) >= minimum_similarity
+            if pattern_id not in anchor_patterns and float(scores[pattern_id]) >= minimum_similarity
         ]
         candidates.sort(
             key=lambda pattern_id: (
@@ -255,9 +238,7 @@ class AxialCategoryStore:
                     "relationId": relation_id,
                     "objectId": target_id,
                     "subjectLabel": self._category_label(self.entities[source_id]),
-                    "relationLabel": self._category_label(
-                        self.relations[relation_id]
-                    ),
+                    "relationLabel": self._category_label(self.relations[relation_id]),
                     "objectLabel": self._category_label(self.entities[target_id]),
                     "tripleCount": int(scoped_counts[pattern_id]),
                     "similarity": float(scores[pattern_id]),
@@ -272,11 +253,7 @@ class AxialCategoryStore:
             "ok": True,
             "minimumSimilarity": minimum_similarity,
             "comparedRoles": available_roles,
-            "narrowedBy": {
-                role: sorted(labels)
-                for role, labels in narrowing.items()
-                if labels
-            },
+            "narrowedBy": {role: sorted(labels) for role, labels in narrowing.items() if labels},
             "anchor": {
                 "claimCount": len(anchor_records),
                 "patternCount": len(anchor_patterns),
@@ -292,12 +269,10 @@ class AxialCategoryStore:
         self.entity_order = [item["id"] for item in self._catalog["entities"]]
         self.relation_order = [item["id"] for item in self._catalog["relations"]]
         self.entity_index = {
-            category_id: index
-            for index, category_id in enumerate(self.entity_order)
+            category_id: index for index, category_id in enumerate(self.entity_order)
         }
         self.relation_index = {
-            category_id: index
-            for index, category_id in enumerate(self.relation_order)
+            category_id: index for index, category_id in enumerate(self.relation_order)
         }
 
         pattern_counts: Counter[tuple[str, str, str]] = Counter()
@@ -312,9 +287,7 @@ class AxialCategoryStore:
                 self.entity_index[key[2]],
             ),
         )
-        self.pattern_index = {
-            key: index for index, key in enumerate(self.pattern_keys)
-        }
+        self.pattern_index = {key: index for index, key in enumerate(self.pattern_keys)}
         self.pattern_counts = pattern_counts
 
         entity_counterparts: dict[str, set[str]] = defaultdict(set)
@@ -323,13 +296,9 @@ class AxialCategoryStore:
         relation_entities: dict[str, set[str]] = defaultdict(set)
         relation_patterns: Counter[str] = Counter()
         bundle_counts: Counter[tuple[str, str, str]] = Counter()
-        bundle_patterns: dict[
-            tuple[str, str, str], list[int]
-        ] = defaultdict(list)
+        bundle_patterns: dict[tuple[str, str, str], list[int]] = defaultdict(list)
 
-        for pattern_id, (source_id, relation_id, target_id) in enumerate(
-            self.pattern_keys
-        ):
+        for pattern_id, (source_id, relation_id, target_id) in enumerate(self.pattern_keys):
             count = pattern_counts[(source_id, relation_id, target_id)]
             entity_counterparts[source_id].add(target_id)
             entity_counterparts[target_id].add(source_id)
@@ -399,13 +368,9 @@ class AxialCategoryStore:
         unknown_entities = entities - self.entities.keys()
         unknown_relations = relations - self.relations.keys()
         if unknown_entities:
-            raise ValueError(
-                f"Unknown entity categories: {', '.join(sorted(unknown_entities))}"
-            )
+            raise ValueError(f"Unknown entity categories: {', '.join(sorted(unknown_entities))}")
         if unknown_relations:
-            raise ValueError(
-                f"Unknown relation categories: {', '.join(sorted(unknown_relations))}"
-            )
+            raise ValueError(f"Unknown relation categories: {', '.join(sorted(unknown_relations))}")
         return entities, relations
 
     @staticmethod
@@ -422,17 +387,11 @@ class AxialCategoryStore:
         if scope in {"vol1", "vol2", "vol3"}:
             return record["volumeId"] == scope
         if scope == "page":
-            return (
-                record["volumeId"] == volume_id
-                and int(page_number or -1) in record["pages"]
-            )
+            return record["volumeId"] == volume_id and int(page_number or -1) in record["pages"]
         if scope == "range":
-            return (
-                record["volumeId"] == volume_id
-                and any(
-                    int(start_page or -1) <= int(page) <= int(end_page or -1)
-                    for page in record["pages"]
-                )
+            return record["volumeId"] == volume_id and any(
+                int(start_page or -1) <= int(page) <= int(end_page or -1)
+                for page in record["pages"]
             )
         raise ValueError(f"Unknown category graph scope: {scope}")
 
@@ -467,23 +426,13 @@ class AxialCategoryStore:
         unknown_subjects = subjects - self.entities.keys()
         unknown_objects = objects - self.entities.keys()
         if unknown_subjects:
-            raise ValueError(
-                f"Unknown subject categories: {', '.join(sorted(unknown_subjects))}"
-            )
+            raise ValueError(f"Unknown subject categories: {', '.join(sorted(unknown_subjects))}")
         if unknown_objects:
-            raise ValueError(
-                f"Unknown object categories: {', '.join(sorted(unknown_objects))}"
-            )
+            raise ValueError(f"Unknown object categories: {', '.join(sorted(unknown_objects))}")
         raw_values = {str(value) for value in raw_labels if str(value)}
-        raw_subjects = {
-            str(value) for value in raw_subject_labels if str(value)
-        }
-        raw_relations = {
-            str(value) for value in raw_relation_labels if str(value)
-        }
-        raw_objects = {
-            str(value) for value in raw_object_labels if str(value)
-        }
+        raw_subjects = {str(value) for value in raw_subject_labels if str(value)}
+        raw_relations = {str(value) for value in raw_relation_labels if str(value)}
+        raw_objects = {str(value) for value in raw_object_labels if str(value)}
         if raw_kind not in {None, "entity", "relation"}:
             raise ValueError(f"Unknown raw graph tag kind: {raw_kind}")
         if raw_values and raw_kind is None:
@@ -506,14 +455,10 @@ class AxialCategoryStore:
                 continue
             if raw_values:
                 if raw_kind == "entity" and (
-                    record["subject"] not in raw_values
-                    and record["object"] not in raw_values
+                    record["subject"] not in raw_values and record["object"] not in raw_values
                 ):
                     continue
-                if (
-                    raw_kind == "relation"
-                    and record["predicate"] not in raw_values
-                ):
+                if raw_kind == "relation" and record["predicate"] not in raw_values:
                     continue
             if raw_relations and record["predicate"] not in raw_relations:
                 continue
@@ -564,21 +509,23 @@ class AxialCategoryStore:
             return True
 
         found = []
-        if direction in {"either", "ab"} and fits(
-            tags["s"], record["subject"], group_a, raw_a
-        ) and fits(tags["o"], record["object"], group_b, raw_b):
+        if (
+            direction in {"either", "ab"}
+            and fits(tags["s"], record["subject"], group_a, raw_a)
+            and fits(tags["o"], record["object"], group_b, raw_b)
+        ):
             found.append("forward")
-        if direction in {"either", "ba"} and fits(
-            tags["o"], record["object"], group_a, raw_a
-        ) and fits(tags["s"], record["subject"], group_b, raw_b):
+        if (
+            direction in {"either", "ba"}
+            and fits(tags["o"], record["object"], group_a, raw_a)
+            and fits(tags["s"], record["subject"], group_b, raw_b)
+        ):
             found.append("reverse")
         return tuple(found)
 
     @staticmethod
     def _normalize_tag_query(value: str) -> str:
-        return " ".join(
-            str(value).casefold().replace("_", " ").replace("-", " ").split()
-        )
+        return " ".join(str(value).casefold().replace("_", " ").replace("-", " ").split())
 
     def _bucket_labels(
         self,
@@ -599,18 +546,14 @@ class AxialCategoryStore:
 
         if role == "relation":
             return (record["predicate"],)
-        orientations = self._orientations(
-            record, group_a, group_b, raw_a, raw_b, direction
-        )
+        orientations = self._orientations(record, group_a, group_b, raw_a, raw_b, direction)
         sides = {
             ("subject", "forward"): "subject",
             ("subject", "reverse"): "object",
             ("object", "forward"): "object",
             ("object", "reverse"): "subject",
         }
-        labels = {
-            record[sides[(role, orientation)]] for orientation in orientations
-        }
+        labels = {record[sides[(role, orientation)]] for orientation in orientations}
         return tuple(labels)
 
     def filtered_tags(
@@ -659,9 +602,7 @@ class AxialCategoryStore:
             "object": [str(value) for value in object_tag_labels if str(value)],
         }
         narrowing = {
-            other: labels
-            for other, labels in applied_tags.items()
-            if other != role and labels
+            other: labels for other, labels in applied_tags.items() if other != role and labels
         }
         records, _, subjects, relations, objects = self._matching_records(
             scope=scope,
@@ -697,8 +638,7 @@ class AxialCategoryStore:
         ranked = [
             (label, frequency)
             for label, frequency in frequencies.items()
-            if not normalized_query
-            or normalized_query in self._normalize_tag_query(label)
+            if not normalized_query or normalized_query in self._normalize_tag_query(label)
         ]
         ranked.sort(key=lambda item: (-item[1], item[0].casefold(), item[0]))
 
@@ -743,9 +683,7 @@ class AxialCategoryStore:
             "query": query,
             "categoryScoped": bool(selected_for_role),
             "direction": direction,
-            "narrowedBy": {
-                other: sorted(labels) for other, labels in narrowing.items()
-            },
+            "narrowedBy": {other: sorted(labels) for other, labels in narrowing.items()},
             "similarTo": anchors,
             "minimumSimilarity": float(minimum_similarity) if anchors else None,
             "items": [
@@ -796,9 +734,7 @@ class AxialCategoryStore:
         end_page: int | None = None,
     ) -> dict[str, Any]:
         selected_raw_ids = list(dict.fromkeys(str(value) for value in raw_tag_ids))
-        selected_raw_labels = list(
-            dict.fromkeys(str(value) for value in raw_tag_labels)
-        )
+        selected_raw_labels = list(dict.fromkeys(str(value) for value in raw_tag_labels))
         selected_role_tag_ids = {
             "subject": list(dict.fromkeys(str(value) for value in raw_subject_tag_ids)),
             "relation": list(dict.fromkeys(str(value) for value in raw_relation_tag_ids)),
@@ -850,8 +786,7 @@ class AxialCategoryStore:
                 "kind": "page",
                 "id": f"{volume_id}-p{int(page_number or 0):04d}",
                 "label": (
-                    f"Thematic graph · {str(volume_id).upper()}, "
-                    f"page {int(page_number or 0)}"
+                    f"Thematic graph · {str(volume_id).upper()}, page {int(page_number or 0)}"
                 ),
                 "volumeId": volume_id,
                 "pageNumber": page_number,
@@ -859,10 +794,7 @@ class AxialCategoryStore:
         elif scope == "range":
             focus = {
                 "kind": "range",
-                "id": (
-                    f"{volume_id}-p{int(start_page or 0):04d}"
-                    f"-p{int(end_page or 0):04d}"
-                ),
+                "id": (f"{volume_id}-p{int(start_page or 0):04d}-p{int(end_page or 0):04d}"),
                 "label": (
                     f"Thematic graph · {str(volume_id).upper()} "
                     f"{int(start_page or 0)}–{int(end_page or 0)}"
@@ -928,9 +860,7 @@ class AxialCategoryStore:
             active_entity_patterns[source_id] += 1
             if target_id != source_id:
                 active_entity_patterns[target_id] += 1
-            active_relation_entities[relation_id].update(
-                (source_id, target_id)
-            )
+            active_relation_entities[relation_id].update((source_id, target_id))
             active_relation_patterns[relation_id] += 1
 
         entity_categories = []
@@ -941,18 +871,10 @@ class AxialCategoryStore:
                     **descriptor,
                     "mentionCount": int(descriptor["count"]),
                     "activeMentionCount": active_entity_counts[category_id],
-                    "counterpartCount": len(
-                        self.entity_counterparts[category_id]
-                    ),
-                    "activeCounterpartCount": len(
-                        active_entity_counterparts[category_id]
-                    ),
-                    "relationCount": len(
-                        self.entity_relations[category_id]
-                    ),
-                    "activeRelationCount": len(
-                        active_entity_relations[category_id]
-                    ),
+                    "counterpartCount": len(self.entity_counterparts[category_id]),
+                    "activeCounterpartCount": len(active_entity_counterparts[category_id]),
+                    "relationCount": len(self.entity_relations[category_id]),
+                    "activeRelationCount": len(active_entity_relations[category_id]),
                     "patternCount": self.entity_patterns[category_id],
                     "activePatternCount": active_entity_patterns[category_id],
                 }
@@ -966,16 +888,10 @@ class AxialCategoryStore:
                     **descriptor,
                     "tripleCount": int(descriptor["count"]),
                     "activeTripleCount": active_relation_counts[category_id],
-                    "entityCount": len(
-                        self.relation_entities[category_id]
-                    ),
-                    "activeEntityCount": len(
-                        active_relation_entities[category_id]
-                    ),
+                    "entityCount": len(self.relation_entities[category_id]),
+                    "activeEntityCount": len(active_relation_entities[category_id]),
                     "patternCount": self.relation_patterns[category_id],
-                    "activePatternCount": active_relation_patterns[
-                        category_id
-                    ],
+                    "activePatternCount": active_relation_patterns[category_id],
                 }
             )
 
@@ -985,9 +901,7 @@ class AxialCategoryStore:
                 self.relation_index[relation_id],
                 self.entity_index[target_id],
                 self.pattern_counts[(source_id, relation_id, target_id)],
-                active_pattern_counts[
-                    (source_id, relation_id, target_id)
-                ],
+                active_pattern_counts[(source_id, relation_id, target_id)],
             ]
             for source_id, relation_id, target_id in self.pattern_keys
         ]
@@ -995,12 +909,8 @@ class AxialCategoryStore:
         incidence_bundles = []
         for role, entity_id, relation_id in self.bundle_keys:
             active_count = 0
-            for pattern_id in self.bundle_patterns[
-                (role, entity_id, relation_id)
-            ]:
-                active_count += active_pattern_counts[
-                    self.pattern_keys[pattern_id]
-                ]
+            for pattern_id in self.bundle_patterns[(role, entity_id, relation_id)]:
+                active_count += active_pattern_counts[self.pattern_keys[pattern_id]]
             incidence_bundles.append(
                 [
                     self.entity_index[entity_id],
@@ -1077,8 +987,7 @@ class AxialCategoryStore:
         matching = [
             record
             for record in records
-            if record["categories"]["s"] == source_id
-            and record["categories"]["o"] == target_id
+            if record["categories"]["s"] == source_id and record["categories"]["o"] == target_id
         ]
         safe_offset = max(0, int(offset))
         safe_limit = self._bounded_limit(limit)
@@ -1095,9 +1004,7 @@ class AxialCategoryStore:
                 "subject": record["subject"],
                 "predicate": record["predicate"],
                 "object": record["object"],
-                "relationCategory": self.relations[
-                    record["categories"]["r"]
-                ],
+                "relationCategory": self.relations[record["categories"]["r"]],
             }
             for record in selected
         ]

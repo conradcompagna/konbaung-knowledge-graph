@@ -5,12 +5,14 @@ import time
 from pathlib import Path
 import requests
 
+
 def load_api_key():
     env_path = Path(__file__).resolve().parent.parent / ".env"
     for line in env_path.read_text().splitlines():
         if line.startswith("GOOGLE_API_KEY="):
             return line.split("=", 1)[1].strip()
     raise RuntimeError("GOOGLE_API_KEY not found in .env")
+
 
 def ocr_image(image_path: Path, api_key: str, language_hint: str = "my"):
     url = f"https://vision.googleapis.com/v1/images:annotate?key={api_key}"
@@ -27,6 +29,7 @@ def ocr_image(image_path: Path, api_key: str, language_hint: str = "my"):
     resp = requests.post(url, json=body, timeout=60)
     resp.raise_for_status()
     return resp.json()
+
 
 def run(book_id: str, max_pages: int = None, force: bool = False, language_hint: str = "my"):
     base = Path(__file__).resolve().parent.parent / "data"
@@ -52,7 +55,7 @@ def run(book_id: str, max_pages: int = None, force: bool = False, language_hint:
             except requests.HTTPError as e:
                 if attempt == 3:
                     raise
-                wait = 2 ** attempt
+                wait = 2**attempt
                 print(f"error on {page_path}, retrying in {wait}s: {e}")
                 time.sleep(wait)
 
@@ -60,8 +63,10 @@ def run(book_id: str, max_pages: int = None, force: bool = False, language_hint:
         text = result.get("responses", [{}])[0].get("fullTextAnnotation", {}).get("text", "")
         print(f"OCR'd {page_path.name}: {len(text)} chars")
 
+
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--book-id", required=True)
     ap.add_argument("--max-pages", type=int, default=None)

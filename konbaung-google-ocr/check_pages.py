@@ -1,4 +1,5 @@
 import fitz
+
 base = r"C:\Users\conra\Documents\primary texts\ocr_out"
 files = [
     ("ocr_konbaungsetvol2.pdf", "vol2"),

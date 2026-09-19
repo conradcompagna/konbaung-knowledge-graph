@@ -12,9 +12,7 @@ DEFAULT_DATA_ROOT = APP_ROOT / "static" / "data" / "konbaung"
 DEFAULT_V1_DATA_ROOT = (
     APP_ROOT / "data_archives" / "konbaung_reader_pre_sentence_annotations_20260713"
 )
-DEFAULT_V3_DATA_ROOT = (
-    APP_ROOT / "data" / "konbaung_historiography_v3_canonical_20260724"
-)
+DEFAULT_V3_DATA_ROOT = APP_ROOT / "data" / "konbaung_historiography_v3_canonical_20260724"
 DEFAULT_AXIAL_DATA_ROOT = APP_ROOT / "data" / "konbaung_axial_categories_v2"
 DEFAULT_TRIPLE_VARIANT = "v3"
 
@@ -64,9 +62,7 @@ def exact_utf16_ranges(text: str, literal: str) -> list[tuple[int, int]]:
 
 def valid_utf16_range(text: str, start: Any, end: Any) -> bool:
     return (
-        isinstance(start, int)
-        and isinstance(end, int)
-        and 0 <= start < end <= utf16_length(text)
+        isinstance(start, int) and isinstance(end, int) and 0 <= start < end <= utf16_length(text)
     )
 
 
@@ -76,11 +72,7 @@ def resolved_range(
     literal_keys: tuple[str, ...],
 ) -> tuple[int, int] | None:
     literal = next(
-        (
-            str(record.get(key, ""))
-            for key in literal_keys
-            if str(record.get(key, "")).strip()
-        ),
+        (str(record.get(key, "")) for key in literal_keys if str(record.get(key, "")).strip()),
         "",
     )
     start = record.get("startUtf16")
@@ -154,11 +146,7 @@ class CorpusStore:
         if not path.exists():
             raise FileNotFoundError(f"Axial category catalog is missing: {path}")
         catalog = json.loads(path.read_text(encoding="utf-8"))
-        return {
-            item["id"]: item
-            for kind in ("entities", "relations")
-            for item in catalog[kind]
-        }
+        return {item["id"]: item for kind in ("entities", "relations") for item in catalog[kind]}
 
     @lru_cache(maxsize=3)
     def _axial_assignments(self, volume_id: str) -> dict[str, dict[str, Any]]:
@@ -213,24 +201,15 @@ class CorpusStore:
                 "id": "v3",
                 "shortLabel": "V3",
                 "label": "V3 · Historiography triples",
-                "description": (
-                    "Canonical analytical triples with final axial power categories"
-                ),
+                "description": ("Canonical analytical triples with final axial power categories"),
                 "sourceTripleCount": int(v3_index["totals"]["canonicalTriples"]),
-                "pageAppearanceCount": int(
-                    v3_index["totals"]["pageAppearanceTriples"]
-                ),
+                "pageAppearanceCount": int(v3_index["totals"]["pageAppearanceTriples"]),
                 "excludedSourcePages": sum(
-                    len(pages)
-                    for pages in v3_index["pagesWithUnavailableSentences"].values()
+                    len(pages) for pages in v3_index["pagesWithUnavailableSentences"].values()
                 ),
                 "groundingMode": "none",
-                "taggedTripleCount": int(
-                    axial_manifest["totals"]["taggedTriples"]
-                ),
-                "unresolvedTripleCount": int(
-                    axial_manifest["totals"]["unresolvedTriples"]
-                ),
+                "taggedTripleCount": int(axial_manifest["totals"]["taggedTriples"]),
+                "unresolvedTripleCount": int(axial_manifest["totals"]["unresolvedTriples"]),
             },
         ]
         return index
@@ -340,12 +319,8 @@ class CorpusStore:
         sentences: list[dict[str, Any]],
     ) -> tuple[dict[str, Any], str]:
         source_id = str(annotation["id"])
-        subject, subject_range = CorpusStore._adapt_endpoint(
-            annotation["subject"], canonical_text
-        )
-        object_, object_range = CorpusStore._adapt_endpoint(
-            annotation["object"], canonical_text
-        )
+        subject, subject_range = CorpusStore._adapt_endpoint(annotation["subject"], canonical_text)
+        object_, object_range = CorpusStore._adapt_endpoint(annotation["object"], canonical_text)
         source_evidence = annotation["evidence"]
         evidence_range = resolved_range(
             source_evidence,
@@ -353,9 +328,7 @@ class CorpusStore:
             ("canonicalText", "text"),
         )
         anchors = [
-            span
-            for span in (evidence_range, subject_range, object_range)
-            if span is not None
+            span for span in (evidence_range, subject_range, object_range) if span is not None
         ]
         sentence, sentence_mapping_method = CorpusStore._choose_sentence(sentences, anchors)
         evidence_fragments: list[dict[str, Any]] = []
@@ -363,9 +336,7 @@ class CorpusStore:
             evidence_start, evidence_end = evidence_range
             evidence_fragments.append(
                 {
-                    "canonicalText": slice_utf16(
-                        canonical_text, evidence_start, evidence_end
-                    ),
+                    "canonicalText": slice_utf16(canonical_text, evidence_start, evidence_end),
                     "startUtf16": evidence_start,
                     "endUtf16": evidence_end,
                 }
@@ -402,9 +373,7 @@ class CorpusStore:
                 "fragments": evidence_fragments,
                 "candidateCount": len(evidence_fragments),
                 "status": evidence_status,
-                "alignmentMethod": (
-                    "v1_source_offsets" if evidence_range else None
-                ),
+                "alignmentMethod": ("v1_source_offsets" if evidence_range else None),
                 "characterOverlap": 1.0 if evidence_range else 0.0,
                 "crossPage": bool(sentence["crossPage"]),
                 "ownerPage": int(sentence["ownerPage"]),
@@ -535,8 +504,7 @@ class CorpusStore:
                 or source_sentence["en"] != sentence["translation"]
             ):
                 raise ValueError(
-                    f"V3/current translation mismatch: "
-                    f"{volume_id}/{page_number}/{sentence_id}"
+                    f"V3/current translation mismatch: {volume_id}/{page_number}/{sentence_id}"
                 )
             decision = source_sentence["decision"]
             sentence["tripleDecision"] = decision
@@ -548,12 +516,8 @@ class CorpusStore:
             selected_from = source_sentence["selectedFrom"]
             axial_assignment = axial_assignments.get(sentence_id)
             thinking_level = selected_from["thinkingLevel"]
-            thinking_levels[thinking_level] = thinking_levels.get(
-                thinking_level, 0
-            ) + 1
-            for ordinal, triple in enumerate(
-                source_sentence["triples"], start=1
-            ):
+            thinking_levels[thinking_level] = thinking_levels.get(thinking_level, 0) + 1
+            for ordinal, triple in enumerate(source_sentence["triples"], start=1):
                 base_triple_id = f"v3-{sentence_id}-t{ordinal:03d}"
                 annotation_id = f"{base_triple_id}-p{page_number:04d}"
                 annotation = {
@@ -591,9 +555,7 @@ class CorpusStore:
                         "tripleOrdinal": ordinal,
                         "thinkingLevel": thinking_level,
                         "selectionRule": source_sentence["selectionRule"],
-                        "sourceAppearanceCount": len(
-                            source_sentence["sourceAppearances"]
-                        ),
+                        "sourceAppearanceCount": len(source_sentence["sourceAppearances"]),
                     },
                     "rawSourceRecord": copy.deepcopy(triple),
                 }
@@ -614,9 +576,7 @@ class CorpusStore:
                 else:
                     annotation["axial"] = {
                         "status": (
-                            axial_assignment["status"]
-                            if axial_assignment
-                            else "unresolved"
+                            axial_assignment["status"] if axial_assignment else "unresolved"
                         ),
                         "sourcePage": (
                             axial_assignment["sourcePage"]
@@ -655,16 +615,12 @@ class CorpusStore:
             "v3Status": v3_status,
             "v3ThinkingLevels": thinking_levels,
             "axialTaggedAnnotationCount": sum(
-                annotation["axial"]["status"] == "accepted"
-                for annotation in annotations
+                annotation["axial"]["status"] == "accepted" for annotation in annotations
             ),
             "axialUnresolvedAnnotationCount": sum(
-                annotation["axial"]["status"] != "accepted"
-                for annotation in annotations
+                annotation["axial"]["status"] != "accepted" for annotation in annotations
             ),
-            "v3UnavailableReason": (
-                None if unavailable_sentences == 0 else unavailable_reason
-            ),
+            "v3UnavailableReason": (None if unavailable_sentences == 0 else unavailable_reason),
         }
         return current
 

@@ -162,12 +162,8 @@ def build() -> dict[str, object]:
     if len(edge_records) != 11_886 or len(edge_by_tag) != 11_886:
         raise RuntimeError("Expected exactly 11,886 unique raw relation labels")
 
-    page_index = json.loads(
-        (PAGE_ROOT / "index.json").read_text(encoding="utf-8")
-    )
-    v3_index = json.loads(
-        (V3_SENTENCE_ROOT / "index.json").read_text(encoding="utf-8")
-    )
+    page_index = json.loads((PAGE_ROOT / "index.json").read_text(encoding="utf-8"))
+    v3_index = json.loads((V3_SENTENCE_ROOT / "index.json").read_text(encoding="utf-8"))
     counts: Counter[str] = Counter()
     direct_edges: set[tuple[str, str, str]] = set()
 
@@ -222,9 +218,7 @@ def build() -> dict[str, object]:
             counts["volumes"] += 1
 
             for page_number in volume["availablePages"]:
-                page_path = (
-                    PAGE_ROOT / "pages" / volume_id / f"{int(page_number):04d}.json"
-                )
+                page_path = PAGE_ROOT / "pages" / volume_id / f"{int(page_number):04d}.json"
                 page = json.loads(page_path.read_text(encoding="utf-8"))
                 page_resource = node(page_uri(volume_id, page_number))
                 page_rows = [
@@ -274,9 +268,7 @@ def build() -> dict[str, object]:
 
         for volume_id in ("vol1", "vol2", "vol3"):
             sentence_data = json.loads(
-                (V3_SENTENCE_ROOT / "sentences" / f"{volume_id}.json").read_text(
-                    encoding="utf-8"
-                )
+                (V3_SENTENCE_ROOT / "sentences" / f"{volume_id}.json").read_text(encoding="utf-8")
             )["sentences"]
             for sentence in sentence_data.values():
                 sentence_resource = node(sentence_uri(sentence["sid"]))
@@ -472,9 +464,7 @@ def build() -> dict[str, object]:
         store.bulk_extend(all_quads())
         store.flush()
         if counts["claims"] != 27_129:
-            raise RuntimeError(
-                f"Expected 27,129 claim resources, found {counts['claims']:,}"
-            )
+            raise RuntimeError(f"Expected 27,129 claim resources, found {counts['claims']:,}")
         if counts["sentences"] != int(v3_index["totals"]["canonicalSentences"]):
             raise RuntimeError("Canonical sentence count changed during graph import")
         if len(store) != sum(
@@ -505,17 +495,11 @@ def build() -> dict[str, object]:
                 "model": "gemini-embedding-001",
                 "view": "raw tag",
                 "dimensions": 768,
-                "nodeMatrix": str(
-                    EMBEDDING_ROOT / "node_base_vectors.npy"
-                ),
-                "relationMatrix": str(
-                    EMBEDDING_ROOT / "edge_base_vectors.npy"
-                ),
+                "nodeMatrix": str(EMBEDDING_ROOT / "node_base_vectors.npy"),
+                "relationMatrix": str(EMBEDDING_ROOT / "edge_base_vectors.npy"),
             },
             "sourceHashes": {
-                str(V3_SENTENCE_ROOT / "index.json"): sha256(
-                    V3_SENTENCE_ROOT / "index.json"
-                ),
+                str(V3_SENTENCE_ROOT / "index.json"): sha256(V3_SENTENCE_ROOT / "index.json"),
                 str(OCCURRENCES_PATH): sha256(OCCURRENCES_PATH),
                 str(EMBEDDING_ROOT / "node_records.jsonl"): sha256(
                     EMBEDDING_ROOT / "node_records.jsonl"

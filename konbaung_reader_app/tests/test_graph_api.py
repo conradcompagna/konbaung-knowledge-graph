@@ -62,15 +62,9 @@ class GraphApiTests(unittest.TestCase):
         self.assertLess(len(response.data), 2_600_000)
 
     def test_page_range_returns_complete_deduplicated_topology(self):
-        first_page = self.client.get(
-            "/api/graph/topology/page/vol2/235"
-        ).get_json()
-        second_page = self.client.get(
-            "/api/graph/topology/page/vol2/236"
-        ).get_json()
-        response = self.client.get(
-            "/api/graph/topology/range/vol2/235/236"
-        )
+        first_page = self.client.get("/api/graph/topology/page/vol2/235").get_json()
+        second_page = self.client.get("/api/graph/topology/page/vol2/236").get_json()
+        response = self.client.get("/api/graph/topology/range/vol2/235/236")
         payload = response.get_json()
 
         self.assertEqual(response.status_code, 200)
@@ -90,16 +84,13 @@ class GraphApiTests(unittest.TestCase):
         self.assertTrue(all(node[4] is None for node in payload["nodes"]))
 
     def test_page_range_rejects_reversed_bounds(self):
-        response = self.client.get(
-            "/api/graph/topology/range/vol2/236/235"
-        )
+        response = self.client.get("/api/graph/topology/range/vol2/236/235")
         self.assertEqual(response.status_code, 400)
         self.assertIn("end page", response.get_json()["error"])
 
     def test_evidence_is_exact_and_paginated(self):
         topology = self.client.get(
-            "/api/graph/topology/entity/e_d02ca5be0460043fd02e891bbe69b007"
-            "?depth=1&limit=30"
+            "/api/graph/topology/entity/e_d02ca5be0460043fd02e891bbe69b007?depth=1&limit=30"
         ).get_json()
         source, relation, target = first_edge(topology)
         response = self.client.get(

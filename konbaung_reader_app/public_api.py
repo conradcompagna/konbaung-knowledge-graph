@@ -133,14 +133,9 @@ class PublicGraphApi:
         self.graph = graph
         self.axial_graph = axial_graph
         self.limiter = SlidingWindowRateLimiter()
-        self.records_by_id = {
-            str(record["id"]): record for record in axial_graph.records
-        }
+        self.records_by_id = {str(record["id"]): record for record in axial_graph.records}
         self.tag_id_by_label = {
-            kind: {
-                str(record["tag"]): str(record["baseKey"])
-                for record in graph.records[kind]
-            }
+            kind: {str(record["tag"]): str(record["baseKey"]) for record in graph.records[kind]}
             for kind in ("entity", "relation")
         }
         self.blueprint = Blueprint(
@@ -221,9 +216,7 @@ class PublicGraphApi:
         if value < minimum or (maximum is not None and value > maximum):
             if maximum is None:
                 raise ApiProblem(f"{name} must be at least {minimum}")
-            raise ApiProblem(
-                f"{name} must be between {minimum} and {maximum}"
-            )
+            raise ApiProblem(f"{name} must be between {minimum} and {maximum}")
         return value
 
     @staticmethod
@@ -243,8 +236,7 @@ class PublicGraphApi:
         unknown = sorted(set(request.args) - allowed)
         if unknown:
             raise ApiProblem(
-                f"Unknown query parameter{'s' if len(unknown) != 1 else ''}: "
-                + ", ".join(unknown)
+                f"Unknown query parameter{'s' if len(unknown) != 1 else ''}: " + ", ".join(unknown)
             )
 
     def _resolve_tag_labels(
@@ -315,17 +307,11 @@ class PublicGraphApi:
         unknown_entities = (
             set(subject_categories) | set(object_categories)
         ) - self.axial_graph.entities.keys()
-        unknown_relations = (
-            set(relation_categories) - self.axial_graph.relations.keys()
-        )
+        unknown_relations = set(relation_categories) - self.axial_graph.relations.keys()
         if unknown_entities:
-            raise ApiProblem(
-                "Unknown entity categories: " + ", ".join(sorted(unknown_entities))
-            )
+            raise ApiProblem("Unknown entity categories: " + ", ".join(sorted(unknown_entities)))
         if unknown_relations:
-            raise ApiProblem(
-                "Unknown relation categories: " + ", ".join(sorted(unknown_relations))
-            )
+            raise ApiProblem("Unknown relation categories: " + ", ".join(sorted(unknown_relations)))
 
         subject_tag_ids, subject_tag_labels = self._resolve_tag_labels(
             "entity", self._values("subject_tag_id")
@@ -386,45 +372,25 @@ class PublicGraphApi:
             record["predicate"], filters.predicate_contains
         ):
             return False
-        if filters.object_contains and not cls._contains(
-            record["object"], filters.object_contains
-        ):
+        if filters.object_contains and not cls._contains(record["object"], filters.object_contains):
             return False
-        if (
-            filters.subject_tag_labels
-            and record["subject"] not in filters.subject_tag_labels
-        ):
+        if filters.subject_tag_labels and record["subject"] not in filters.subject_tag_labels:
             return False
-        if (
-            filters.object_tag_labels
-            and record["object"] not in filters.object_tag_labels
-        ):
+        if filters.object_tag_labels and record["object"] not in filters.object_tag_labels:
             return False
         if filters.entity_tag_labels and (
             record["subject"] not in filters.entity_tag_labels
             and record["object"] not in filters.entity_tag_labels
         ):
             return False
-        if (
-            filters.relation_tag_labels
-            and record["predicate"] not in filters.relation_tag_labels
-        ):
+        if filters.relation_tag_labels and record["predicate"] not in filters.relation_tag_labels:
             return False
         categories = record["categories"]
-        if (
-            filters.subject_categories
-            and categories["s"] not in filters.subject_categories
-        ):
+        if filters.subject_categories and categories["s"] not in filters.subject_categories:
             return False
-        if (
-            filters.relation_categories
-            and categories["r"] not in filters.relation_categories
-        ):
+        if filters.relation_categories and categories["r"] not in filters.relation_categories:
             return False
-        if (
-            filters.object_categories
-            and categories["o"] not in filters.object_categories
-        ):
+        if filters.object_categories and categories["o"] not in filters.object_categories:
             return False
         if filters.volume is not None and record["volumeId"] != filters.volume:
             return False
@@ -440,11 +406,7 @@ class PublicGraphApi:
         return True
 
     def _matching_records(self, filters: TripleFilters) -> list[dict[str, Any]]:
-        return [
-            record
-            for record in self.axial_graph.records
-            if self._matches(record, filters)
-        ]
+        return [record for record in self.axial_graph.records if self._matches(record, filters)]
 
     @staticmethod
     def _category_summary(category: dict[str, Any]) -> dict[str, Any]:
@@ -476,15 +438,9 @@ class PublicGraphApi:
                 "object": self._tag_summary("entity", record["object"]),
             },
             "thematic": {
-                "subject": self._category_summary(
-                    self.axial_graph.entities[categories["s"]]
-                ),
-                "relation": self._category_summary(
-                    self.axial_graph.relations[categories["r"]]
-                ),
-                "object": self._category_summary(
-                    self.axial_graph.entities[categories["o"]]
-                ),
+                "subject": self._category_summary(self.axial_graph.entities[categories["s"]]),
+                "relation": self._category_summary(self.axial_graph.relations[categories["r"]]),
+                "object": self._category_summary(self.axial_graph.entities[categories["o"]]),
             },
             "source": {
                 "sentenceId": record["sid"],
@@ -492,9 +448,7 @@ class PublicGraphApi:
                 "volume": record["volumeId"],
                 "ownerPage": record["ownerPage"],
                 "pages": record["pages"],
-                "readerUrl": (
-                    f"/chronicles/{record['volumeId']}/{record['ownerPage']}"
-                ),
+                "readerUrl": (f"/chronicles/{record['volumeId']}/{record['ownerPage']}"),
             },
         }
         if include_text:
@@ -530,9 +484,7 @@ class PublicGraphApi:
             raise ApiProblem("cursor is invalid")
         try:
             padding = "=" * (-len(value) % 4)
-            payload = json.loads(
-                base64.urlsafe_b64decode(value + padding).decode("utf-8")
-            )
+            payload = json.loads(base64.urlsafe_b64decode(value + padding).decode("utf-8"))
             offset = int(payload["o"])
             if payload.get("v") != 1 or payload.get("q") != fingerprint:
                 raise ValueError
@@ -561,11 +513,7 @@ class PublicGraphApi:
             "returned": max(0, min(limit, total - offset)),
             "total": total,
             "hasMore": has_more,
-            "nextCursor": (
-                cls._encode_cursor(next_offset, fingerprint)
-                if has_more
-                else None
-            ),
+            "nextCursor": (cls._encode_cursor(next_offset, fingerprint) if has_more else None),
         }
 
     def _authorized_key(self) -> str | None:
@@ -635,13 +583,9 @@ class PublicGraphApi:
 
         @bp.after_request
         def public_api_headers(response):
-            origins = str(
-                current_app.config.get("PUBLIC_API_CORS_ORIGINS", "*")
-            ).strip()
+            origins = str(current_app.config.get("PUBLIC_API_CORS_ORIGINS", "*")).strip()
             request_origin = request.headers.get("Origin", "")
-            allowed_origins = {
-                origin.strip() for origin in origins.split(",") if origin.strip()
-            }
+            allowed_origins = {origin.strip() for origin in origins.split(",") if origin.strip()}
             if "*" in allowed_origins:
                 response.headers["Access-Control-Allow-Origin"] = "*"
             elif request_origin and request_origin in allowed_origins:
@@ -703,9 +647,7 @@ class PublicGraphApi:
                         "maximumPageSize": MAX_PAGE_SIZE,
                         "maximumTagFilters": MAX_TAG_FILTERS,
                         "requestsPerMinute": int(
-                            current_app.config.get(
-                                "PUBLIC_API_RATE_LIMIT", DEFAULT_RATE_LIMIT
-                            )
+                            current_app.config.get("PUBLIC_API_RATE_LIMIT", DEFAULT_RATE_LIMIT)
                         ),
                     },
                 }
@@ -755,13 +697,11 @@ class PublicGraphApi:
             }
             if kind in {"all", "entity"}:
                 payload["entities"] = [
-                    self._category_summary(item)
-                    for item in self.axial_graph._catalog["entities"]
+                    self._category_summary(item) for item in self.axial_graph._catalog["entities"]
                 ]
             if kind in {"all", "relation"}:
                 payload["relations"] = [
-                    self._category_summary(item)
-                    for item in self.axial_graph._catalog["relations"]
+                    self._category_summary(item) for item in self.axial_graph._catalog["relations"]
                 ]
             return jsonify(payload)
 
@@ -796,9 +736,7 @@ class PublicGraphApi:
             if kind not in {"entity", "relation"}:
                 raise ApiProblem("kind must be entity or relation")
             try:
-                minimum_similarity = float(
-                    request.args.get("minimum_similarity", "0.90")
-                )
+                minimum_similarity = float(request.args.get("minimum_similarity", "0.90"))
             except ValueError as exc:
                 raise ApiProblem("minimum_similarity must be a number") from exc
             if not -1 <= minimum_similarity <= 1:
@@ -814,9 +752,7 @@ class PublicGraphApi:
                     limit=limit,
                 )
             except KeyError as exc:
-                raise ApiProblem(
-                    str(exc), code="tag_not_found", status=404
-                ) from exc
+                raise ApiProblem(str(exc), code="tag_not_found", status=404) from exc
             except ValueError as exc:
                 raise ApiProblem(str(exc)) from exc
             return jsonify(
@@ -832,20 +768,11 @@ class PublicGraphApi:
 
         @bp.get("/triples")
         def triples():
-            filters = self._parse_filters(
-                extra_allowed={"limit", "cursor", "include_text"}
-            )
-            limit = int(
-                self._integer(
-                    "limit", default=25, minimum=1, maximum=MAX_PAGE_SIZE
-                )
-                or 25
-            )
+            filters = self._parse_filters(extra_allowed={"limit", "cursor", "include_text"})
+            limit = int(self._integer("limit", default=25, minimum=1, maximum=MAX_PAGE_SIZE) or 25)
             include_text = self._boolean("include_text", False)
             if include_text and limit > MAX_TEXT_PAGE_SIZE:
-                raise ApiProblem(
-                    f"limit cannot exceed {MAX_TEXT_PAGE_SIZE} when include_text=true"
-                )
+                raise ApiProblem(f"limit cannot exceed {MAX_TEXT_PAGE_SIZE} when include_text=true")
             fingerprint = self._fingerprint("triples", filters)
             offset = self._decode_cursor(request.args.get("cursor", ""), fingerprint)
             matching = self._matching_records(filters)
@@ -856,8 +783,7 @@ class PublicGraphApi:
                     "version": API_VERSION,
                     "query": filters.public(),
                     "data": [
-                        self._triple_item(record, include_text=include_text)
-                        for record in selected
+                        self._triple_item(record, include_text=include_text) for record in selected
                     ],
                     "pagination": self._pagination(
                         offset=offset,
@@ -892,12 +818,7 @@ class PublicGraphApi:
         @bp.get("/thematic-patterns")
         def thematic_patterns():
             filters = self._parse_filters(extra_allowed={"limit", "cursor"})
-            limit = int(
-                self._integer(
-                    "limit", default=50, minimum=1, maximum=MAX_PAGE_SIZE
-                )
-                or 50
-            )
+            limit = int(self._integer("limit", default=50, minimum=1, maximum=MAX_PAGE_SIZE) or 50)
             matching = self._matching_records(filters)
             counts: Counter[tuple[str, str, str]] = Counter(
                 (
@@ -918,15 +839,9 @@ class PublicGraphApi:
             for (source_id, relation_id, object_id), count in selected:
                 data.append(
                     {
-                        "subject": self._category_summary(
-                            self.axial_graph.entities[source_id]
-                        ),
-                        "relation": self._category_summary(
-                            self.axial_graph.relations[relation_id]
-                        ),
-                        "object": self._category_summary(
-                            self.axial_graph.entities[object_id]
-                        ),
+                        "subject": self._category_summary(self.axial_graph.entities[source_id]),
+                        "relation": self._category_summary(self.axial_graph.relations[relation_id]),
+                        "object": self._category_summary(self.axial_graph.entities[object_id]),
                         "tripleCount": count,
                     }
                 )
@@ -956,11 +871,7 @@ class PublicGraphApi:
                 "api_docs.html",
                 api_name=API_NAME,
                 api_version=API_VERSION,
-                rate_limit=int(
-                    current_app.config.get(
-                        "PUBLIC_API_RATE_LIMIT", DEFAULT_RATE_LIMIT
-                    )
-                ),
+                rate_limit=int(current_app.config.get("PUBLIC_API_RATE_LIMIT", DEFAULT_RATE_LIMIT)),
             )
 
     @staticmethod
@@ -1025,11 +936,7 @@ class PublicGraphApi:
         response = {
             "200": {
                 "description": "Successful response",
-                "content": {
-                    "application/json": {
-                        "schema": {"type": "object"}
-                    }
-                },
+                "content": {"application/json": {"schema": {"type": "object"}}},
             },
             "400": {"$ref": "#/components/responses/BadRequest"},
             "429": {"$ref": "#/components/responses/RateLimited"},
@@ -1205,34 +1112,26 @@ class PublicGraphApi:
                     "BearerAuth": {
                         "type": "http",
                         "scheme": "bearer",
-                        "description": (
-                            "Alternative way to send a configured public API key."
-                        ),
+                        "description": ("Alternative way to send a configured public API key."),
                     },
                 },
                 "responses": {
                     "BadRequest": {
                         "description": "Invalid query",
                         "content": {
-                            "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Error"}
-                            }
+                            "application/json": {"schema": {"$ref": "#/components/schemas/Error"}}
                         },
                     },
                     "NotFound": {
                         "description": "Resource not found",
                         "content": {
-                            "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Error"}
-                            }
+                            "application/json": {"schema": {"$ref": "#/components/schemas/Error"}}
                         },
                     },
                     "RateLimited": {
                         "description": "Request quota exceeded",
                         "content": {
-                            "application/json": {
-                                "schema": {"$ref": "#/components/schemas/Error"}
-                            }
+                            "application/json": {"schema": {"$ref": "#/components/schemas/Error"}}
                         },
                     },
                 },

@@ -23,11 +23,7 @@ class GraphAtlasTests(unittest.TestCase):
     def setUpClass(cls):
         cls.manifest = json.loads(GRAPH_MANIFEST.read_text(encoding="utf-8"))
         cls.payloads = {
-            scope: json.loads(
-                (GRAPH_ROOT / f"atlas_{scope}.json").read_text(
-                    encoding="utf-8"
-                )
-            )
+            scope: json.loads((GRAPH_ROOT / f"atlas_{scope}.json").read_text(encoding="utf-8"))
             for scope in EXPECTED
         }
 
@@ -63,10 +59,7 @@ class GraphAtlasTests(unittest.TestCase):
                     nodes,
                 )
                 self.assertTrue(
-                    all(
-                        0 <= edge[0] < nodes and 0 <= edge[1] < nodes
-                        for edge in payload["edges"]
-                    )
+                    all(0 <= edge[0] < nodes and 0 <= edge[1] < nodes for edge in payload["edges"])
                 )
 
     def test_every_node_has_a_renderable_connection(self):
@@ -133,16 +126,9 @@ class GraphAtlasTests(unittest.TestCase):
                     ordered = sorted(rows, key=lambda row: (row[0], row[1]))
                     active = []
                     for bounds in ordered:
-                        active = [
-                            other
-                            for other in active
-                            if other[2] > bounds[0]
-                        ]
+                        active = [other for other in active if other[2] > bounds[0]]
                         for other in active:
-                            overlaps_y = (
-                                bounds[1] < other[3]
-                                and bounds[3] > other[1]
-                            )
+                            overlaps_y = bounds[1] < other[3] and bounds[3] > other[1]
                             self.assertFalse(overlaps_y)
                         active.append(bounds)
 
@@ -150,10 +136,7 @@ class GraphAtlasTests(unittest.TestCase):
         for scope, payload in self.payloads.items():
             with self.subTest(scope=scope):
                 overview = [row for row in payload["bundles"] if row[5]]
-                expected = sum(
-                    max(0, component[9] - 1)
-                    for component in payload["components"]
-                )
+                expected = sum(max(0, component[9] - 1) for component in payload["components"])
                 self.assertEqual(len(overview), expected)
                 for bundle in payload["bundles"]:
                     source = payload["communities"][bundle[0]]
@@ -174,19 +157,11 @@ class GraphAtlasTests(unittest.TestCase):
                         )
 
     def test_volume_layout_is_not_filtered_corpus_coordinates(self):
-        corpus_positions = {
-            row[0]: (row[3], row[4]) for row in self.payloads["corpus"]["nodes"]
-        }
+        corpus_positions = {row[0]: (row[3], row[4]) for row in self.payloads["corpus"]["nodes"]}
         for scope in ("vol1", "vol2", "vol3"):
-            positions = {
-                row[0]: (row[3], row[4])
-                for row in self.payloads[scope]["nodes"]
-            }
+            positions = {row[0]: (row[3], row[4]) for row in self.payloads[scope]["nodes"]}
             self.assertTrue(
-                any(
-                    positions[node_id] != corpus_positions[node_id]
-                    for node_id in positions
-                )
+                any(positions[node_id] != corpus_positions[node_id] for node_id in positions)
             )
 
 

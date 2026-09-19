@@ -1,43 +1,44 @@
 # Konbaung Chronicle Knowledge Graph
 
-**An end-to-end historical research system: Burmese chronicle scans → translated, structured claims → an evidence-linked reader, knowledge graph, and public API.**
+**An end-to-end historical research system: Burmese chronicle scans → structured claims → an evidence-linked reader, knowledge graph, and public API.**
 
-I built this project to investigate how power operated in the Konbaung dynasty: through kingship, office, military command, religious patronage, tribute, kinship, and local administration. It turns a large primary source into inspectable research data while preserving the connection between an interpretation and its source sentence and page.
+I built this project to investigate how power operated in the Konbaung dynasty through kingship, office, military command, religious patronage, tribute, and kinship. It turns a large primary source into inspectable research data while connecting interpretations to their source sentences and pages.
 
-[Live research reader](https://burmeseneuralreader.com/chronicles/vol1/47) · [API documentation](https://burmeseneuralreader.com/api/v1/docs) · [Portfolio](https://github.com/conradcompagna)
+[Live reader](https://burmeseneuralreader.com/chronicles/vol1/47) · [API documentation](https://burmeseneuralreader.com/api/v1/docs) · [Setup](docs/SETUP.md) · [Portfolio](https://github.com/conradcompagna)
+
+[![Checks](https://github.com/conradcompagna/konbaung-knowledge-graph/actions/workflows/checks.yml/badge.svg)](https://github.com/conradcompagna/konbaung-knowledge-graph/actions/workflows/checks.yml)
 
 ## Engineering highlights
 
-- **A complete extraction pipeline:** page-image OCR, sentence reconstruction, translation, structured LLM annotation, schema validation, targeted repair, and corpus compilation.
-- **Auditable historical evidence:** canonical page text, source hashes, sentence identifiers, exact Unicode/UTF-16 alignment, cross-page routing, and explicit deduplication.
-- **Substantial knowledge representation:** the deployed graph manifest records **27,129 canonical claims across 1,215 pages and three volumes**, with 23,890 entity labels and 11,886 relation labels.
-- **Research access and analysis:** embedded Oxigraph/RDF storage, thematic and embedding-based exploration, entity-resolution workflows, an interactive reader, and a versioned read-only API with OpenAPI documentation.
-
-## Pipeline
-
-```mermaid
-flowchart LR
-    A[Scanned volumes] --> B[OCR and corpus repair]
-    B --> C[Sentence translation and claim extraction]
-    C --> D[Validation / canonicalization]
-    D --> E[RDF graph and embeddings]
-    E --> F[Reader / graph UI / API]
-```
+- **Complete extraction infrastructure:** page-image OCR, sentence reconstruction, translation, structured LLM annotation, schema validation, targeted repair, and corpus compilation.
+- **Traceable evidence:** canonical page text, source hashes, sentence identifiers, exact Unicode/UTF-16 span alignment, cross-page routing, and deduplication.
+- **Substantial knowledge representation:** the deployed manifest records **27,129 canonical claims across 1,215 pages and three volumes**, with 23,890 entity labels and 11,886 relation labels.
+- **Research access and analysis:** embedded Oxigraph/RDF storage, embedding-based exploration, entity-resolution workflows, a worker-based graph interface, and a versioned read-only API with OpenAPI documentation.
 
 ## Explore the code
 
-| Area | Starting points |
+| Stage | Starting point |
 |---|---|
-| OCR | `konbaung-google-ocr/src/` |
-| Corpus construction | `build_konbaung_sentence_corpus.py`, `repair_konbaung_sentence_corpus.py` |
-| Translation and extraction | `konbaung_gemini_sentence_translation_batch.py`, `konbaung_gemini_historiography_ungrounded_full_batch.py`, prompt templates |
-| Embeddings and resolution | `konbaung_v3_eight_view_embeddings.py`, `run_konbaung_binary_resolution_production.py` |
-| Graph storage | `konbaung_reader_app/graph_schema.py`, `graph_store.py`, `axial_store.py` |
-| HTTP and browser interface | `konbaung_reader_app/app.py`, `public_api.py`, `frontend/`, `static/` |
-| Validation and research analysis | `tests/`, `konbaung_reader_app/tests/`, `article/` source scripts |
+| OCR | [konbaung-google-ocr/src/](konbaung-google-ocr/src/) |
+| Corpus reconstruction and compilation | [pipeline/corpus/](pipeline/corpus/) |
+| Translation and claim extraction | [pipeline/translation/](pipeline/translation/), [pipeline/extraction/](pipeline/extraction/), [prompts/](prompts/) |
+| Embeddings and entity resolution | [pipeline/embeddings/](pipeline/embeddings/), [pipeline/resolution/](pipeline/resolution/) |
+| Graph storage and API | [graph_store.py](konbaung_reader_app/graph_store.py), [public_api.py](konbaung_reader_app/public_api.py) |
+| Reader and graph interface | [app.py](konbaung_reader_app/app.py), [frontend/](konbaung_reader_app/frontend/) |
+| Statistical analysis | [research/analysis/](research/analysis/) |
+| Source alignment and integration checks | [tests/](tests/) |
 
-The repository includes research trials and earlier annotation pipelines as well as the deployed reader. They record distinct methodological experiments; the README's graph counts refer to the canonical V3 dataset. Extracted claims and semantic clusters are model-assisted research outputs, not a human-coded gold standard or proof of historical truth.
+The [pipeline guide](pipeline/README.md) connects these stages. Extracted claims and clusters are model-assisted research outputs, not a human-coded gold standard.
 
-**This repository publishes the software, not the proprietary research dataset.** RDF/N-Quads files, Oxigraph storage, extracted triples, corpus exports, embedding matrices, and generated analytical outputs are excluded. The public application's existing API is a separate interface; no dataset license is granted here.
+## Run the lightweight checks
 
-See [setup and external resources](docs/SETUP.md), [publication contents](docs/PUBLICATION.md), and [third-party notices](THIRD_PARTY_NOTICES.md).
+```sh
+python -m unittest discover -s tests/unit -v
+cd konbaung_reader_app
+npm ci
+npm run build:frontend
+```
+
+Eight unit tests cover source spans, UTF-16 offsets, dictionary display fields, and cross-page projection using synthetic text. The graph frontend builds from TypeScript; generated bundles are not tracked.
+
+**The research dataset remains proprietary.** RDF files, graph databases, extracted triples, source corpora, embedding matrices, and generated analytical outputs are excluded. See [setup](docs/SETUP.md) and [publication contents](docs/PUBLICATION.md) for the resource boundary.

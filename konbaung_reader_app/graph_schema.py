@@ -13,17 +13,10 @@ GRAPH_DB = GRAPH_ROOT / "oxigraph"
 GRAPH_EXPORT = GRAPH_ROOT / "konbaung_knowledge_graph_v3.nq"
 GRAPH_MANIFEST = GRAPH_ROOT / "manifest.json"
 
-V3_SENTENCE_ROOT = (
-    APP_ROOT / "data" / "konbaung_historiography_v3_canonical_20260724"
-)
+V3_SENTENCE_ROOT = APP_ROOT / "data" / "konbaung_historiography_v3_canonical_20260724"
 PAGE_ROOT = APP_ROOT / "static" / "data" / "konbaung"
-EMBEDDING_ROOT = (
-    PROJECT_ROOT / "konbaung_v3_node_edge_clustering_first_pass_20260724"
-)
-OCCURRENCES_PATH = (
-    PROJECT_ROOT / "konbaung_v3_eight_view_embeddings_20260724"
-    / "occurrences.jsonl"
-)
+EMBEDDING_ROOT = PROJECT_ROOT / "konbaung_v3_node_edge_clustering_first_pass_20260724"
+OCCURRENCES_PATH = PROJECT_ROOT / "konbaung_v3_eight_view_embeddings_20260724" / "occurrences.jsonl"
 
 KG = "urn:konbaung:vocab:"
 RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -74,4 +67,3 @@ def page_uri(volume_id: str, page_number: int) -> str:
 
 def volume_uri(volume_id: str) -> str:
     return f"urn:konbaung:volume:{volume_id}"
-

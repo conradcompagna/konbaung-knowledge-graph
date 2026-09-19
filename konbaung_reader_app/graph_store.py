@@ -52,9 +52,7 @@ PREFIX rdfs: <{RDFS}>
 
 
 def normalize_query(value: str) -> str:
-    return " ".join(
-        value.casefold().replace("_", " ").replace("-", " ").split()
-    )
+    return " ".join(value.casefold().replace("_", " ").replace("-", " ").split())
 
 
 class ChronicleGraphStore:
@@ -79,12 +77,8 @@ class ChronicleGraphStore:
             "relation": list(read_jsonl(EMBEDDING_ROOT / "edge_records.jsonl")),
         }
         self.vectors = {
-            "entity": np.load(
-                EMBEDDING_ROOT / "node_base_vectors.npy", mmap_mode="r"
-            ),
-            "relation": np.load(
-                EMBEDDING_ROOT / "edge_base_vectors.npy", mmap_mode="r"
-            ),
+            "entity": np.load(EMBEDDING_ROOT / "node_base_vectors.npy", mmap_mode="r"),
+            "relation": np.load(EMBEDDING_ROOT / "edge_base_vectors.npy", mmap_mode="r"),
         }
         self.by_id: dict[str, dict[str, dict[str, Any]]] = {}
         self.by_label: dict[str, dict[str, dict[str, Any]]] = {}
@@ -98,8 +92,7 @@ class ChronicleGraphStore:
                 for record in records
             }
             self.by_label[kind] = {
-                record["tag"]: self.by_id[kind][record["baseKey"]]
-                for record in records
+                record["tag"]: self.by_id[kind][record["baseKey"]] for record in records
             }
 
     @staticmethod
@@ -165,35 +158,23 @@ class ChronicleGraphStore:
             if minimum_similarity is not None:
                 minimum_similarity = float(minimum_similarity)
                 if not -1.0 <= minimum_similarity <= 1.0:
-                    raise ValueError(
-                        "Minimum Gemini similarity must be between -1 and 1"
-                    )
+                    raise ValueError("Minimum Gemini similarity must be between -1 and 1")
             if anchor_kind not in {"entity", "relation"} or not anchor_id:
-                raise ValueError(
-                    "Gemini sorting requires a selected entity or relation"
-                )
+                raise ValueError("Gemini sorting requires a selected entity or relation")
             anchor_id = self._safe_id(anchor_id)
             anchor = self.by_id[anchor_kind].get(anchor_id)
             if anchor is None:
                 raise KeyError(f"Unknown {anchor_kind}: {anchor_id}")
             records = self.records[anchor_kind]
             matrix = self.vectors[anchor_kind]
-            anchor_vector = np.asarray(
-                matrix[int(anchor["index"])], dtype=np.float32
-            )
+            anchor_vector = np.asarray(matrix[int(anchor["index"])], dtype=np.float32)
             similarities = np.asarray(matrix @ anchor_vector, dtype=np.float32)
             candidates = [
                 index
                 for index, record in enumerate(records)
                 if record["baseKey"] != anchor_id
-                and (
-                    minimum_similarity is None
-                    or float(similarities[index]) >= minimum_similarity
-                )
-                and (
-                    not query_normalized
-                    or query_normalized in normalize_query(record["tag"])
-                )
+                and (minimum_similarity is None or float(similarities[index]) >= minimum_similarity)
+                and (not query_normalized or query_normalized in normalize_query(record["tag"]))
             ]
             candidates.sort(
                 key=lambda index: (
@@ -230,10 +211,7 @@ class ChronicleGraphStore:
         results = []
         for target_kind in kinds:
             for record in self.records[target_kind]:
-                if (
-                    query_normalized
-                    and query_normalized not in normalize_query(record["tag"])
-                ):
+                if query_normalized and query_normalized not in normalize_query(record["tag"]):
                     continue
                 results.append(
                     {
@@ -281,8 +259,7 @@ class ChronicleGraphStore:
             )
         else:
             filter_body = (
-                f"VALUES ?selectedTag {{ {selected_uris} }} "
-                "?claim rdf:predicate ?selectedTag ."
+                f"VALUES ?selectedTag {{ {selected_uris} }} ?claim rdf:predicate ?selectedTag ."
             )
 
         rows = self._topology_rows(filter_body, None)
@@ -432,9 +409,7 @@ LIMIT {int(limit)}
                     "sentenceMy": self._term(row, "sentenceMy"),
                     "sentenceEn": self._term(row, "sentenceEn"),
                     "volumeId": self._term(row, "volumeId"),
-                    "ownerPage": int(
-                        self._resource_id(self._term(row, "ownerPage"))
-                    ),
+                    "ownerPage": int(self._resource_id(self._term(row, "ownerPage"))),
                     "ordinal": int(self._term(row, "ordinal")),
                 }
             )
@@ -482,13 +457,9 @@ LIMIT {int(limit)}
             node_map.items(),
             key=lambda item: (-item[1][1], item[1][0], item[0]),
         )
-        node_indexes = {
-            node_id: index
-            for index, (node_id, _) in enumerate(ordered_nodes)
-        }
+        node_indexes = {node_id: index for index, (node_id, _) in enumerate(ordered_nodes)}
         nodes = [
-            [node_id, label, frequency, None, None]
-            for node_id, (label, frequency) in ordered_nodes
+            [node_id, label, frequency, None, None] for node_id, (label, frequency) in ordered_nodes
         ]
         edges = [
             [
@@ -526,9 +497,7 @@ LIMIT {int(limit)}
             raise ValueError(f"Invalid graph scope: {scope}")
         overview = self.manifest.get("overview", {})
         if int(overview.get("schemaVersion", 0)) != 3:
-            raise RuntimeError(
-                "Atlas artifacts are stale. Run build_graph_overview.py."
-            )
+            raise RuntimeError("Atlas artifacts are stale. Run build_graph_overview.py.")
         record = overview["scopes"][scope]
         return (
             GRAPH_ROOT / record["path"],
@@ -595,10 +564,7 @@ VALUES ?rangePage {{ {range_pages} }}
             {
                 "kind": "range",
                 "id": f"{volume_id}:{start_page}-{end_page}",
-                "label": (
-                    f"{volume_id.upper()}, source pages "
-                    f"{start_page}\u2013{end_page}"
-                ),
+                "label": (f"{volume_id.upper()}, source pages {start_page}\u2013{end_page}"),
                 "volumeId": volume_id,
                 "startPage": start_page,
                 "endPage": end_page,
@@ -625,11 +591,7 @@ VALUES ?rangePage {{ {range_pages} }}
         uri = entity_uri(entity_id)
         first_budget = limit if depth == 1 else max(1, limit // 2)
         first_rows = self._topology_rows(
-            "{ "
-            f"?claim rdf:subject <{uri}> . "
-            "} UNION { "
-            f"?claim rdf:object <{uri}> . "
-            "}",
+            f"{{ ?claim rdf:subject <{uri}> . }} UNION {{ ?claim rdf:object <{uri}> . }}",
             first_budget + 1,
         )
         first_truncated = len(first_rows) > first_budget
@@ -647,9 +609,7 @@ VALUES ?rangePage {{ {range_pages} }}
             )
             if neighbor_ids:
                 remaining = limit - len(claims)
-                neighbor_uris = " ".join(
-                    f"<{entity_uri(item)}>" for item in neighbor_ids[:160]
-                )
+                neighbor_uris = " ".join(f"<{entity_uri(item)}>" for item in neighbor_ids[:160])
                 candidates = self._topology_rows(
                     f"VALUES ?neighbor {{ {neighbor_uris} }} "
                     "{ ?claim rdf:subject ?neighbor . } UNION "
@@ -657,11 +617,7 @@ VALUES ?rangePage {{ {range_pages} }}
                     remaining + len(claims) + 1,
                 )
                 seen = {claim["claimId"] for claim in claims}
-                unique = [
-                    claim
-                    for claim in candidates
-                    if claim["claimId"] not in seen
-                ]
+                unique = [claim for claim in candidates if claim["claimId"] not in seen]
                 second_truncated = len(unique) > remaining
                 claims.extend(unique[:remaining])
 
@@ -788,9 +744,7 @@ VALUES ?rangePage {{ {range_pages} }}
         if sentence_id is not None:
             sentence_id = self._safe_sid(sentence_id)
             if ordinal is None or int(ordinal) < 1:
-                raise ValueError(
-                    "A positive triple ordinal is required with sentenceId"
-                )
+                raise ValueError("A positive triple ordinal is required with sentenceId")
             filters += (
                 f" ?claim kg:sentence <urn:konbaung:sentence:{sentence_id}> ; "
                 f"kg:tripleOrdinal {int(ordinal)} ."

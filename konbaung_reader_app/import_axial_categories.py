@@ -24,12 +24,8 @@ CLOSED_SCHEMA_ARCHIVE = Path(
     r"C:\Users\conra\Downloads"
     r"\konbaung_flashlite_axial_closed_schema_20260729.zip"
 )
-CLOSED_SCHEMA_ARCHIVE_SHA256 = (
-    "dba65e85c8c969d15fcae2df0143859d920372a29b01872fdfea32d8b29ec3c7"
-)
-TAXONOMY_PATTERN = re.compile(
-    r"^- \*\*(?P<id>[ER]\d{2}) (?P<label>[^*]+)\*\*: (?P<definition>.+)$"
-)
+CLOSED_SCHEMA_ARCHIVE_SHA256 = "dba65e85c8c969d15fcae2df0143859d920372a29b01872fdfea32d8b29ec3c7"
+TAXONOMY_PATTERN = re.compile(r"^- \*\*(?P<id>[ER]\d{2}) (?P<label>[^*]+)\*\*: (?P<definition>.+)$")
 
 # Exact replacements supplied by the closed-schema archive's
 # provisional_remap_audit.json. Keys are (page, page-local triple index, field).
@@ -62,9 +58,7 @@ CLOSED_SCHEMA_CATEGORY_REMAPS = {
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
@@ -106,9 +100,7 @@ def parse_taxonomy() -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any
             "definition": match.group("definition").strip(),
             "provisional": False,
         }
-        (entities if category_id.startswith("E") else relations)[category_id] = (
-            descriptor
-        )
+        (entities if category_id.startswith("E") else relations)[category_id] = descriptor
     if len(entities) != 52 or len(relations) != 81:
         raise ValueError(
             f"Expected 52 entity and 81 relation categories; "
@@ -194,8 +186,7 @@ def main() -> None:
         actual = (row["subject"], row["predicate"], row["object"])
         if actual != expected:
             raise ValueError(
-                f"Tagged/V3 triple mismatch for {sid} #{ordinal}: "
-                f"{actual!r} != {expected!r}"
+                f"Tagged/V3 triple mismatch for {sid} #{ordinal}: {actual!r} != {expected!r}"
             )
 
         key = row["key"]
@@ -275,8 +266,7 @@ def main() -> None:
         )
     if remap_counts != {"archive": 14, "manual": 22}:
         raise ValueError(
-            "Closed-schema remap coverage changed: "
-            f"{dict(sorted(remap_counts.items()))}"
+            f"Closed-schema remap coverage changed: {dict(sorted(remap_counts.items()))}"
         )
 
     for category_id, descriptor in entity_catalog.items():
