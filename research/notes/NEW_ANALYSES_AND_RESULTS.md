@@ -1,5 +1,12 @@
 # New analyses of power relations in the Konbaung triples
 
+> Moved here from the September 2026 analysis run directory. Relative references
+> below have been repointed at the published copies in `../findings/`,
+> `../figures/` and `../reproduce/`. References marked *not published* are to
+> full analysis outputs that stay local; see [../README.md](../README.md) for what
+> is published and why.
+
+
 The new analyses support **differentiated but connected forms of power in the chronicle**. Royal allocation, status-bearing, military operations, upward information/resource flows and religious patronage have distinguishable structures. Important layer associations remain after removing the sovereign category. The stronger claim that these form recurrent causal chains is not supported by the stricter motif nulls or the sparse held-out rule results.
 
 ## Data and units
@@ -67,7 +74,7 @@ All 81 layers were measured on the same 52 categories. The 3,240 pairwise descri
 
 Appointment–officeholding and command–implementation remain strongly associated after E01 is removed. Reporting–removal, ritual–titling and tax–tribute do not retain the same corrected support after that removal. This distinction is more informative than a blanket assertion that everything forms one royal power network. Association surviving exclusion does not imply actor autonomy or successful command transmission.
 
-![Relation layers and sovereign exclusion](figures/01_layer_coupling.png)
+![Relation layers and sovereign exclusion](../figures/01_layer_coupling.png)
 
 The page-bootstrap bars are percentile ranges of 999 within-volume page resamples; they describe resampling variability and can be biased for this sparse, nonlinear statistic. QAP supplies the reported inferential comparison. Register exclusion and exclusion of both E01 and E30 are separate sensitivity tables. Undefined correlations receive no p-value.
 
@@ -77,7 +84,7 @@ Nonnegative CP was fitted to square-root counts, with ranks 3, 5 and 7 and two s
 
 The seven fitted components were interpreted as military action, status-bearing, court performance, upward flows, royal allocation, religious patronage and governing operations. Their factor loadings, not these labels, are the primary outputs.
 
-![Joint subject relation object factors](figures/02_tensor_roles.png)
+![Joint subject relation object factors](../figures/02_tensor_roles.png)
 
 The military, upward-flow, royal-allocation and governing components recur strongly in the alternate-seed and register-exclusion fits. The court-performance component **does not**: its cross-fit similarity is only about 0.14 by seed and 0.11 after register exclusion. Its boundaries should not be treated as established. Religious patronage is moderately stable. Excluding R12 and R64 still leaves recognizable military, upward-flow, allocation and patronage components. The status-bearing/royal-allocation distinction partly reflects receive versus bestow encoding; it is not itself evidence that the model discovered a new institutional duality.
 
@@ -96,7 +103,7 @@ Weak nulls shuffling labels within pages make several paths look strongly enrich
 | resistance -> coercion | 117 | 110.9 | 0.047 | 0.5757 |
 | allegiance -> authorization | 1719 | 1696 | 0.0905 | 0.658 |
 
-![Effect of stronger motif controls](figures/03_motif_null_sensitivity.png)
+![Effect of stronger motif controls](../figures/03_motif_null_sensitivity.png)
 
 These results show that the apparent paths can largely follow from who tends to send and receive each type of relation. Of information-to-authorization paths, **89.3%** have the sovereign category as intermediate; for allegiance-to-authorization it is **96.5%**. Counting each supporting page once yields the same negative conclusion under the stronger null. The paths are spatial configurations within text pages, not time-respecting event sequences.
 
@@ -140,7 +147,7 @@ On a separate split of 6,050 distinct category facts, the 1,210 test facts are d
 | predicate_object_frequency | all_other_known_category_facts | 0.3995 | 0.2455 | 0.6702 | 1210 |
 | predicate_object_frequency | unfiltered | 0.2335 | 0.09835 | 0.5066 | 1210 |
 
-![Semantic consistency and predictive checks](figures/04_semantics_and_prediction.png)
+![Semantic consistency and predictive checks](../figures/04_semantics_and_prediction.png)
 
 No predicted fact has been added to the database. This diagnostic does not support deploying more elaborate link prediction to fill gaps in the historical record.
 
@@ -166,6 +173,6 @@ These contrasts do not distinguish political change from narrative selection, co
 
 ## Reproduction and inspection
 
-The script order is recorded in [RUN_ANALYSES.ps1](RUN_ANALYSES.ps1). The exact source archive and input hashes are in [original_source_verification.json](original_source_verification.json), [input_provenance.json](input_provenance.json), and the original source manifest. The environment, seeds and **126 passing invariants** are recorded in [11_validation.json](results/11_validation.json) and [11_environment.json](results/11_environment.json). Four figures are supplied as PNG and SVG. The [selected source passages](results/09_selected_source_passages.csv) retain Burmese and English; the HTML source reader links them to sentence IDs.
+The script order is recorded in [RUN_ANALYSES.ps1](../reproduce/RUN_ANALYSES.ps1). The exact source archive and input hashes are in [original_source_verification.json](../reproduce/original_source_verification.json), [input_provenance.json](../reproduce/input_provenance.json), and the original source manifest. The environment, seeds and **126 passing invariants** are recorded in [11_validation.json](../findings/11_validation.json) and [11_environment.json](../findings/11_environment.json). Four figures are supplied as PNG and SVG. The selected source passages (`results/09_selected_source_passages.csv`, not published) retain Burmese and English; the HTML source reader links them to sentence IDs.
 
 The code uses [TensorLy's documented decomposition routines](https://tensorly.org/dev/modules/api.html) and [NetworkX graph definitions](https://networkx.org/documentation/stable/reference/algorithms/index.html). The rule measures follow the support/standard/PCA-confidence distinctions in the supplied [AMIE reference](https://suchanek.name/work/publications/vldbj2015.pdf). The implementation is bounded custom rule enumeration, not AMIE software. The custom degree null, conditioning schemes, transformations and all departures from full historical-process models are stated in the scripts and scope JSONs.

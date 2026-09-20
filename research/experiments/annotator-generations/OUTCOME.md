@@ -26,4 +26,4 @@ the evidence field first or last. That kind of single-page A/B against a fixed
 reference page is how each schema change was judged before a full-corpus run.
 
 The gold standards those tests were scored against are in
-[`../../prompts/gold_standards/`](../../prompts/gold_standards/).
+[`../../../prompts/gold_standards/`](../../../prompts/gold_standards/).

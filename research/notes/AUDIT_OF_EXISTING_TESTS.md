@@ -1,5 +1,12 @@
 # Audit of existing Konbaung analyses
 
+> Moved here from the September 2026 analysis run directory. Relative references
+> below have been repointed at the published copies in `../findings/`,
+> `../figures/` and `../reproduce/`. References marked *not published* are to
+> full analysis outputs that stay local; see [../README.md](../README.md) for what
+> is published and why.
+
+
 The supplied catalogue contains **26 families and 380 bullet items**, including overlapping metrics, alternative algorithms and proposed applications. The audit found extensive earlier work, added a historically focused battery of missing analyses, and records the unrun alternatives explicitly. Coverage of a family does not imply that every named algorithm in it has been executed.
 
 ## What was inspected
@@ -55,7 +62,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Data revalidated against intact original source.
 
-**Outputs:** [data_validation.json](data_validation.json).
+**Outputs:** [data_validation.json](../reproduce/data_validation.json).
 
 ### 2 Three-way categorical analysis
 
@@ -68,7 +75,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Mutual independence, SP/PO conditional independence, all-pairwise IPF, Pearson residuals and a page/predicate constrained permutation.
 
-**Outputs:** [01_loglinear_models.csv](results/01_loglinear_models.csv), [01_conditional_permutation.json](results/01_conditional_permutation.json), [01_threeway_cells.csv](results/01_threeway_cells.csv).
+**Outputs:** [01_loglinear_models.csv](../findings/01_loglinear_models.csv), [01_conditional_permutation.json](../findings/01_conditional_permutation.json), 01_threeway_cells.csv (`results/01_threeway_cells.csv`, not published).
 
 **Boundary:** Three-way residuals are descriptive; no asymptotic chi-square p-values for sparse cells. The randomization tests S-O association given P/page, not the isolated three-way interaction.
 
@@ -83,7 +90,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Directed category centralities and connectivity, paths, cuts, walks, named-person graph extensions.
 
-**Outputs:** [02_category_centralities.csv](results/02_category_centralities.csv), [02_named_person_topology.json](results/02_named_person_topology.json), [07_topology_supplement.json](results/07_topology_supplement.json).
+**Outputs:** [02_category_centralities.csv](../findings/02_category_centralities.csv), [02_named_person_topology.json](../findings/02_named_person_topology.json), [07_topology_supplement.json](../findings/07_topology_supplement.json).
 
 **Boundary:** Category graphs retain extraction direction; named-person graph remains the archived conservative undirected graph.
 
@@ -93,7 +100,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Typed chains/transitive/cyclic patterns with page-label nulls; stricter page/category null; unlabelled triads against two degree-preserving MCMC chains.
 
-**Outputs:** [04_labelled_motif_tests.csv](results/04_labelled_motif_tests.csv), [09_category_conditioned_chain_null.csv](results/09_category_conditioned_chain_null.csv), [04_degree_preserving_triads.csv](results/04_degree_preserving_triads.csv).
+**Outputs:** 04_labelled_motif_tests.csv (`results/04_labelled_motif_tests.csv`, not published), [09_category_conditioned_chain_null.csv](../findings/09_category_conditioned_chain_null.csv), [04_degree_preserving_triads.csv](../findings/04_degree_preserving_triads.csv).
 
 **Boundary:** No exhaustive census of every larger graphlet size.
 
@@ -103,7 +110,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Shortest/weighted paths, reachability, typed page-scoped paths, hitting/commute times, cuts, removal sensitivity.
 
-**Outputs:** [07_all_pairs_paths.csv](results/07_all_pairs_paths.csv), [04_frequent_paths.csv](results/04_frequent_paths.csv), [07_random_walk_hitting_times.csv](results/07_random_walk_hitting_times.csv).
+**Outputs:** 07_all_pairs_paths.csv (`results/07_all_pairs_paths.csv`, not published), 04_frequent_paths.csv (`results/04_frequent_paths.csv`, not published), 07_random_walk_hitting_times.csv (`results/07_random_walk_hitting_times.csv`, not published).
 
 **Boundary:** Graph walk steps and inverse-frequency distances are mathematical diagnostics, not measured travel, time or resources.
 
@@ -119,7 +126,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Predicate-specific directional role profiles, category communities, an explicit Bernoulli SBM and seed checks.
 
-**Outputs:** [02_profile_roles.csv](results/02_profile_roles.csv), [05_sbm_memberships.csv](results/05_sbm_memberships.csv), [05_sbm_selection.csv](results/05_sbm_selection.csv).
+**Outputs:** [02_profile_roles.csv](../findings/02_profile_roles.csv), [05_sbm_memberships.csv](../findings/05_sbm_memberships.csv), [05_sbm_selection.csv](../findings/05_sbm_selection.csv).
 
 **Boundary:** Leiden/Infomap and exact regular or automorphic equivalence were not run; profile similarity is not exact regular equivalence.
 
@@ -129,7 +136,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** All 81 layers, overlap, centrality, participation, 3240 descriptive layer comparisons, 15 prespecified QAP comparisons and sensitivities.
 
-**Outputs:** [02_layer_statistics.csv](results/02_layer_statistics.csv), [02_all_layer_pairs.csv](results/02_all_layer_pairs.csv), [02_layer_qap.csv](results/02_layer_qap.csv), [06_layer_qap_sensitivity.csv](results/06_layer_qap_sensitivity.csv).
+**Outputs:** [02_layer_statistics.csv](../findings/02_layer_statistics.csv), 02_all_layer_pairs.csv (`results/02_all_layer_pairs.csv`, not published), [02_layer_qap.csv](../findings/02_layer_qap.csv), [06_layer_qap_sensitivity.csv](../findings/06_layer_qap_sensitivity.csv).
 
 **Boundary:** No supra-adjacency community/centrality fit or multilayer SBM.
 
@@ -139,7 +146,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Nonnegative CP rank 3/5/7 selection, full rank-7 descriptive fit, Tucker 8/8/8 and seed/register/status sensitivities.
 
-**Outputs:** [03_tensor_model_selection.csv](results/03_tensor_model_selection.csv), [03_static_cp_loadings.csv](results/03_static_cp_loadings.csv), [03_tucker_fit.json](results/03_tucker_fit.json), [06_tensor_component_stability.csv](results/06_tensor_component_stability.csv).
+**Outputs:** [03_tensor_model_selection.csv](../findings/03_tensor_model_selection.csv), 03_static_cp_loadings.csv (`results/03_static_cp_loadings.csv`, not published), [03_tucker_fit.json](../findings/03_tucker_fit.json), [06_tensor_component_stability.csv](../findings/06_tensor_component_stability.csv).
 
 **Boundary:** RESCAL, DEDICOM and coupled tensor/matrix variants remain unrun alternatives.
 
@@ -153,7 +160,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Held-out category-fact DistMult and ComplEx, plus frequency baseline; page-held-out CP selection.
 
-**Outputs:** [08_link_prediction.csv](results/08_link_prediction.csv), [08_scope.json](results/08_scope.json).
+**Outputs:** [08_link_prediction.csv](../findings/08_link_prediction.csv), [08_scope.json](../findings/08_scope.json).
 
 **Boundary:** Scores do not give calibrated probabilities that an unrecorded historical event occurred.
 
@@ -163,7 +170,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Regularized p1 dyad-independent exponential-family likelihood, held-out dyad comparison, triad adequacy simulations and Bernoulli SBM.
 
-**Outputs:** [05_p1_models.csv](results/05_p1_models.csv), [05_p1_triad_adequacy.csv](results/05_p1_triad_adequacy.csv), [05_sbm_selection.csv](results/05_sbm_selection.csv).
+**Outputs:** [05_p1_models.csv](../findings/05_p1_models.csv), [05_p1_triad_adequacy.csv](../findings/05_p1_triad_adequacy.csv), [05_sbm_selection.csv](../findings/05_sbm_selection.csv).
 
 **Boundary:** Category adjacency only. No historical-person causal ERGM, p2, latent-space, growth or dynamic process fit.
 
@@ -179,7 +186,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Layer QAP, residual-permutation multiple-matrix QAP, degree/predicate nulls and page bootstrap for new layer effects.
 
-**Outputs:** [02_layer_qap.csv](results/02_layer_qap.csv), [03_semantic_structure_qap.csv](results/03_semantic_structure_qap.csv), [06_layer_bootstrap_intervals.csv](results/06_layer_bootstrap_intervals.csv).
+**Outputs:** [02_layer_qap.csv](../findings/02_layer_qap.csv), [03_semantic_structure_qap.csv](../findings/03_semantic_structure_qap.csv), [06_layer_bootstrap_intervals.csv](../findings/06_layer_bootstrap_intervals.csv).
 
 **Boundary:** Empirical p-value floors and the family of corrected comparisons are documented.
 
@@ -194,7 +201,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Full category mixing tensor, conditional endpoint randomization and degree assortativity diagnostics.
 
-**Outputs:** [01_observed_and_expected.npz](results/01_observed_and_expected.npz), [01_conditional_permutation.json](results/01_conditional_permutation.json), [07_topology_supplement.json](results/07_topology_supplement.json).
+**Outputs:** 01_observed_and_expected.npz (`results/01_observed_and_expected.npz`, not published), [01_conditional_permutation.json](../findings/01_conditional_permutation.json), [07_topology_supplement.json](../findings/07_topology_supplement.json).
 
 **Boundary:** Shared analytical category is not necessarily shared social identity; no claim of individual homophily.
 
@@ -204,7 +211,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Burt constraint/effective size, brokerage centrality, and five G-F brokerage roles with explicit analyst groups.
 
-**Outputs:** [07_brokerage_centrality.csv](results/07_brokerage_centrality.csv), [07_gould_fernandez_brokerage.csv](results/07_gould_fernandez_brokerage.csv).
+**Outputs:** [07_brokerage_centrality.csv](../findings/07_brokerage_centrality.csv), [07_gould_fernandez_brokerage.csv](../findings/07_gould_fernandez_brokerage.csv).
 
 **Boundary:** These measures describe category connectivity, not a measured monopoly held by a person.
 
@@ -219,7 +226,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Flow/reachability hierarchy, generalized trophic levels, cores/shells, rich-club and nestedness diagnostics; SBM.
 
-**Outputs:** [02_layer_statistics.csv](results/02_layer_statistics.csv), [07_trophic_levels.csv](results/07_trophic_levels.csv), [07_rich_club.csv](results/07_rich_club.csv), [07_hierarchy_scope.json](results/07_hierarchy_scope.json).
+**Outputs:** [02_layer_statistics.csv](../findings/02_layer_statistics.csv), [07_trophic_levels.csv](../findings/07_trophic_levels.csv), [07_rich_club.csv](../findings/07_rich_club.csv), [07_hierarchy_scope.json](../findings/07_hierarchy_scope.json).
 
 **Boundary:** No calibrated dominance ranking; geographic core/periphery is not graph core/periphery.
 
@@ -233,7 +240,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Exact-tag page-scoped frequent edges, outgoing relation forks and length-two labelled paths; small closed patterns via rule supports.
 
-**Outputs:** [04_frequent_paths.csv](results/04_frequent_paths.csv), [04_frequent_outgoing_relation_pairs.csv](results/04_frequent_outgoing_relation_pairs.csv), [04_length2_horn_rules.csv](results/04_length2_horn_rules.csv).
+**Outputs:** 04_frequent_paths.csv (`results/04_frequent_paths.csv`, not published), [04_frequent_outgoing_relation_pairs.csv](../findings/04_frequent_outgoing_relation_pairs.csv), [04_length2_horn_rules.csv](../findings/04_length2_horn_rules.csv).
 
 **Boundary:** No exhaustive closed/maximal general-subgraph miner; node identity is not asserted across pages.
 
@@ -243,7 +250,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** One-body-edge and two-edge Horn rules with standard/PCA confidence, head coverage and page holdout.
 
-**Outputs:** [04_single_edge_rules.csv](results/04_single_edge_rules.csv), [04_length2_horn_rules.csv](results/04_length2_horn_rules.csv).
+**Outputs:** [04_single_edge_rules.csv](../findings/04_single_edge_rules.csv), [04_length2_horn_rules.csv](../findings/04_length2_horn_rules.csv).
 
 **Boundary:** Custom bounded rule enumeration, not a run of AMIE itself. Low support and weak holdout results are retained.
 
@@ -258,7 +265,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Additional reign-level S-P-O comparison and reign tensor; no event-time paths claimed.
 
-**Outputs:** [06_adjacent_reign_tensor_comparison.csv](results/06_adjacent_reign_tensor_comparison.csv).
+**Outputs:** [06_adjacent_reign_tensor_comparison.csv](../findings/06_adjacent_reign_tensor_comparison.csv).
 
 **Boundary:** Validated event timestamps and within-sentence event order are absent. Page order includes retrospect and is not elapsed time.
 
@@ -268,7 +275,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Not fitted to historical events.
 
-**Outputs:** [06_scope.json](results/06_scope.json).
+**Outputs:** [06_scope.json](../findings/06_scope.json).
 
 **Boundary:** Needs defensible event order, actor identities and a defined set of possible next events. Extraction order and narrative pages cannot supply those without historical annotation.
 
@@ -278,7 +285,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Not fitted.
 
-**Outputs:** [06_scope.json](results/06_scope.json).
+**Outputs:** [06_scope.json](../findings/06_scope.json).
 
 **Boundary:** No validated office spells, dates of entry/exit, right censoring or population at risk; Kaplan-Meier/Cox estimates would imply unsupported exposure.
 
@@ -293,7 +300,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Reign-segment distribution comparisons and four-mode factors.
 
-**Outputs:** [06_adjacent_reign_tensor_comparison.csv](results/06_adjacent_reign_tensor_comparison.csv), [03_reign_cp_loadings.csv](results/03_reign_cp_loadings.csv).
+**Outputs:** [06_adjacent_reign_tensor_comparison.csv](../findings/06_adjacent_reign_tensor_comparison.csv), 03_reign_cp_loadings.csv (`results/03_reign_cp_loadings.csv`, not published).
 
 **Boundary:** Chronicle mentions are not repeated complete network states. No process model fitted.
 
@@ -303,7 +310,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Five-component nonnegative subject-relation-object-reign tensor normalized per 1000 claims within segment.
 
-**Outputs:** [03_reign_cp_loadings.csv](results/03_reign_cp_loadings.csv), [03_reign_cp_fit.json](results/03_reign_cp_fit.json).
+**Outputs:** 03_reign_cp_loadings.csv (`results/03_reign_cp_loadings.csv`, not published), [03_reign_cp_fit.json](../findings/03_reign_cp_fit.json).
 
 **Boundary:** The fourth mode is 12 narrative reign/crisis segments, not dated event time. No causal temporal factor dynamics claimed.
 
@@ -319,7 +326,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Base/context/fused semantic-to-endpoint-structure QAP, within-domain and frequency/shared-predicate controls.
 
-**Outputs:** [03_semantic_structure_qap.csv](results/03_semantic_structure_qap.csv), [03_semantic_structure_pairs.csv](results/03_semantic_structure_pairs.csv).
+**Outputs:** [03_semantic_structure_qap.csv](../findings/03_semantic_structure_qap.csv), 03_semantic_structure_pairs.csv (`results/03_semantic_structure_pairs.csv`, not published).
 
 **Boundary:** Context embeddings include the same Burmese/English source context; agreement is internal consistency, not independent validation.
 
@@ -348,7 +355,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** New page bootstraps, king/status/register exclusions, CP seed and label-null sensitivity, numerical/source invariants.
 
-**Outputs:** [06_layer_bootstrap_intervals.csv](results/06_layer_bootstrap_intervals.csv), [06_tensor_component_stability.csv](results/06_tensor_component_stability.csv), [09_category_conditioned_chain_null.csv](results/09_category_conditioned_chain_null.csv).
+**Outputs:** [06_layer_bootstrap_intervals.csv](../findings/06_layer_bootstrap_intervals.csv), [06_tensor_component_stability.csv](../findings/06_tensor_component_stability.csv), [09_category_conditioned_chain_null.csv](../findings/09_category_conditioned_chain_null.csv).
 
 **Boundary:** No calibrated triple extraction confidence or independent full-corpus reliability sample is available for confidence weighting/posterior measurement-error models.
 
@@ -364,7 +371,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** Layer topology comparison, QAP coupling, whole S-P-O adjacent-reign JS divergence with page permutations.
 
-**Outputs:** [02_layer_statistics.csv](results/02_layer_statistics.csv), [06_adjacent_reign_tensor_comparison.csv](results/06_adjacent_reign_tensor_comparison.csv).
+**Outputs:** [02_layer_statistics.csv](../findings/02_layer_statistics.csv), [06_adjacent_reign_tensor_comparison.csv](../findings/06_adjacent_reign_tensor_comparison.csv).
 
 **Boundary:** Corpus attention and exposure differ across reigns; null results for small segments are reported.
 
@@ -379,7 +386,7 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **New work:** DistMult and ComplEx with disjoint category-fact train/validation/test sets and a frequency baseline.
 
-**Outputs:** [08_link_prediction.csv](results/08_link_prediction.csv), [08_training_trace.csv](results/08_training_trace.csv).
+**Outputs:** [08_link_prediction.csv](../findings/08_link_prediction.csv), [08_training_trace.csv](../findings/08_training_trace.csv).
 
 **Boundary:** No TransE/RotatE/GNN/DeepWalk benchmark. The two added predictors underperform the simple baseline, so no missing historical facts are imputed.
 
@@ -398,8 +405,8 @@ The controlling files are `WITHDRAWN_OR_SUPERSEDED_RESULTS.md`, `WITHDRAWN_OR_NO
 
 ## Method-level enumeration and remaining work
 
-The [380-item checklist](results/10_requested_method_checklist.csv) distinguishes previous evidence, new execution, partial execution, missing data prerequisites and unrun alternatives. It deliberately does not claim an exhaustive benchmark of every centrality, community algorithm, tensor factorization or neural model. Exact equivalence algorithms, RESCAL/DEDICOM, supra-adjacency multilayer models, general closed/maximal subgraph mining, and additional embedding/GNN architectures remain listed as unrun variants.
+The 380-item checklist (`results/10_requested_method_checklist.csv`, not published) distinguishes previous evidence, new execution, partial execution, missing data prerequisites and unrun alternatives. It deliberately does not claim an exhaustive benchmark of every centrality, community algorithm, tensor factorization or neural model. Exact equivalence algorithms, RESCAL/DEDICOM, supra-adjacency multilayer models, general closed/maximal subgraph mining, and additional embedding/GNN architectures remain listed as unrun variants.
 
 Historical event-time paths, REMs, survival models and dynamic actor/network processes require validated event order, identities, exposure or network-state observations. Geographic distance/autocorrelation/gravity models require validated geolocation. Those inputs are not supplied by narrative page order or the existing three-tier place-string gazetteer. The new results therefore do not relabel page windows as elapsed historical time, or mentions as complete population risk sets.
 
-The inventory is [CSV](inventory.csv) and [JSON](inventory.json); the [method-search evidence](results/10_archive_method_search_hits.csv) records source paths and line numbers. The HTML reader provides a filterable version of the method checklist.
+The inventory is CSV (`inventory.csv`, not published) and JSON (`inventory.json`, not published); the method-search evidence (`results/10_archive_method_search_hits.csv`, not published) records source paths and line numbers. The HTML reader provides a filterable version of the method checklist.
