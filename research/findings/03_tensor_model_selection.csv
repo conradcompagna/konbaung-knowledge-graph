@@ -1,0 +1,8 @@
+﻿iterations,relative_error,last_error_change,seed,rank,validation_nll_per_claim,fit
+13.0,0.7891666282883449,6.192000767679673e-08,20260911.0,3,10.240570694583575,"sqrt count CP, score squared reconstruction"
+12.0,0.7891666189328037,3.6894449717550515e-08,20260912.0,3,10.241651537942928,"sqrt count CP, score squared reconstruction"
+38.0,0.7216793486637769,9.209878393257043e-08,20260911.0,5,9.713942608792134,"sqrt count CP, score squared reconstruction"
+38.0,0.7216793736874259,7.194444462399474e-08,20260912.0,5,9.713885694293735,"sqrt count CP, score squared reconstruction"
+40.0,0.6897978006847381,8.402780016236733e-08,20260911.0,7,9.59572487377403,"sqrt count CP, score squared reconstruction"
+34.0,0.6903120020392886,9.485301688538783e-08,20260912.0,7,9.645171906019865,"sqrt count CP, score squared reconstruction"
+,,,,1,9.91440935932522,marginal independence baseline

@@ -1,0 +1,47 @@
+[
+  {
+    "file": "chronology.csv",
+    "source": "Konbaung_Chronological_Trends_Evidence.zip!/Konbaung_Chronological_Trends_Evidence/results/triple_analysis_ledger.csv",
+    "sha256": "5c6bf978ed8984d5e3cc03f46d3f8987f6a23a9842e68158927e6a04a5afac8e"
+  },
+  {
+    "file": "page_chronology.csv",
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/results/page_chronology_full.csv",
+    "sha256": "89d6dfd78e99a17e316b0c594c92e6fa055eb986710f7330b5d070362d3709ba"
+  },
+  {
+    "file": "person_edges.csv",
+    "source": "Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED (2).zip!/Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED/09_ENTITY_RESOLUTION_ANALYSIS/04_OUTPUTS/named_person_network_edges.csv",
+    "sha256": "599b56224311b602001e12f4724e8cc911758cb55d706ea6f29cb0a143d032a9"
+  },
+  {
+    "file": "person_centrality.csv",
+    "source": "Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED (2).zip!/Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED/09_ENTITY_RESOLUTION_ANALYSIS/04_OUTPUTS/named_person_network_centrality.csv",
+    "sha256": "72c6713603d49e2aabbb9c862c512d6548131e68d246df39a0911fd8026a4fd3"
+  },
+  {
+    "file": "actor_groups.csv",
+    "source": "Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED (2).zip!/Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED/03_BASE_STATISTICAL_ANALYSIS/02_METHODS/entity_actor_group_map.csv",
+    "sha256": "2c6318cf1db49ce6a479899e6d816c608f45f17f38e0b333ad2c640c6563f1ea"
+  },
+  {
+    "file": "domain_map.csv",
+    "source": "Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED (2).zip!/Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED/03_BASE_STATISTICAL_ANALYSIS/02_METHODS/relation_domain_map.csv",
+    "sha256": "d01f73b4be006fed93583bd29873ffbf2f462612557662d23d92a3f42188d85c"
+  },
+  {
+    "file": "triples.jsonl",
+    "source": "CRC and SHA256 verified recovered canonical archive, identical to 08_NEW_STRUCTURAL_AUDITS/01_CANONICAL_DATA",
+    "sha256": "f0dd12e3c85719ab819ea22a2eb1a84f7e61e11159ed1cbd00ee1964073ba823"
+  },
+  {
+    "file": "sentences.jsonl",
+    "source": "CRC and SHA256 verified recovered canonical archive, identical to 08_NEW_STRUCTURAL_AUDITS/01_CANONICAL_DATA",
+    "sha256": "ddb925d08a3a41ee822a91b84340e1d5f96d724c2636182bcf31c4e0c5636101"
+  },
+  {
+    "file": "pages.jsonl",
+    "source": "CRC and SHA256 verified recovered canonical archive, identical to 08_NEW_STRUCTURAL_AUDITS/01_CANONICAL_DATA",
+    "sha256": "3c36cef1cf65aaebf8b29d29f3a27422b9021192baac6cb31e24bf8ae79153f9"
+  }
+]

@@ -1,0 +1,176 @@
+[
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/Konbaung_Full_Figure_Atlas.pdf",
+    "pages": 25,
+    "sha256": "30400ed9199843ae7b624af607cbbf48f6fe49a798102c1647e9cd0858272b7f",
+    "text_file": "source_text/30400ed9199843ae7b62.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/all_sequences_reign_matched_enrichment.pdf",
+    "pages": 1,
+    "sha256": "25e8cb227722eb3cdc35e15d8b823d262a93d42db8a3dfd3382a0ee355282b80",
+    "text_file": "source_text/25e8cb227722eb3cdc35.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/all_three_volumes_71_sequences.pdf",
+    "pages": 1,
+    "sha256": "15ec82f3d574331e5b29a795667f6e00c49ab1c861f9bd947be259d4c3e4c624",
+    "text_file": "source_text/15ec82f3d574331e5b29.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/before_during_after_context.pdf",
+    "pages": 1,
+    "sha256": "4a1812bd7713b0b61a7e476f00a862b66164c8c6e738dfeb55ba3928f2cd193b",
+    "text_file": "source_text/4a1812bd7713b0b61a7e.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/independent_community_association_matrix.pdf",
+    "pages": 1,
+    "sha256": "17b2bc0298ecaae05efbd6cd268bd2ac15e0cea91e4ff72676fd71ac8d62f622",
+    "text_file": "source_text/17b2bc0298ecaae05efb.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/legacy_cliques_volume_I.pdf",
+    "pages": 1,
+    "sha256": "ede913512ed71f7afe71da43bcaea14ff0abf35a9c9e5246eb7d8b39e005feff",
+    "text_file": "source_text/ede913512ed71f7afe71.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/legacy_cliques_volume_II.pdf",
+    "pages": 1,
+    "sha256": "369cfeab8006bcc27b77bde00cf66619c934ec416bb53b19a1e8161a94ca0494",
+    "text_file": "source_text/369cfeab8006bcc27b77.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/legacy_cliques_volume_III.pdf",
+    "pages": 1,
+    "sha256": "a6e596d759035573b96bd5d61b5e6b5e982f659402c6f2717c9fc04f7830d3de",
+    "text_file": "source_text/a6e596d759035573b96b.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/sequence_profiles_volume_I.pdf",
+    "pages": 1,
+    "sha256": "65c2af6e82de5c887b901ab004dbf142837e4156ad4debfc2d5926c08b0df170",
+    "text_file": "source_text/65c2af6e82de5c887b90.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/sequence_profiles_volume_II.pdf",
+    "pages": 1,
+    "sha256": "cca73a389f1951db0f28e0ab3d6439edeae9064aa69cc49e5b3ce55ade75ad29",
+    "text_file": "source_text/cca73a389f1951db0f28.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/sequence_profiles_volume_III.pdf",
+    "pages": 1,
+    "sha256": "a1b4beb80e9393e7ace19d34f50952a6b6bff0c6cee7a1db800c245c12ee31b5",
+    "text_file": "source_text/a1b4beb80e9393e7ace1.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_profiles_vs_corpus.pdf",
+    "pages": 1,
+    "sha256": "91c87e8cb68747092fc15827c21134261e571f6d47e523077dd9dbbb1727f06c",
+    "text_file": "source_text/91c87e8cb68747092fc1.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_correction.pdf",
+    "pages": 1,
+    "sha256": "c6150909798384e6d782d7daba5d3a7c1790a49dd21922032dc77730f178ae37",
+    "text_file": "source_text/c6150909798384e6d782.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_diplomacy.pdf",
+    "pages": 1,
+    "sha256": "ec985f9417ae12bd4db63d8bb46bd15755ce9dfafe47e43063fd1ac391d2e38c",
+    "text_file": "source_text/ec985f9417ae12bd4db6.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_display_codification.pdf",
+    "pages": 1,
+    "sha256": "ca3922cdb284193870d0dfe038822174286e1a513a39ea96020b02154f508f46",
+    "text_file": "source_text/ca3922cdb284193870d0.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_distribution.pdf",
+    "pages": 1,
+    "sha256": "b2eef1f7c147ea7e6d9e4d543b4e370137d8b2cfa414627c68ab67465cc438e9",
+    "text_file": "source_text/b2eef1f7c147ea7e6d9e.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_incorporation.pdf",
+    "pages": 1,
+    "sha256": "8b981f70fe8869e9a0acbdce5c5685ec88af8fe1721c3d123f661ba464594b1c",
+    "text_file": "source_text/8b981f70fe8869e9a0ac.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_reorganization.pdf",
+    "pages": 1,
+    "sha256": "e25f0940caa1095b1841c1dfdf595df2fcbc2f07c51fb2321b17aa40125ee976",
+    "text_file": "source_text/e25f0940caa1095b1841.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/taxonomy_timeline_succession.pdf",
+    "pages": 1,
+    "sha256": "683a785ca814128dc072fc6792fa9da7a082d1fa8655c0755b1826b7623ceb96",
+    "text_file": "source_text/683a785ca814128dc072.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/volume_III_pages_w01.pdf",
+    "pages": 1,
+    "sha256": "e02afa2ff8ee7f7b551dfb6206b9434a58aec0ff0ecdb08bca8c4e2f4bf1d5e1",
+    "text_file": "source_text/e02afa2ff8ee7f7b551d.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/volume_III_pages_w05.pdf",
+    "pages": 1,
+    "sha256": "5f7fc0a63c9e802c673f54d650d987490f09b29d6fba0b95810f1e2a53d31ed9",
+    "text_file": "source_text/5f7fc0a63c9e802c673f.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/volume_II_pages_w01.pdf",
+    "pages": 1,
+    "sha256": "8bf0c1728f1789e7ab5158368c3660dff4237d754c7e84559c18c956af6ad56c",
+    "text_file": "source_text/8bf0c1728f1789e7ab51.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/volume_II_pages_w05.pdf",
+    "pages": 1,
+    "sha256": "446e72956e25ce80f4bc3e5b0f3a481fcc6e347b61197019de79719825961773",
+    "text_file": "source_text/446e72956e25ce80f4bc.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/volume_I_pages_w01.pdf",
+    "pages": 1,
+    "sha256": "e71d0ed7650663bcf34565603bc9e0851241ee78fa952cecb72581715000a10a",
+    "text_file": "source_text/e71d0ed7650663bcf345.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/figures/volume_I_pages_w05.pdf",
+    "pages": 1,
+    "sha256": "bd087b0b0bb98d7b937abe6df498ab4349c9b6fea4d8255b2ee8861e5d88802e",
+    "text_file": "source_text/bd087b0b0bb98d7b937a.txt"
+  },
+  {
+    "source": "Konbaung_Complete_Narrative_Analysis.zip!/Konbaung_Narrative_Atlas_Complete/report/Konbaung_Narrative_Structure_and_Title_Sequences_Report.pdf",
+    "pages": 8,
+    "sha256": "6d474c2f386933c9bfbcbcc2a09177fcc0b3a065af824b2398a3ecc7b4d0be64",
+    "text_file": "source_text/6d474c2f386933c9bfbc.txt"
+  },
+  {
+    "source": "Konbaung_Consolidated_Evidence_and_Coverage.zip!/Konbaung_Consolidated_Evidence/supplementary_evidence/chronology_reanalysis/results/status_composition.pdf",
+    "pages": 1,
+    "sha256": "e02c449be9d569bffa4e0871d5b63dca3b26a1e2c49d5a45080bfc97ac5d4c76",
+    "text_file": "source_text/e02c449be9d569bffa4e.txt"
+  },
+  {
+    "source": "Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED (2).zip!/Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED/04_EMBEDDING_ANALYSIS/01_REPORT/Konbaung_Embedding_Enriched_Analysis.pdf",
+    "pages": 27,
+    "sha256": "8e76fa0b2bbee882c35fdbf6c89676808e3326306205a7f3d0625edf0ca566d4",
+    "text_file": "source_text/8e76fa0b2bbee882c35f.txt"
+  },
+  {
+    "source": "Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED (2).zip!/Konbaung_Status_Power_FINAL_Statistical_Reproducibility_UPDATED/04_EMBEDDING_ANALYSIS/01_REPORT/Konbaung_Status_Power_Research_Guide_Embedding_Enriched.pdf",
+    "pages": 32,
+    "sha256": "7f0c7a5706ab7ed9d2a28b17ff5c14450cc9cccf73d1f27ffb177ae36d241509",
+    "text_file": "source_text/7f0c7a5706ab7ed9d2a2.txt"
+  }
+]

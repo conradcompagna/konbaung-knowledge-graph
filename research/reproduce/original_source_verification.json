@@ -1,0 +1,53 @@
+{
+  "archive": "C:\\Users\\conra\\Desktop\\dighumproject\\DIGHUM_WEBGPT_ANALYSIS_PACKAGE_20260831.zip",
+  "members": [
+    {
+      "member": "data/triples.jsonl",
+      "bytes": 29548193,
+      "sha256": "f0dd12e3c85719ab819ea22a2eb1a84f7e61e11159ed1cbd00ee1964073ba823",
+      "recovered_copy_identical": true
+    },
+    {
+      "member": "data/sentences.jsonl",
+      "bytes": 20249647,
+      "sha256": "ddb925d08a3a41ee822a91b84340e1d5f96d724c2636182bcf31c4e0c5636101",
+      "recovered_copy_identical": true
+    },
+    {
+      "member": "data/axial_category_catalog.json",
+      "bytes": 83223,
+      "sha256": "c3db11cfac163f097a8dd7fc06e13be8f386aa381d1c6a6ce346d436ce59c79e",
+      "recovered_copy_identical": true
+    },
+    {
+      "member": "embeddings/entity_base_vectors.npy",
+      "bytes": 73390208,
+      "sha256": "d8044e4573c71480292a6875a10021638648fefd0d165e2d707791dcd1a54275",
+      "recovered_copy_identical": true
+    },
+    {
+      "member": "embeddings/relation_base_vectors.npy",
+      "bytes": 36513920,
+      "sha256": "6355abc445570e61a82cdff3b888707cadecc8ba61f69a86cc3995d31ef92007",
+      "recovered_copy_identical": true
+    },
+    {
+      "member": "similarity/features/relation_context_vectors.npy",
+      "bytes": 36513920,
+      "sha256": "042c821fdba09fde172b6368cb4322c3f97b0cb5f30da1a79eb646be3f69d444",
+      "recovered_copy_identical": null
+    },
+    {
+      "member": "similarity/features/relation_fused_vectors.npy",
+      "bytes": 73027712,
+      "sha256": "3e60442176cacdc4693714d82da20c0dfc39c13f3cca49f15d29b4d044ec1536",
+      "recovered_copy_identical": null
+    },
+    {
+      "member": "similarity/features/entity_context_vectors.npy",
+      "bytes": 73390208,
+      "sha256": "550db713b64a551bad6f01767653bd89d50475110e92329d8bf98721bd0d9fe5",
+      "recovered_copy_identical": true
+    }
+  ]
+}

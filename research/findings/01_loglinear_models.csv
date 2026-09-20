@@ -1,0 +1,4 @@
+﻿model,G2,positive_observed_cells,positive_expected_cells,iterations,max_margin_error,absolute_margin_tolerance_counts,converged
+mutual_independence,127972.64445430215,6050,214812,1,4.9112713895738125e-11,0.001,True
+S_independent_O_given_P,28506.860791523664,6050,38820,1,9.094947017729282e-13,0.001,True
+all_pairwise_no_threeway,18986.988369023915,6050,28824,996,0.000999838974451328,0.001,True

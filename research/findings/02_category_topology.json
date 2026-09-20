@@ -1,0 +1,22 @@
+{
+  "nodes": 52,
+  "edges": 1227,
+  "density": 0.4626696832579186,
+  "reciprocity": 0.5770171149144254,
+  "weak_components": 1,
+  "strong_components": 2,
+  "largest_weak": 52,
+  "largest_strong": 51,
+  "isolates": 0,
+  "transitivity": 0.7871891056961826,
+  "average_clustering": 0.8268769039354691,
+  "directed_average_clustering": 0.6647361476425863,
+  "flow_hierarchy": 0.0024449877750610804,
+  "reachable_pair_share": 0.9807692307692307,
+  "global_reaching_centralization": 0.0196078431372549,
+  "outdegree_centralization": 0.5478662053056517,
+  "indegree_centralization": 0.4279123414071511,
+  "bridges": 0,
+  "articulation_points": 0,
+  "global_efficiency": 0.829185520361991
+}

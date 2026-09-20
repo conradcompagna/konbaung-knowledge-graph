@@ -30,6 +30,30 @@ I built this project to investigate how power operated in the Konbaung dynasty t
 
 The [pipeline guide](pipeline/README.md) connects these stages. Extracted claims and clusters are model-assisted research outputs, not a human-coded gold standard.
 
+---
+
+## How it was built
+
+The dataset is not published. The process that produced it is.
+
+**[`research/`](research/)** — start at [research/README.md](research/README.md).
+
+| | |
+|---|---|
+| [**Methodology**](research/notes/METHODOLOGY.md) | How the corpus, triples and embeddings were built. |
+| [**Pipeline guide**](pipeline/README.md) | Every stage from page image to canonical graph, and why extraction and resolution are shaped the way they are. |
+| [**Reproduction record**](research/reproduce/) | The analysis runner, twelve per-stage logs, output checksums, input provenance, and data validation. |
+| [`research/findings/`](research/findings/) | What the analysis produced: model selection, fit statistics, stability intervals, validation. Summary statistics only. |
+| [`research/figures/`](research/figures/) | The four figures, PNG and SVG. |
+| [`research/experiments/`](research/experiments/) | Seven superseded annotator generations and four repair strategies, each with an `OUTCOME.md`. |
+| [`research/datasets/`](research/datasets/) | Label inventory distributions: 5,667 entity labels and 13,727 relation predicates, most occurring once. |
+| [`research/notes/`](research/notes/) | Including an honest audit of what the existing tests actually establish. |
+
+The extracted triples, the RDF store, the embedding matrices and the source scans
+remain proprietary. Everything needed to judge whether the method is sound is
+published; the material needed to reconstruct the corpus is not. See
+[publication contents](docs/PUBLICATION.md).
+
 ## Run the lightweight checks
 
 ```sh

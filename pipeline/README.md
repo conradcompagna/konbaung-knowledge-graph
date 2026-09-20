@@ -4,21 +4,56 @@
 flowchart LR
     OCR[OCR text and page images] --> Corpus[Canonical sentence corpus]
     Corpus --> Extract[Translation and claim extraction]
-    Extract --> Validate[Repair / validation / compilation]
-    Validate --> Graph[RDF graph and embeddings]
-    Graph --> Reader[Reader / API / analysis]
+    Extract --> Repair[Repair, audit, compilation]
+    Repair --> Resolve[Entity resolution and canonicalisation]
+    Resolve --> Graph[RDF graph and embeddings]
+    Graph --> Reader[Reader, API, analysis]
 ```
 
-Run modules from the repository root. For example, `python -m pipeline.extraction.historiography_batch --help` and `python -m pipeline.translation.sentence_translation_batch --help` describe the batch interfaces.
+Run modules from the repository root. For example,
+`python -m pipeline.extraction.historiography_batch --help` and
+`python -m pipeline.translation.sentence_translation_batch --help` describe the batch
+interfaces.
 
-| Directory | Representative entrypoints |
-|---|---|
-| `corpus/` | `build_sentence_corpus.py`, `repair_sentence_corpus.py`, `build_dataset_v3.py`, `build_historiography_v3_reader_data.py` |
-| `translation/` | `sentence_translation_batch.py`, `evidence_translation_batch.py` |
-| `extraction/` | `historiography_batch.py`, structured annotation and axial-coding stages |
-| `embeddings/` | `v3_eight_view_embeddings.py`, clustering and cluster-labeling stages |
-| `resolution/` | `run_binary_resolution_production.py`, candidate generation, adjudication, refinement, and `pair_classifier/` |
+| Directory | What it does | Representative entrypoints |
+|---|---|---|
+| `corpus/` | reconstructs sentences from OCR text, repairs them, integrates manual restorations, detects section breaks | `build_sentence_corpus.py`, `repair_sentence_corpus.py`, `build_dataset_v3.py`, `integrate_restoration_annotations.py`, `section_break_detector.py` |
+| `translation/` | sentence and evidence translation | `sentence_translation_batch.py`, `evidence_translation_batch.py`, `translated_sentence_triples_batch.py` |
+| `extraction/` | claim extraction, open and axial coding, and the targeted repair passes | `historiography_batch.py`, `structured_open_coding_batch.py`, `summary_gap_batch.py`, `quantitative_fourth_pass_batch.py`, `predicate_gloss_repair_batch.py`, `cross_page_repair.py` |
+| `audit/` | decides what counts as a defect and measures coverage | `audit_entity_resolution_completion.py`, `calculate_debris_adjusted_coverage.py`, `make_normalized_diff.py`, `audit_v2_removals.py` |
+| `embeddings/` | eight-view embeddings, clustering, cluster labelling | `v3_eight_view_embeddings.py`, `v3_node_edge_clustering.py`, `extract_fasttext_tag_token_vectors.py` |
+| `resolution/` | collapses the open label inventory into canonical entities | `run_binary_resolution_production.py`, `run_frequency_prioritized_resolution.py`, `run_nonsingleton_top50_wave.py`, `run_remaining_singleton_completion.py`, `pair_classifier/` |
+| `review/` | packages candidate merges and evidence for manual adjudication | `build_master_positive_resolution_review.py`, `build_manual_review_archive.py`, `build_analysis_package.py` |
 
-Prompts live in `../prompts/`. The canonical reader and graph builders are under `../konbaung_reader_app/`; the reusable statistical analysis scripts are under `../research/analysis/`.
+Prompts are in `../prompts/`, with the reference annotations they were scored against
+in `../prompts/gold_standards/`. The reader and graph builders are under
+`../konbaung_reader_app/`. The statistical analysis is under `../research/`.
 
-Each stage declares its expected inputs and output directories. Provision the selected corpus and configure your own API credentials before running a stage. Extraction, translation, embeddings, and classification commands can issue paid requests. The modules represent separate research stages and methods, not one command that recreates the proprietary dataset.
+## The shape of the work
+
+Two stages carry most of the difficulty.
+
+**Extraction is iterative, not a single pass.** A page goes through open coding, then
+gap-filling for claims the first pass missed, then a quantitative pass, then predicate
+grounding, then metadata enrichment — with an audit between passes deciding what still
+needs work. `extraction/` and `audit/` are interleaved by design. Seven superseded
+generations of the annotator are in
+[`../research/experiments/annotator-generations/`](../research/experiments/annotator-generations/),
+and the sequence of what each one fixed is the clearest statement of why the current
+schema looks the way it does.
+
+**Resolution is a wave process.** The extraction produces an open vocabulary — 5,667
+entity labels and 13,727 relation labels, most occurring once
+([distributions](../research/datasets/)). Canonicalising it runs in frequency-ordered
+waves: the most frequent labels first, where the evidence is richest and a wrong merge
+is most costly, then non-singleton labels, then the singleton tail. `resolution/` holds
+the wave drivers, the embedding and regex candidate generators, the pair classifier,
+and the manual adjudication path. `run_binary_resolution_production.py` is the
+production driver and imports the frequency-prioritised trial module, which is why that
+module is published here rather than treated as an experiment.
+
+Each stage declares its expected inputs and output directories. Provision the selected
+corpus and configure your own API credentials before running a stage. Extraction,
+translation, embeddings and classification commands can issue paid requests. These
+modules represent separate research stages and methods, not one command that recreates
+the proprietary dataset.

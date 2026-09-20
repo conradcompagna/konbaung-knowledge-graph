@@ -1,0 +1,31 @@
+{
+  "inventory_entries": 3350,
+  "top_level_zip_files": 14,
+  "archived_and_loose_docx": 70,
+  "script_occurrences": 154,
+  "unique_scripts": 127,
+  "families": 26,
+  "requested_bullet_items": 380,
+  "method_status_counts": {
+    "Prior evidence located": 56,
+    "Not a variable in the canonical analysis table": 7,
+    "New analysis executed": 188,
+    "Not run alternative": 67,
+    "Partial new analysis": 5,
+    "Data prerequisites missing": 57
+  },
+  "family_prior_status_counts": {
+    "Already covered": 1,
+    "Partly covered": 10,
+    "Not found as network tests": 1,
+    "Not found as a dedicated family": 1,
+    "Not found as actual S-to-O layers": 1,
+    "Not found": 6,
+    "Not found as a fitted triple model": 1,
+    "Not found as formal measures": 1,
+    "Partly covered as narrative order": 1,
+    "Partly covered descriptively": 1,
+    "Already extensively covered": 2
+  },
+  "scope": "All 26 families audited. Named algorithms within a family are alternatives, not assumed complete from one representative fit. The method checklist records unrun variants explicitly. Original project source was searched for additional advanced implementations; its recovered originals and validation assets were used, without treating extraction trials as statistical historical results."
+}

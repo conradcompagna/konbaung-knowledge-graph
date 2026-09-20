@@ -1,0 +1,11 @@
+{
+  "iterations": 73,
+  "relative_error": 0.6809858190948788,
+  "last_error_change": 8.240946935966775e-08,
+  "seed": 20260911,
+  "rank": 7,
+  "selected_rank": 7,
+  "train_claims": 21775,
+  "test_claims": 5354,
+  "selection": "minimum held-out owner-page NLL among ranks 3,5,7 and two seeds; descriptive model, not calibrated missing-fact probabilities"
+}

@@ -1,0 +1,37 @@
+{
+  "iterations": 34,
+  "relative_error": 0.8692139380784977,
+  "last_error_change": 7.985769079343896e-08,
+  "seed": 20260911,
+  "rank": 5,
+  "reign_order": [
+    "Alaungpaya",
+    "Naungdawgyi",
+    "Hsinbyushin",
+    "Singu",
+    "1782 succession crisis",
+    "Bodawpaya",
+    "Bagyidaw",
+    "1837 succession war",
+    "Tharrawaddy",
+    "Pagan Min",
+    "Mindon",
+    "Thibaw"
+  ],
+  "claims_per_reign": [
+    5221.0,
+    336.0,
+    1802.0,
+    169.0,
+    81.0,
+    4152.0,
+    3849.0,
+    671.0,
+    1789.0,
+    821.0,
+    4658.0,
+    3580.0
+  ],
+  "transformation": "sqrt occurrences per 1000 claims within reign; all 12 narrative segments including succession crises",
+  "time_semantics": "reign-linked textual composition, not durations or dated events"
+}

@@ -1,0 +1,12 @@
+{
+  "bootstrap_draws": 999,
+  "bootstrap_unit": "owner page, sampled within volume",
+  "QAP_sensitivity_draws": 1999,
+  "comparisons": "Adjacent reign segments compare composition, not evolution of an observed social risk set. Reign labels permuted at page level within volume; no historical cause inferred.",
+  "unusable_for_historical_event_models": [
+    "No verified occurrence timestamps for every triple",
+    "Within-sentence triple order is extraction order, not event order",
+    "Page order includes retrospective registers",
+    "No complete office spell onset/exit/censoring ledger or population at risk"
+  ]
+}

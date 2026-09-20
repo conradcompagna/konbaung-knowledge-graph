@@ -97,3 +97,14 @@ sandbox_adapter_bank_deps/
 /article/
 
 .ruff_cache/
+
+# Published research record. research/results/ above stays ignored: that is the
+# local directory for full analysis output. research/findings/ holds the curated
+# summary statistics that are published, and these paths are deliberately tracked.
+!research/findings/
+!research/findings/**
+!research/reproduce/run_logs/
+!research/reproduce/run_logs/*.log
+!research/datasets/*.tsv
+!konbaung-google-ocr/run_evidence/
+!konbaung-google-ocr/run_evidence/**

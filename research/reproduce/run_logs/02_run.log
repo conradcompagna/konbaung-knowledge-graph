@@ -1,0 +1,1 @@
+Graph layers completed {'nodes': 599, 'edges': 443, 'components': 162, 'largest_component': 64, 'density': 0.0024734646931061244, 'transitivity': 0.0040286481647269475, 'bridges': 427, 'articulation_points': 141, 'diameter_largest_component': 6, 'radius_largest_component': 3, 'mean_distance_largest_component': 2.3864087301587302, 'global_efficiency': 0.0112327311380534}

@@ -1,0 +1,635 @@
+{
+  "checks_passed": 126,
+  "checks": [
+    {
+      "check": "source manifest data/triples.jsonl",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "source manifest data/sentences.jsonl",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "source manifest data/axial_category_catalog.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "source manifest embeddings/entity_base_vectors.npy",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "source manifest embeddings/relation_base_vectors.npy",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "source manifest similarity/features/relation_context_vectors.npy",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "source manifest similarity/features/relation_fused_vectors.npy",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "embedding finite and normalized embeddings/entity_base_vectors.npy",
+      "status": "passed",
+      "detail": "(23890, 768)"
+    },
+    {
+      "check": "embedding finite and normalized embeddings/relation_base_vectors.npy",
+      "status": "passed",
+      "detail": "(11886, 768)"
+    },
+    {
+      "check": "embedding finite and normalized similarity/features/relation_context_vectors.npy",
+      "status": "passed",
+      "detail": "(11886, 768)"
+    },
+    {
+      "check": "embedding finite and normalized similarity/features/relation_fused_vectors.npy",
+      "status": "passed",
+      "detail": "(11886, 1536)"
+    },
+    {
+      "check": "Canonical rows and primary keys",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "No annotations invented for missing sentences",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "SPO total",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "IPF pairwise margins",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "IPF fitted expectations nonnegative",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Conditional permutation preserves SP and PO",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Conditional permutation preserves page/O margins",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Triad census total equals choose(52,3)",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Degree-null invariants verified",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Page support allegiance -> authorization",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Page support authorization -> execution",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Page support information -> authorization",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Page support resistance -> coercion",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Normalized factors 03_static_cp_loadings",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Normalized factors 03_reign_cp_loadings",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Disjoint predictive facts",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "p1 probabilities sum to one",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Rule supports and confidence",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 02_layer_qap.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 02_layer_qap.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 02_layer_qap.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 02_layer_qap.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 03_semantic_structure_qap.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 03_semantic_structure_qap.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 03_semantic_structure_qap.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 03_semantic_structure_qap.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_degree_preserving_triads.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_degree_preserving_triads.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_degree_preserving_triads.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 04_degree_preserving_triads.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_labelled_motif_tests.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_labelled_motif_tests.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_labelled_motif_tests.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 04_labelled_motif_tests.csv q_enrichment",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 04_labelled_motif_tests.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 05_p1_triad_adequacy.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 05_p1_triad_adequacy.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 05_p1_triad_adequacy.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 05_p1_triad_adequacy.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 06_adjacent_reign_tensor_comparison.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 06_adjacent_reign_tensor_comparison.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 06_adjacent_reign_tensor_comparison.csv q_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 06_adjacent_reign_tensor_comparison.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 06_layer_qap_sensitivity.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 06_layer_qap_sensitivity.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 06_layer_qap_sensitivity.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 06_layer_qap_sensitivity.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 09_category_conditioned_chain_null.csv p_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 09_category_conditioned_chain_null.csv p_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 09_category_conditioned_chain_null.csv q_greater",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Probability bounds 09_category_conditioned_chain_null.csv q_two_sided",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Undefined statistics have no p-values 09_category_conditioned_chain_null.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists data_validation.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/01_loglinear_models.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/01_conditional_permutation.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/01_threeway_cells.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_category_centralities.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_named_person_topology.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_topology_supplement.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_labelled_motif_tests.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/09_category_conditioned_chain_null.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_degree_preserving_triads.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_all_pairs_paths.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_frequent_paths.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_random_walk_hitting_times.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_profile_roles.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/05_sbm_memberships.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/05_sbm_selection.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_layer_statistics.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_all_layer_pairs.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_layer_qap.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_layer_qap_sensitivity.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_tensor_model_selection.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_static_cp_loadings.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_tucker_fit.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_tensor_component_stability.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/08_link_prediction.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/08_scope.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/05_p1_models.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/05_p1_triad_adequacy.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/05_sbm_selection.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_layer_qap.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_semantic_structure_qap.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_layer_bootstrap_intervals.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/01_observed_and_expected.npz",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/01_conditional_permutation.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_topology_supplement.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_brokerage_centrality.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_gould_fernandez_brokerage.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_layer_statistics.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_trophic_levels.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_rich_club.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/07_hierarchy_scope.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_frequent_paths.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_frequent_outgoing_relation_pairs.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_length2_horn_rules.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_single_edge_rules.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/04_length2_horn_rules.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_adjacent_reign_tensor_comparison.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_scope.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_scope.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_adjacent_reign_tensor_comparison.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_reign_cp_loadings.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_reign_cp_loadings.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_reign_cp_fit.json",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_semantic_structure_qap.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/03_semantic_structure_pairs.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_layer_bootstrap_intervals.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_tensor_component_stability.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/09_category_conditioned_chain_null.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/02_layer_statistics.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/06_adjacent_reign_tensor_comparison.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/08_link_prediction.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "Audit output exists results/08_training_trace.csv",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "check": "All 26 families enumerated",
+      "status": "passed",
+      "detail": ""
+    }
+  ]
+}

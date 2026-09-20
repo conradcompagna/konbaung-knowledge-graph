@@ -1,0 +1,8 @@
+CP {'iterations': 13, 'relative_error': 0.7891666282883449, 'last_error_change': 6.192000767679673e-08, 'seed': 20260911, 'rank': 3, 'validation_nll_per_claim': 10.240570694583575, 'fit': 'sqrt count CP, score squared reconstruction'}
+CP {'iterations': 12, 'relative_error': 0.7891666189328037, 'last_error_change': 3.6894449717550515e-08, 'seed': 20260912, 'rank': 3, 'validation_nll_per_claim': 10.241651537942928, 'fit': 'sqrt count CP, score squared reconstruction'}
+CP {'iterations': 38, 'relative_error': 0.7216793486637769, 'last_error_change': 9.209878393257043e-08, 'seed': 20260911, 'rank': 5, 'validation_nll_per_claim': 9.713942608792134, 'fit': 'sqrt count CP, score squared reconstruction'}
+CP {'iterations': 38, 'relative_error': 0.7216793736874259, 'last_error_change': 7.194444462399474e-08, 'seed': 20260912, 'rank': 5, 'validation_nll_per_claim': 9.713885694293735, 'fit': 'sqrt count CP, score squared reconstruction'}
+CP {'iterations': 40, 'relative_error': 0.6897978006847381, 'last_error_change': 8.402780016236733e-08, 'seed': 20260911, 'rank': 7, 'validation_nll_per_claim': 9.59572487377403, 'fit': 'sqrt count CP, score squared reconstruction'}
+CP {'iterations': 34, 'relative_error': 0.6903120020392886, 'last_error_change': 9.485301688538783e-08, 'seed': 20260912, 'rank': 7, 'validation_nll_per_claim': 9.645171906019865, 'fit': 'sqrt count CP, score squared reconstruction'}
+Domain map columns ['relation_id', 'relation_label', 'domain', 'catalog_claim_count']
+Tensor and semantics completed

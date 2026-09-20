@@ -1,0 +1,65 @@
+{
+  "page_scoped_edges": 26550,
+  "exact_tag_paths": 18228,
+  "transitive_configurations": 526,
+  "cyclic_oriented_configurations": 108,
+  "rule_candidates": 6,
+  "note": "Raw exact tags are scoped within owner page. Labels are axial; edges are grammatical extraction directions. Motif null preserves page predicate-family totals and endpoint topology, not per-layer degree. Rule holdout is pages, not historical future. Missing edges are unrecorded, not false.",
+  "families": {
+    "authorization": [
+      "R06",
+      "R11",
+      "R12",
+      "R14",
+      "R15",
+      "R23",
+      "R69",
+      "R75"
+    ],
+    "execution": [
+      "R13",
+      "R24",
+      "R33",
+      "R36",
+      "R37",
+      "R40",
+      "R43",
+      "R44",
+      "R45",
+      "R46",
+      "R47"
+    ],
+    "information": [
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29"
+    ],
+    "coercion": [
+      "R21",
+      "R39",
+      "R41",
+      "R51",
+      "R52",
+      "R53"
+    ],
+    "resistance": [
+      "R54",
+      "R55",
+      "R73",
+      "R76",
+      "R77",
+      "R79"
+    ],
+    "allegiance": [
+      "R16",
+      "R30",
+      "R34",
+      "R56",
+      "R57",
+      "R58"
+    ],
+    "other": "remaining relations"
+  }
+}

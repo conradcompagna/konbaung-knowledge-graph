@@ -1,0 +1,4 @@
+﻿model,parameters,penalty,converged,gradient_max_abs,training_converged,heldout_dyad_nll,full_log_likelihood,reciprocity_log_odds,reciprocity_odds_multiplier
+density_only,1,0.05,True,5.076673303960888e-09,True,1.3842203219528124,-602.6494834891972,0.0,1.0
+sender_receiver,59,0.05,True,9.761533284313728e-05,True,0.8763294992791884,-297.2245345460452,0.0,1.0
+sender_receiver_reciprocity,60,0.05,True,2.5593277453384022e-05,True,0.8502460203813378,-292.26661864749366,1.2882853940694132,3.626563095295546

@@ -1,0 +1,8 @@
+{
+  "unique_category_facts": 6050,
+  "train": 4235,
+  "validation": 605,
+  "test": 1210,
+  "embedding_dimension": 32,
+  "limits": "Held-out facts are unique category S-P-O cells, not people or dated events. Labels from test facts enter only the conventional filtered-ranking exclusion, never fitting. Incomplete observations are not verified negative facts. No predicted fact is added to the data. No claim of causal inference or historical discovery. Evaluation is object-category ranking among 52 categories, not raw-tag link prediction."
+}

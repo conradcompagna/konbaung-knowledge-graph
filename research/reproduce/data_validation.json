@@ -1,0 +1,36 @@
+{
+  "triples": 27129,
+  "sentences": 11282,
+  "triple_bearing_sentences": 10498,
+  "unique_entities": 23890,
+  "unique_predicates": 11886,
+  "entity_categories": 52,
+  "relation_categories": 81,
+  "triple_owner_pages": 1206,
+  "duplicate_triple_ids": 0,
+  "missing_sentence_joins": 0,
+  "unavailable_annotation_sentences": 60,
+  "category_self_occurrences": 1092,
+  "exact_tag_self_occurrences": 19,
+  "register_values": {
+    "NaN": 24514,
+    "E19": 839,
+    "E04": 791,
+    "E39": 712,
+    "E01": 273
+  },
+  "reign_values": {
+    "Alaungpaya": 5221,
+    "Mindon": 4658,
+    "Bodawpaya": 4152,
+    "Bagyidaw": 3849,
+    "Thibaw": 3580,
+    "Hsinbyushin": 1802,
+    "Tharrawaddy": 1789,
+    "Pagan Min": 821,
+    "1837 succession war": 671,
+    "Naungdawgyi": 336,
+    "Singu": 169,
+    "1782 succession crisis": 81
+  }
+}
