@@ -1,0 +1,76 @@
+{
+  "selection": "Original sampling fields and cost aggregates; job/cache identifiers, full annotations, and individual batch records omitted.",
+  "taxonomy_revision": {
+    "source": {
+      "file": "konbaung_round5_purpose_taxonomy_v7_bundle/konbaung_round5_purpose_sampling_manifest.json",
+      "sha256": "7d7e1e2bbdf3107edceadddbf20e8c879f636e7f63524ac0a2af0be9d70ee94f"
+    },
+    "project": "Konbaung power-purpose taxonomy, round 5",
+    "corpus_triple_count": 27129,
+    "sample_seed": 20260805,
+    "sample_method": "Uniform random sample without replacement from triples not present in the prior reviewed union.",
+    "sample_triple_count": 1357,
+    "actual_percent": 5.002027,
+    "prior_reviewed_unique_triples": 7111,
+    "overlap_with_prior_reviewed": 0,
+    "unique_selected_pages_in_sample": 750,
+    "substantive_purpose_category_count": 32,
+    "final_label_count_including_no_clear": 33,
+    "clear_purpose_triples": 1349,
+    "no_clear_power_purpose_triples": 8,
+    "inductive_changes": [
+      {
+        "change": "Added F33 Privatize Public Authority and Resources",
+        "reason": "Two clear triples described officials using jurisdiction and procedure to shield clients, obstruct justice, falsify interrogation, or appropriate public authority for private ends; neither anti-leakage enforcement nor generic noncompliance captured their purpose."
+      },
+      {
+        "change": "Discarded the seed category Evade, Refuse, or Withhold Obligations",
+        "reason": "Refusal was a surface form rather than a stable political purpose. The sampled cases resolved into throne contest, elite containment, internal resistance, autonomy, rival-center realignment, private appropriation, defense, or no clear purpose."
+      },
+      {
+        "change": "Merged collective deliberation and implementation into F07",
+        "reason": "The two sampled cases were adjacent manifestations of constituting and coordinating governing institutions, not a separate recurrent purpose."
+      },
+      {
+        "change": "Merged colonial replacement into F18 external domination",
+        "reason": "Ultimata, disarmament, annexation, occupation, and colonial jurisdiction served the same political purpose as conquest and supersession of another sovereign order; a period-specific label would overfit the actor."
+      }
+    ],
+    "interpretation": "The sample informed category revisions; this is a development audit, not an independent test of the finished taxonomy."
+  },
+  "extraction_run": {
+    "source": {
+      "file": "konbaung_translated_sentence_triples_full_batch_20260713_high_thinking/cost_audit.json",
+      "sha256": "cf382668d8486a5fd65a0900c1080b738354a38d0358bfc4eb08f208c2d71ed3"
+    },
+    "model": "gemini-3.1-flash-lite",
+    "mode": "Batch API with explicit prefix cache",
+    "pricing_usd_per_million_tokens": {
+      "uncached_input_per_million": 0.125,
+      "cached_input_per_million": 0.0125,
+      "output_including_thinking_per_million": 0.75,
+      "cache_storage_per_million_token_hour": 0.5
+    },
+    "pricing_source": "https://ai.google.dev/gemini-api/docs/pricing",
+    "usage": {
+      "prompt_token_count": 14438128,
+      "cached_content_token_count": 7940256,
+      "candidates_token_count": 5283421,
+      "thoughts_token_count": 11799511,
+      "total_token_count": 31521060
+    },
+    "derived_tokens": {
+      "uncached_input": 6497872,
+      "billed_output_including_thinking": 17082932
+    },
+    "cost_components_usd": {
+      "uncached_input": 0.812234,
+      "cached_input": 0.0992532,
+      "output_including_thinking": 12.812199,
+      "cache_storage_estimate": 0.001857713555391111
+    },
+    "estimated_total_usd": 13.725543913555391,
+    "excludes": "Five earlier high-thinking test pages were reused and incurred no new cost in this production run.",
+    "interpretation": "Historical estimate for this extraction pass including recorded retries/salvage; not an invoice or the whole-project cost."
+  }
+}

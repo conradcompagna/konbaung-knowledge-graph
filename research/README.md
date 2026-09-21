@@ -26,6 +26,11 @@ directories holding the source data and the full analysis output.
 
 ## Where to start
 
+For a concrete model-development example, read
+[Entity resolution: from similar names to a review queue](notes/ENTITY_RESOLUTION.md),
+which connects candidate retrieval, supervised ranking, and source-based review to
+the saved evaluation records.
+
 1. [`notes/METHODOLOGY.md`](notes/METHODOLOGY.md) — how the data was built and embedded.
 2. [`notes/ANALYSIS_READ_ME_FIRST.md`](notes/ANALYSIS_READ_ME_FIRST.md) — what the
    analysis run was for and how to read its output.

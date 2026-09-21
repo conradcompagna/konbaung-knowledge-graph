@@ -1,0 +1,108 @@
+{
+  "selection": "One rejected top-ranked pair, retrieval-miss examples, and trial conformance counts; full source passages and entity inventories omitted.",
+  "raw_similarity_stop": {
+    "sources": [
+      {
+        "file": "konbaung_node_identity_raw_embedding_refinement_20260725/raw_embedding_pass_report.json",
+        "sha256": "56ff95dcceeab6f5d71f6b2cb1ec10fefc1aaae697076d4ee29341d2fa4b84bc"
+      },
+      {
+        "file": "konbaung_node_identity_raw_embedding_refinement_20260725/raw_embedding_review_top100.json",
+        "sha256": "39721ac27f510c5ffa9f53fa97af97cf739db7a2d3ed5981b45470b638bf0d4f"
+      }
+    ],
+    "method": "raw cosine similarity of averaged entity-only Gemini embeddings",
+    "uniqueCandidatePairs": 1530847,
+    "top_candidate": {
+      "embeddingSimilarity": 0.9956204295158386,
+      "leftClusterId": "N-8809",
+      "leftIdentity": "Hlaingdet Prince's younger son",
+      "leftMembers": [
+        "Hlaingdet Prince's younger son"
+      ],
+      "rightClusterId": "N-8810",
+      "rightIdentity": "Hlaingdet Prince's youngest son",
+      "rightMembers": [
+        "Hlaingdet Prince's youngest son"
+      ]
+    },
+    "adjudication": {
+      "reviewedCandidates": 1,
+      "acceptedMerges": 0,
+      "firstRejectedCandidate": {
+        "embeddingSimilarity": 0.99562043,
+        "leftIdentity": "Hlaingdet Prince's younger son",
+        "rightIdentity": "Hlaingdet Prince's youngest son",
+        "evidenceSentence": "vol3_s001416",
+        "reason": "The sentence identifies them as two different sons receiving two different titles."
+      }
+    },
+    "status": "STOPPED_ON_FIRST_MANUAL_ERROR"
+  },
+  "retrieval_audit": {
+    "source": {
+      "file": "konbaung_full_gold_pair_classifier_20260725/UPSTREAM_RETRIEVAL_MISSES.md",
+      "sha256": "6eeda877c93355b583be20ca4e4c439428e6ae3356e1bc671996bf4180b72faa"
+    },
+    "neighbors_per_cluster": 100,
+    "eligible_known_positive_pairs": 240,
+    "retrieved_known_positive_pairs": 236,
+    "misses": [
+      {
+        "left_id": "N-0847",
+        "left_label": "Dagon fort",
+        "right_id": "N-1331",
+        "right_label": "DA_PON_FORT"
+      },
+      {
+        "left_id": "N-7569",
+        "left_label": "De-sap village",
+        "right_id": "N-7632",
+        "right_label": "Desat village"
+      },
+      {
+        "left_id": "N-10743",
+        "left_label": "Min Kyaw Akha",
+        "right_id": "N-10788",
+        "right_label": "Min_Kyaw_Aka"
+      },
+      {
+        "left_id": "N-17135",
+        "left_label": "Yezet Kyawkhaung",
+        "right_id": "N-18997",
+        "right_label": "ye_set_kyaw_khaung"
+      }
+    ],
+    "exclusion": "The documented N-0397 / N-0501 correction was already resolved before retrieval and is excluded from this denominator."
+  },
+  "contextual_trial": {
+    "pages": 40,
+    "windows": [
+      {
+        "window": "window_01",
+        "source": {
+          "file": "konbaung_contextual_entity_resolution_trial_20260902_first40/window_01/mechanical_conformance.json",
+          "sha256": "c051a3bac467c68897438410a3c3cc54b096f18bdf49758f16f808f8a674d42a"
+        },
+        "method": "mechanical exact-inventory conformance; no new identity merges",
+        "mappedAliases": 5,
+        "removedUnknownAliases": 12,
+        "deduplicatedTags": 9,
+        "addedAsSingletons": 5
+      },
+      {
+        "window": "window_02",
+        "source": {
+          "file": "konbaung_contextual_entity_resolution_trial_20260902_first40/window_02/mechanical_conformance.json",
+          "sha256": "7e85674c956606583d16c440d90102861d2f58672ba7b0e88644a7b6c56be734"
+        },
+        "method": "mechanical exact-inventory conformance; no new identity merges",
+        "mappedAliases": 26,
+        "removedUnknownAliases": 58,
+        "deduplicatedTags": 0,
+        "addedAsSingletons": 335
+      }
+    ],
+    "interpretation": "Final coverage includes mechanical repairs; these counts describe conformance repairs, not raw model accuracy."
+  }
+}
