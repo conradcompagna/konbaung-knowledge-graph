@@ -1,13 +1,13 @@
 # Annotator generations
 
-Turning a page of Burmese chronicle into linked claims is not one problem. Getting the
-model to read the page, getting it to produce well-formed output, getting the output
-grounded in specific sentences, and getting entities linked across pages are four
-problems, and each generation of the annotator solved one and exposed the next.
+The annotator developed across four connected requirements: reading historical
+Burmese, producing structured output, linking claims to source sentences, and
+connecting entities across pages. The sequence below records how each schema
+iteration addressed those requirements.
 
 The generations, in order, all against the same corpus:
 
-| Generation | What changed | What it exposed |
+| Generation | Design change | Next design requirement |
 |---|---|---|
 | `plaintext_triple_annotator` | free-text triples | output was not parseable reliably |
 | `triple_annotator` | structured triple schema | triples were not tied to source sentences |

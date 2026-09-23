@@ -1,24 +1,31 @@
-# Konbaung analysis audit and new results
+# Analyzing the chronicle's account of power
 
-> Moved here from the September 2026 analysis run directory. Relative references
-> below have been repointed at the published copies in `../findings/`,
-> `../figures/` and `../reproduce/`. References marked *not published* are to
-> full analysis outputs that stay local; see [../README.md](../README.md) for what
-> is published and why.
+The analysis combines contingency models, relation-layer comparisons, tensor
+decomposition, network models, motif tests, and predictive baselines to examine
+how different actors and relations organize the chronicle's account of power.
+The clearest findings concern differentiated political roles and connections among
+relation layers, including associations that remain after excluding the sovereign
+category.
 
+## Read the results
 
-The audit covers all 26 families in the pasted catalogue. The new analyses investigate how different actors, relations and recipients organize the chronicle's account of power. The strongest results concern differentiated roles and relation-layer structure; stronger causal claims fail several of the new controls.
+- [Historical interpretation](PRELIMINARY_HISTORICAL_INTERPRETATION.md): the research
+  argument and the source passages that give the statistical patterns meaning.
+- [Analysis results](NEW_ANALYSES_AND_RESULTS.md): model comparisons, four figures,
+  and the controls used to interpret each result.
+- [Evaluation record](AUDIT_OF_EXISTING_TESTS.md): coverage across 26 method families,
+  with implemented analyses, prior studies, and requirements for further work.
+- [Family summary](../findings/10_family_audit.csv): a compact machine-readable index.
 
-- [Preliminary historical interpretation](PRELIMINARY_HISTORICAL_INTERPRETATION.md)
-- [Audit of existing tests](AUDIT_OF_EXISTING_TESTS.md)
-- [New analyses and results](NEW_ANALYSES_AND_RESULTS.md)
-- Interactive report and searchable enumeration (`index.html`, not published)
-- [26-family audit CSV](../findings/10_family_audit.csv)
-- 380-item method checklist CSV (`results/10_requested_method_checklist.csv`, not published)
-- Source passages in Burmese and English (`source_passages.html`, not published)
+## Inspect the run
 
-**Scope:** 67 named alternatives remain explicitly unrun, and historical event-time/spatial models require additional validated inputs. This is a completed audit and a substantial new test battery, not a claim that every algorithm in the catalogue has been executed.
+The package retains source hashes, seeds, environment details, stage logs, and
+**126 passing validation checks**. Start with the [reproduction guide](../reproduce/README.md)
+and [runner](../reproduce/RUN_ANALYSES.ps1). The recorded environment is in
+[11_environment.json](../findings/11_environment.json); input identity is documented
+in [input_provenance.json](../reproduce/input_provenance.json).
 
-**Source:** the intact `DIGHUM_WEBGPT_ANALYSIS_PACKAGE_20260831.zip` in the original `dighumproject` directory. Its canonical data match the article archive. Originals were left unchanged. Reproducible code, raw result tables, source hashes, seeds and 126 passing checks are included.
-
-Run [RUN_ANALYSES.ps1](../reproduce/RUN_ANALYSES.ps1) from this directory to reproduce the new analyses using the verified extracted inputs. The tensor package is in `vendor`; the installed scientific Python versions are recorded in `results/11_environment.json`. `scripts/inventory.py`, `prepare.py`, and `supplement_inventory.py` document the source inventory/extraction phase. The original archive is required to repeat source verification. No paid API calls are required.
+Re-execution requires the separately maintained source archive and prepared inputs.
+The statistical analysis itself requires no paid API calls. The full method checklist,
+interactive report, and source-quotation tables belong to the original local analysis
+package; the public [research guide](../README.md) maps the selected published outputs.

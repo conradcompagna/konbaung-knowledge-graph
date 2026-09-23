@@ -28,31 +28,34 @@ I built this project to investigate how power operated in the Konbaung dynasty t
 | Statistical analysis | [research/analysis/](research/analysis/) |
 | Source alignment and integration checks | [tests/](tests/) |
 
-The [pipeline guide](pipeline/README.md) connects these stages. Extracted claims and clusters are model-assisted research outputs, not a human-coded gold standard.
+The [pipeline guide](pipeline/README.md) connects these stages, from model-assisted
+extraction to source inspection, entity review, and graph exploration.
 
 ---
 
 ## How it was built
 
-The dataset is not published. The process that produced it is.
+The research package connects the system's construction to its historical purpose:
+examining the relationships among office, command, patronage, tribute, and kinship.
+It includes the methods, analysis code, selected findings, figures, and run records.
 
 **[`research/`](research/)** — start at [research/README.md](research/README.md).
 
 | | |
 |---|---|
-| [**Methodology**](research/notes/METHODOLOGY.md) | How the corpus, triples and embeddings were built. |
+| [**Methodology**](research/notes/METHODOLOGY.md) | Corpus construction, extraction design, eight embedding views, and validation. |
 | [**Pipeline guide**](pipeline/README.md) | Every stage from page image to canonical graph, and why extraction and resolution are shaped the way they are. |
 | [**Reproduction record**](research/reproduce/) | The analysis runner, twelve per-stage logs, output checksums, input provenance, and data validation. |
-| [`research/findings/`](research/findings/) | What the analysis produced: model selection, fit statistics, stability intervals, validation. Summary statistics only. |
+| [`research/findings/`](research/findings/) | Model comparisons, relation-layer structure, stability estimates, and validation results. |
 | [`research/figures/`](research/figures/) | The four figures, PNG and SVG. |
-| [`research/experiments/`](research/experiments/) | Seven superseded annotator generations and four repair strategies, each with an `OUTCOME.md`. |
+| [`research/experiments/`](research/experiments/) | Schema development across seven annotator generations and targeted-repair strategies. |
 | [`research/datasets/`](research/datasets/) | Label inventory distributions: 5,667 entity labels and 13,727 relation predicates, most occurring once. |
-| [`research/notes/`](research/notes/) | Including an honest audit of what the existing tests actually establish. |
+| [`research/notes/`](research/notes/) | Historical interpretation, statistical methods, and the evaluation record. |
 
-The extracted triples, the RDF store, the embedding matrices and the source scans
-remain proprietary. Everything needed to judge whether the method is sound is
-published; the material needed to reconstruct the corpus is not. See
-[publication contents](docs/PUBLICATION.md).
+For a short route through the findings, read the
+[historical interpretation](research/notes/PRELIMINARY_HISTORICAL_INTERPRETATION.md)
+and the [analysis results](research/notes/NEW_ANALYSES_AND_RESULTS.md). The latter
+connects each result to its model, source context, and validation checks.
 
 ## Run the lightweight checks
 
@@ -65,4 +68,6 @@ npm run build:frontend
 
 Eight unit tests cover source spans, UTF-16 offsets, dictionary display fields, and cross-page projection using synthetic text. The graph frontend builds from TypeScript; generated bundles are not tracked.
 
-**The research dataset remains proprietary.** RDF files, graph databases, extracted triples, source corpora, embedding matrices, and generated analytical outputs are excluded. See [setup](docs/SETUP.md) and [publication contents](docs/PUBLICATION.md) for the resource boundary.
+The source release includes software, methods, and selected research outputs. Full
+corpus and model assets are provisioned separately; see [setup](docs/SETUP.md) and
+[publication contents](docs/PUBLICATION.md).

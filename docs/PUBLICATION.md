@@ -14,7 +14,7 @@ the reproduction harness with per-stage logs and output checksums, methodology n
 label-inventory distributions, and the superseded extraction approaches, under
 `research/`.
 
-## Not included, and why
+## Separately provisioned resources
 
 | Excluded | Reason |
 |---|---|
@@ -36,4 +36,4 @@ examples require your own settings. Third-party notices are preserved in
 
 The GitHub code is maintained separately from the deployed sites and original
 development workspaces. See [setup](SETUP.md) for inputs, build steps, and validation
-limits.
+commands.

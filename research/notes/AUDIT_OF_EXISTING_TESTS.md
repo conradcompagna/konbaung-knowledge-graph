@@ -7,7 +7,7 @@
 > is published and why.
 
 
-The supplied catalogue contains **26 families and 380 bullet items**, including overlapping metrics, alternative algorithms and proposed applications. The audit found extensive earlier work, added a historically focused battery of missing analyses, and records the unrun alternatives explicitly. Coverage of a family does not imply that every named algorithm in it has been executed.
+This evaluation catalogue maps **26 method families and 380 items** to prior research records, new analyses, and requirements for further work. It connects each implemented method to its inputs, outputs, and interpretation, while distinguishing alternative algorithms within a family.
 
 ## What was inspected
 
@@ -390,11 +390,11 @@ Each entry below names the archived evidence rather than relying on a report tit
 
 **Boundary:** No TransE/RotatE/GNN/DeepWalk benchmark. The two added predictors underperform the simple baseline, so no missing historical facts are imputed.
 
-## Previously attempted but withdrawn or qualified
+## How validation refined the research argument
 
-The earlier archives explicitly withdraw or limit several attractive results. They remain classified as attempted, not missing:
+The research record preserves decisions made after additional controls and source review. These checks refined the interpretation used in the current analysis:
 
-- **Titling causes subsequent activity:** exposure imbalance and identity uncertainty undermine the earlier pre/post activation result. Do not reinstate it from page order.
+- **Title activation:** exposure and identity checks led to withdrawal of the earlier pre/post causal interpretation; narrative page order is retained as a textual coordinate.
 - **Nearest-prior-title semantic continuity:** equal-sized random prior sets perform similarly; chronological inheritance was not established.
 - **Positive title/appointment/access/appanage sentence association:** early results were sensitive to sentence density; later matched-page analyses replace them.
 - **R12–R64 semantic proximity as independent validation:** these categories share raw predicates, so part of the proximity is circular.
@@ -405,7 +405,7 @@ The controlling files are `WITHDRAWN_OR_SUPERSEDED_RESULTS.md`, `WITHDRAWN_OR_NO
 
 ## Method-level enumeration and remaining work
 
-The 380-item checklist (`results/10_requested_method_checklist.csv`, not published) distinguishes previous evidence, new execution, partial execution, missing data prerequisites and unrun alternatives. It deliberately does not claim an exhaustive benchmark of every centrality, community algorithm, tensor factorization or neural model. Exact equivalence algorithms, RESCAL/DEDICOM, supra-adjacency multilayer models, general closed/maximal subgraph mining, and additional embedding/GNN architectures remain listed as unrun variants.
+The 380-item checklist (`results/10_requested_method_checklist.csv`, not published) distinguishes previous evidence, new execution, partial execution, missing data prerequisites and unrun alternatives. It records the scope of each implemented method and the alternatives available for future comparisons. Exact equivalence algorithms, RESCAL/DEDICOM, supra-adjacency multilayer models, general closed/maximal subgraph mining, and additional embedding/GNN architectures remain listed as unrun variants.
 
 Historical event-time paths, REMs, survival models and dynamic actor/network processes require validated event order, identities, exposure or network-state observations. Geographic distance/autocorrelation/gravity models require validated geolocation. Those inputs are not supplied by narrative page order or the existing three-tier place-string gazetteer. The new results therefore do not relabel page windows as elapsed historical time, or mentions as complete population risk sets.
 
