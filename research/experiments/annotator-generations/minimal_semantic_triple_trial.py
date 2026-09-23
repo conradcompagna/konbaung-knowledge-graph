@@ -128,15 +128,11 @@ def validate(
             if not justification:
                 errors.append(f"{group.sid}: skipped sentence lacks a justification")
             elif "\n" in justification:
-                errors.append(
-                    f"{group.sid}: skip justification must be exactly one sentence"
-                )
+                errors.append(f"{group.sid}: skip justification must be exactly one sentence")
             continue
         annotated_sentence_count += 1
         if justification:
-            errors.append(
-                f"{group.sid}: annotated sentence must use an empty justification"
-            )
+            errors.append(f"{group.sid}: annotated sentence must use an empty justification")
         if not group.T:
             errors.append(f"{group.sid}: annotated sentence returned no triples")
         triple_count += len(group.T)
@@ -260,11 +256,7 @@ def run(volume: int, page_number: int, output_name: str) -> Path:
     )
     result = SemanticTripleResult.model_validate_json(raw)
     validation = validate(pairs, result)
-    usage = (
-        response.usage_metadata.model_dump(mode="json")
-        if response.usage_metadata
-        else {}
-    )
+    usage = response.usage_metadata.model_dump(mode="json") if response.usage_metadata else {}
     (output_dir / "result.json").write_text(
         json.dumps(
             {

@@ -16,7 +16,9 @@ OUTPUT_PATH = OUTPUT_ROOT / "MASTER_POSITIVE_RESOLUTIONS_ALL.md"
 
 def markdown_value(value: object) -> str:
     """Escape characters that would split a compact Markdown field."""
-    return str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+    return (
+        str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+    )
 
 
 def main() -> None:

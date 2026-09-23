@@ -32,7 +32,9 @@ class GapFillAnnotation(BaseModel):
     critique: str = Field(
         description="About 250 words identifying research-relevant evidence omitted or materially underspecified in both the existing summary and triples."
     )
-    T: list[OpenCodedTriple] = Field(description="Only new triples missing from the existing triple set.")
+    T: list[OpenCodedTriple] = Field(
+        description="Only new triples missing from the existing triple set."
+    )
 
 
 PURPOSE = """This is a second-pass research-gap discovery task over an existing extraction from a Burmese royal chronicle. The first pass already produced an interpretive summary and span-grounded triples. Your purpose now is to find genuinely distinct evidence important to the research question that the first pass omitted or materially underspecified."""
@@ -77,11 +79,15 @@ def find_existing_result(root: Path, volume_id: str, page_num: int) -> Path:
     name = f"page_{page_num:04d}.json"
     matches = list(root.glob(f"*/{volume_id}/{name}"))
     if len(matches) != 1:
-        raise FileNotFoundError(f"Expected one existing result for {volume_id} {name}; found {matches}")
+        raise FileNotFoundError(
+            f"Expected one existing result for {volume_id} {name}; found {matches}"
+        )
     return matches[0]
 
 
-def build_prompt(base_prompt: Path, page_text: str, existing: dict, volume_id: str, page_num: int) -> str:
+def build_prompt(
+    base_prompt: Path, page_text: str, existing: dict, volume_id: str, page_num: int
+) -> str:
     context = historiographical_context(base_prompt)
     existing_payload = json.dumps(
         {"summary": existing["summary"], "T": existing["T"]},
@@ -117,13 +123,15 @@ page_num: {page_num:04d}
 
 def compact_triple_line(index: int, triple: dict) -> str:
     return (
-        f'{index}. {triple.get("sg", "")} [{triple.get("st", "")}] '
-        f'--{triple.get("p", "")}--> '
-        f'{triple.get("og", "")} [{triple.get("ot", "")}]'
+        f"{index}. {triple.get('sg', '')} [{triple.get('st', '')}] "
+        f"--{triple.get('p', '')}--> "
+        f"{triple.get('og', '')} [{triple.get('ot', '')}]"
     )
 
 
-def write_review(out_dir: Path, page_text: str, existing: dict, additional: dict, warnings: list[str]) -> None:
+def write_review(
+    out_dir: Path, page_text: str, existing: dict, additional: dict, warnings: list[str]
+) -> None:
     lines = [
         "ORIGINAL PAGE TEXT",
         "==================",
@@ -140,17 +148,28 @@ def write_review(out_dir: Path, page_text: str, existing: dict, additional: dict
     lines.extend(["", "MODEL CRITIQUE OF EXISTING COVERAGE", "==================================="])
     lines.append(additional["critique"].strip())
     lines.extend(["", "ADDITIONAL TRIPLES", "=================="])
-    lines.extend(compact_triple_line(i, triple) for i, triple in enumerate(additional["T"], start=1))
+    lines.extend(
+        compact_triple_line(i, triple) for i, triple in enumerate(additional["T"], start=1)
+    )
     lines.extend(["", "VALIDATION WARNINGS", "==================="])
     lines.extend(warnings or ["None"])
     write_text(out_dir / "review.txt", "\n".join(lines) + "\n")
 
 
 def write_scan_review(out_dir: Path, existing: dict, additional: dict) -> None:
-    lines = ["SUMMARY", "=======", existing["summary"].strip(), "", "ORIGINAL TRIPLES", "================"]
+    lines = [
+        "SUMMARY",
+        "=======",
+        existing["summary"].strip(),
+        "",
+        "ORIGINAL TRIPLES",
+        "================",
+    ]
     lines.extend(compact_triple_line(i, triple) for i, triple in enumerate(existing["T"], start=1))
     lines.extend(["", "NEW TRIPLES", "==========="])
-    lines.extend(compact_triple_line(i, triple) for i, triple in enumerate(additional["T"], start=1))
+    lines.extend(
+        compact_triple_line(i, triple) for i, triple in enumerate(additional["T"], start=1)
+    )
     write_text(out_dir / "scan_comparison.txt", "\n".join(lines) + "\n")
 
 
@@ -176,7 +195,9 @@ def main(argv: Optional[list[str]] = None) -> None:
     existing_path = find_existing_result(Path(args.results_root), args.volume_id, args.page_num)
     existing = json.loads(existing_path.read_text(encoding="utf-8"))
     page_text = page_path.read_text(encoding="utf-8", errors="strict")
-    prompt = build_prompt(Path(args.base_prompt_file), page_text, existing, args.volume_id, args.page_num)
+    prompt = build_prompt(
+        Path(args.base_prompt_file), page_text, existing, args.volume_id, args.page_num
+    )
 
     out_dir = Path(args.out_dir) / args.volume_id / f"page_{args.page_num:04d}"
     write_text(out_dir / "prompt_sent.txt", prompt)
@@ -184,7 +205,11 @@ def main(argv: Optional[list[str]] = None) -> None:
     write_text(out_dir / "original_page.txt", page_text)
 
     if not args.run:
-        print(json.dumps({"prompt": str(out_dir / "prompt_sent.txt"), "will_call_api": False}, indent=2))
+        print(
+            json.dumps(
+                {"prompt": str(out_dir / "prompt_sent.txt"), "will_call_api": False}, indent=2
+            )
+        )
         return
 
     api_key = resolve_api_key(args)

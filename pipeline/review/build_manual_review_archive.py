@@ -90,10 +90,7 @@ def build(reader_data: Path, build_dir: Path, zip_path: Path) -> dict[str, Any]:
         write_text(output_dir / f"{stem}_summary.txt", summary + ("\n" if summary else ""))
         write_json(output_dir / f"{stem}_triples.json", triples)
 
-        pass_counts = {
-            name: sum(item["pass"] == name for item in triples)
-            for name in pass_names
-        }
+        pass_counts = {name: sum(item["pass"] == name for item in triples) for name in pass_names}
         totals["pages"] += 1
         totals["triples"] += len(triples)
         for name, count in pass_counts.items():
@@ -124,7 +121,9 @@ The `pass` field records `first_pass`, `second_pass`, `third_pass`, or `fourth_p
 
     if zip_path.exists():
         zip_path.unlink()
-    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    with zipfile.ZipFile(
+        zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
+    ) as archive:
         for path in sorted(build_dir.rglob("*")):
             if path.is_file():
                 archive.write(path, path.relative_to(build_dir.parent))

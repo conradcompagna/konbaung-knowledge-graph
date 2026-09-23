@@ -18,15 +18,11 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent
 APP_ROOT = ROOT / "konbaung_reader_app"
 SUMMARY_PATH = ROOT / "DIGHUM_PROJECT_DATABASE_SUMMARY_20260810.json"
-CANONICAL_ROOT = (
-    APP_ROOT / "data" / "konbaung_historiography_v3_canonical_20260724"
-)
+CANONICAL_ROOT = APP_ROOT / "data" / "konbaung_historiography_v3_canonical_20260724"
 AXIAL_ROOT = APP_ROOT / "data" / "konbaung_axial_categories_v2"
 GRAPH_ROOT = APP_ROOT / "data" / "konbaung_knowledge_graph_v3"
 EMBEDDING_ROOT = ROOT / "konbaung_v3_node_edge_clustering_first_pass_20260724"
-OCCURRENCES_PATH = (
-    ROOT / "konbaung_v3_eight_view_embeddings_20260724" / "occurrences.jsonl"
-)
+OCCURRENCES_PATH = ROOT / "konbaung_v3_eight_view_embeddings_20260724" / "occurrences.jsonl"
 METHODOLOGY_MD = ROOT / "KONBAUNG_DATA_AND_EMBEDDINGS_METHODOLOGY.md"
 METHODOLOGY_DOCX = ROOT / "KONBAUNG_DATA_AND_EMBEDDINGS_METHODOLOGY.docx"
 OUTPUT_PATH = ROOT / "DIGHUM_WEBGPT_ANALYSIS_PACKAGE_20260831_WITH_METHODOLOGY.zip"
@@ -95,9 +91,7 @@ def load_canonical_sentences() -> tuple[dict[str, dict[str, Any]], dict[str, Any
             sentences[sentence_id] = sentence
     expected = int(index["totals"]["canonicalSentences"])
     if len(sentences) != expected:
-        raise RuntimeError(
-            f"Expected {expected:,} canonical sentences, found {len(sentences):,}"
-        )
+        raise RuntimeError(f"Expected {expected:,} canonical sentences, found {len(sentences):,}")
     return sentences, index
 
 
@@ -225,30 +219,22 @@ def normalize_pages_and_sentences(
             f"Found {conflicts} conflicting representations of repeated sentence IDs"
         )
     expected_pages = int(summary["counts"]["pages"])
-    expected_unique = (
-        int(summary["counts"]["uniqueCanonicalSentences"])
-        + int(summary["counts"]["unavailableSentenceIds"])
+    expected_unique = int(summary["counts"]["uniqueCanonicalSentences"]) + int(
+        summary["counts"]["unavailableSentenceIds"]
     )
     if len(pages) != expected_pages or len(sentence_rows) != expected_unique:
         raise RuntimeError(
-            f"Normalized count mismatch: {len(pages)} pages, "
-            f"{len(sentence_rows)} sentences"
+            f"Normalized count mismatch: {len(pages)} pages, {len(sentence_rows)} sentences"
         )
     stats = {
         "pageAppearanceRows": sum(len(rows) for rows in appearances.values()),
         "uniqueSentenceRows": len(sentence_rows),
-        "crossPageSentenceRows": sum(
-            1 for row in sentence_rows.values() if row["cross_page"]
-        ),
+        "crossPageSentenceRows": sum(1 for row in sentence_rows.values() if row["cross_page"]),
         "canonicalV3SentenceRows": sum(
-            1
-            for row in sentence_rows.values()
-            if row["annotation_status"] == "canonical_v3"
+            1 for row in sentence_rows.values() if row["annotation_status"] == "canonical_v3"
         ),
         "unavailableV3SentenceRows": sum(
-            1
-            for row in sentence_rows.values()
-            if row["annotation_status"] == "v3_unavailable"
+            1 for row in sentence_rows.values() if row["annotation_status"] == "v3_unavailable"
         ),
         "conflictingRepeatedSentenceRows": conflicts,
     }
@@ -300,8 +286,7 @@ def load_knn_table(
     expected_shape = (len(records), 30)
     if indices.shape != expected_shape or similarities.shape != expected_shape:
         raise RuntimeError(
-            f"Unexpected KNN shape in {path.name}: "
-            f"{indices.shape}, {similarities.shape}"
+            f"Unexpected KNN shape in {path.name}: {indices.shape}, {similarities.shape}"
         )
     if indices.dtype != np.int32 or similarities.dtype != np.float32:
         raise RuntimeError(f"Unexpected KNN dtypes in {path.name}")
@@ -333,9 +318,7 @@ def validate_feature_matrix(
     """Validate a context or fused feature matrix without loading it wholly into RAM."""
     matrix = np.load(path, mmap_mode="r")
     if matrix.shape != (expected_rows, expected_dimensions) or matrix.dtype != np.float32:
-        raise RuntimeError(
-            f"Unexpected feature matrix at {path}: {matrix.shape}, {matrix.dtype}"
-        )
+        raise RuntimeError(f"Unexpected feature matrix at {path}: {matrix.shape}, {matrix.dtype}")
     norm_min = float("inf")
     norm_max = float("-inf")
     norm_sum = 0.0
@@ -383,9 +366,7 @@ def neighbor_rows(
         }
 
 
-def validate_labeled_assignments(
-    path: Path, records: list[dict[str, Any]]
-) -> dict[str, Any]:
+def validate_labeled_assignments(path: Path, records: list[dict[str, Any]]) -> dict[str, Any]:
     """Confirm every tag row has exactly one final labeled-cluster assignment."""
     assignments = list(iter_jsonl(path))
     if len(assignments) != len(records):
@@ -461,10 +442,7 @@ def build_triples(
         if sentence_id not in canonical_sentences or sentence_id not in sentence_rows:
             raise RuntimeError(f"Triple references unknown sentence: {sentence_id}")
         sentence = canonical_sentences[sentence_id]
-        if (
-            occurrence["sentenceMy"] != sentence["my"]
-            or occurrence["sentenceEn"] != sentence["en"]
-        ):
+        if occurrence["sentenceMy"] != sentence["my"] or occurrence["sentenceEn"] != sentence["en"]:
             raise RuntimeError(f"Triple/source sentence mismatch: {occurrence_id}")
         source_triple = sentence["triples"][ordinal - 1]
         raw_tags = (
@@ -571,15 +549,9 @@ def write_table_overview(path: Path, counts: dict[str, int]) -> None:
         writer.writerow(("data/pages.jsonl", counts["pages"], "page_id"))
         writer.writerow(("data/sentences.jsonl", counts["sentences"], "sentence_id"))
         writer.writerow(("data/triples.jsonl", counts["triples"], "triple_id"))
-        writer.writerow(
-            ("embeddings/entity_records.jsonl", counts["entityTags"], "index")
-        )
-        writer.writerow(
-            ("embeddings/relation_records.jsonl", counts["relationTags"], "index")
-        )
-        writer.writerow(
-            ("similarity/entity_top30_neighbors.jsonl", counts["entityTags"], "index")
-        )
+        writer.writerow(("embeddings/entity_records.jsonl", counts["entityTags"], "index"))
+        writer.writerow(("embeddings/relation_records.jsonl", counts["relationTags"], "index"))
+        writer.writerow(("similarity/entity_top30_neighbors.jsonl", counts["entityTags"], "index"))
         writer.writerow(
             (
                 "similarity/relation_top30_neighbors.jsonl",
@@ -610,50 +582,50 @@ Konbaung reader app. Start with `manifest.json`, then use the three JSONL tables
 ## What is here
 
 - `methodology/`: the article-facing methodology report in Markdown and Word format.
-- `data/pages.jsonl`: {counts['pages']:,} pages, one row per page, including page summaries.
-- `data/sentences.jsonl`: {counts['sentences']:,} unique sentence IDs, with Burmese text,
+- `data/pages.jsonl`: {counts["pages"]:,} pages, one row per page, including page summaries.
+- `data/sentences.jsonl`: {counts["sentences"]:,} unique sentence IDs, with Burmese text,
   English translation, page provenance, annotation status, and the canonical-selection
   audit. Sentence text occurs only here; it is not repeated inside every triple.
-- `data/triples.jsonl`: {counts['triples']:,} canonical V3 claim rows. Join
+- `data/triples.jsonl`: {counts["triples"]:,} canonical V3 claim rows. Join
   `sentence_id` to the sentence table. Each subject, predicate, and object includes its
   exact app embedding-matrix row and its raw tag. Axial category IDs and labels are also
   present.
-- `data/axial_category_catalog.json`: definitions for all {counts['entityCategories']}
-  entity categories and {counts['relationCategories']} relation categories.
-- `embeddings/entity_records.jsonl` + `entity_base_vectors.npy`: {counts['entityTags']:,}
+- `data/axial_category_catalog.json`: definitions for all {counts["entityCategories"]}
+  entity categories and {counts["relationCategories"]} relation categories.
+- `embeddings/entity_records.jsonl` + `entity_base_vectors.npy`: {counts["entityTags"]:,}
   raw entity tags and their 768-dimensional float32 vectors.
 - `embeddings/relation_records.jsonl` + `relation_base_vectors.npy`:
-  {counts['relationTags']:,} raw relation tags and their 768-dimensional float32 vectors.
+  {counts["relationTags"]:,} raw relation tags and their 768-dimensional float32 vectors.
 - `similarity/entity_top30_neighbors.jsonl` and
   `similarity/relation_top30_neighbors.jsonl`: GPT-readable precomputed neighbor tables,
-  containing {counts['entityNeighborLinks']:,} entity similarities and
-  {counts['relationNeighborLinks']:,} relation similarities. Exact source NPZ tables and
+  containing {counts["entityNeighborLinks"]:,} entity similarities and
+  {counts["relationNeighborLinks"]:,} relation similarities. Exact source NPZ tables and
   their manifests are beside them under `similarity/precomputed/`.
 - `similarity/features/`: base-context centroids and the 1,536-dimensional fused feature
   matrices used by the precomputed neighbor and clustering passes. Similarity is
   `0.70 * cosine(base) + 0.30 * cosine(context centroid)`.
 - `clustering/`: unlabeled and labeled row assignments, cluster inventories, label maps,
   selected-resolution and sweep reports, frequency tables, and audit documents. It covers
-  {counts['entityClusters']:,} entity clusters and {counts['relationClusters']:,} relation
+  {counts["entityClusters"]:,} entity clusters and {counts["relationClusters"]:,} relation
   clusters.
 - `database/konbaung_knowledge_graph_v3.nq`: the complete portable N-Quads serialization
-  of the app's Oxigraph RDF database ({counts['rdfStatements']:,} statements).
+  of the app's Oxigraph RDF database ({counts["rdfStatements"]:,} statements).
 
 ## Critical counting rule
 
 Do not treat page appearances as independent sentences or claims. Use `sentence_id` and
 `triple_id` as primary keys.
 
-The source annotation run had {totals['sourceTriples']:,} page-occurrence triples and
-{totals['duplicateSentenceIds']:,} sentence IDs submitted more than once because some
+The source annotation run had {totals["sourceTriples"]:,} page-occurrence triples and
+{totals["duplicateSentenceIds"]:,} sentence IDs submitted more than once because some
 sentences crossed page boundaries. The canonical source keeps exactly one annotation set
 per sentence ID: most triples first, then owner page, then lower page number. It removed
-{totals['removedDuplicateAppearances']:,} duplicate annotation appearances and yielded
-{totals['canonicalTriples']:,} canonical triples. This package re-validates that rule and
+{totals["removedDuplicateAppearances"]:,} duplicate annotation appearances and yielded
+{totals["canonicalTriples"]:,} canonical triples. This package re-validates that rule and
 contains one sentence row per ID.
 
-The sentence table has {totals['canonicalSentences']:,} canonical V3 sentences plus
-{totals['unavailableSentenceIds']:,} translated source sentences from the two invalid
+The sentence table has {totals["canonicalSentences"]:,} canonical V3 sentences plus
+{totals["unavailableSentenceIds"]:,} translated source sentences from the two invalid
 annotation pages. Those unavailable rows are retained with `annotation_status` equal to
 `v3_unavailable` and have no invented triples.
 
@@ -693,9 +665,9 @@ were retained. They are not presented as a newly computed exhaustive all-pairs t
 The exact compact arrays are:
 
 - `similarity/precomputed/entity_knn.npz`: `indices` and `similarities`, shape
-  `({counts['entityTags']}, 30)`.
+  `({counts["entityTags"]}, 30)`.
 - `similarity/precomputed/relation_knn.npz`: the same arrays, shape
-  `({counts['relationTags']}, 30)`.
+  `({counts["relationTags"]}, 30)`.
 
 Cluster assignments use those row indices too. Prefer the files ending in `_labeled` when
 you want the final candidate meta-tags; the unlabeled versions are preserved as provenance.
@@ -716,7 +688,7 @@ deduplication, foreign-key, taxonomy, and embedding-coverage checks performed at
 
 def usage_example() -> str:
     """Provide a compact loader that a code-enabled GPT can run after extraction."""
-    return '''from __future__ import annotations
+    return """from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -745,7 +717,7 @@ for triple in read_jsonl("data/triples.jsonl"):
     object_vector = entity_vectors[triple["object"]["embedding_row"]]
     # Run analysis here. Sentence text is intentionally joined rather than duplicated.
     break
-'''
+"""
 
 
 def copy_sources(stage: Path) -> None:
@@ -755,12 +727,8 @@ def copy_sources(stage: Path) -> None:
             stage / "database" / "konbaung_knowledge_graph_v3.nq"
         ),
         GRAPH_ROOT / "manifest.json": stage / "database" / "source_manifest.json",
-        EMBEDDING_ROOT / "node_records.jsonl": (
-            stage / "embeddings" / "entity_records.jsonl"
-        ),
-        EMBEDDING_ROOT / "edge_records.jsonl": (
-            stage / "embeddings" / "relation_records.jsonl"
-        ),
+        EMBEDDING_ROOT / "node_records.jsonl": (stage / "embeddings" / "entity_records.jsonl"),
+        EMBEDDING_ROOT / "edge_records.jsonl": (stage / "embeddings" / "relation_records.jsonl"),
         EMBEDDING_ROOT / "node_base_vectors.npy": (
             stage / "embeddings" / "entity_base_vectors.npy"
         ),
@@ -788,9 +756,7 @@ def copy_sources(stage: Path) -> None:
         EMBEDDING_ROOT / "edge_fused_vectors.npy": (
             stage / "similarity" / "features" / "relation_fused_vectors.npy"
         ),
-        EMBEDDING_ROOT / "node_knn.npz": (
-            stage / "similarity" / "precomputed" / "entity_knn.npz"
-        ),
+        EMBEDDING_ROOT / "node_knn.npz": (stage / "similarity" / "precomputed" / "entity_knn.npz"),
         EMBEDDING_ROOT / "edge_knn.npz": (
             stage / "similarity" / "precomputed" / "relation_knn.npz"
         ),
@@ -815,12 +781,8 @@ def copy_sources(stage: Path) -> None:
         EMBEDDING_ROOT / "edge_assignments_labeled.jsonl": (
             stage / "clustering" / "relation_assignments_labeled.jsonl"
         ),
-        EMBEDDING_ROOT / "node_clusters.json": (
-            stage / "clustering" / "entity_clusters.json"
-        ),
-        EMBEDDING_ROOT / "edge_clusters.json": (
-            stage / "clustering" / "relation_clusters.json"
-        ),
+        EMBEDDING_ROOT / "node_clusters.json": (stage / "clustering" / "entity_clusters.json"),
+        EMBEDDING_ROOT / "edge_clusters.json": (stage / "clustering" / "relation_clusters.json"),
         EMBEDDING_ROOT / "node_clusters_labeled.json": (
             stage / "clustering" / "entity_clusters_labeled.json"
         ),
@@ -836,9 +798,7 @@ def copy_sources(stage: Path) -> None:
         EMBEDDING_ROOT / "selected_resolution.json": (
             stage / "clustering" / "selected_resolution.json"
         ),
-        EMBEDDING_ROOT / "resolution_sweep.json": (
-            stage / "clustering" / "resolution_sweep.json"
-        ),
+        EMBEDDING_ROOT / "resolution_sweep.json": (stage / "clustering" / "resolution_sweep.json"),
         EMBEDDING_ROOT / "cluster_labeling_audit.json": (
             stage / "clustering" / "cluster_labeling_audit.json"
         ),
@@ -859,15 +819,9 @@ def copy_sources(stage: Path) -> None:
         ),
         CANONICAL_ROOT / "index.json": stage / "provenance" / "canonical_index.json",
         AXIAL_ROOT / "manifest.json": stage / "provenance" / "axial_manifest.json",
-        METHODOLOGY_MD: (
-            stage / "methodology" / "KONBAUNG_DATA_AND_EMBEDDINGS_METHODOLOGY.md"
-        ),
-        METHODOLOGY_DOCX: (
-            stage / "methodology" / "KONBAUNG_DATA_AND_EMBEDDINGS_METHODOLOGY.docx"
-        ),
-        Path(__file__).resolve(): (
-            stage / "provenance" / "build_webgpt_analysis_package.py"
-        ),
+        METHODOLOGY_MD: (stage / "methodology" / "KONBAUNG_DATA_AND_EMBEDDINGS_METHODOLOGY.md"),
+        METHODOLOGY_DOCX: (stage / "methodology" / "KONBAUNG_DATA_AND_EMBEDDINGS_METHODOLOGY.docx"),
+        Path(__file__).resolve(): (stage / "provenance" / "build_webgpt_analysis_package.py"),
     }
     for source, destination in copies.items():
         if not source.is_file():
@@ -899,12 +853,8 @@ def source_hashes() -> dict[str, str]:
         "relation_fused_vectors.npy": EMBEDDING_ROOT / "edge_fused_vectors.npy",
         "entity_knn.npz": EMBEDDING_ROOT / "node_knn.npz",
         "relation_knn.npz": EMBEDDING_ROOT / "edge_knn.npz",
-        "entity_assignments_labeled.jsonl": (
-            EMBEDDING_ROOT / "node_assignments_labeled.jsonl"
-        ),
-        "relation_assignments_labeled.jsonl": (
-            EMBEDDING_ROOT / "edge_assignments_labeled.jsonl"
-        ),
+        "entity_assignments_labeled.jsonl": (EMBEDDING_ROOT / "node_assignments_labeled.jsonl"),
+        "relation_assignments_labeled.jsonl": (EMBEDDING_ROOT / "edge_assignments_labeled.jsonl"),
         "entity_clusters_labeled.json": EMBEDDING_ROOT / "node_clusters_labeled.json",
         "relation_clusters_labeled.json": EMBEDDING_ROOT / "edge_clusters_labeled.json",
         "knowledge_graph_v3.nq": GRAPH_ROOT / "konbaung_knowledge_graph_v3.nq",
@@ -1060,8 +1010,7 @@ def build() -> Path:
                 "relationKnn": edge_knn_stats,
                 "featureMatrices": feature_stats,
                 "formula": (
-                    "0.70 * cosine(base, base) + "
-                    "0.30 * cosine(contextCentroid, contextCentroid)"
+                    "0.70 * cosine(base, base) + 0.30 * cosine(contextCentroid, contextCentroid)"
                 ),
             },
             "clustering": {
@@ -1113,9 +1062,7 @@ def build() -> Path:
                 "predicateEmbedding": (
                     "embedding_row -> embeddings/relation_base_vectors.npy[row]"
                 ),
-                "axialCategory": (
-                    "axial_categories.*.id -> data/axial_category_catalog.json"
-                ),
+                "axialCategory": ("axial_categories.*.id -> data/axial_category_catalog.json"),
                 "entitySimilarityAndClusterRows": (
                     "index -> embeddings/entity_records.jsonl.index"
                 ),
@@ -1126,9 +1073,7 @@ def build() -> Path:
             "deduplication": {
                 "key": "sentence_id",
                 "selectionRule": canonical_index["selectionRule"],
-                "sourceDuplicateSentenceIds": canonical_index["totals"][
-                    "duplicateSentenceIds"
-                ],
+                "sourceDuplicateSentenceIds": canonical_index["totals"]["duplicateSentenceIds"],
                 "removedDuplicateAnnotationAppearances": canonical_index["totals"][
                     "removedDuplicateAppearances"
                 ],
@@ -1153,8 +1098,7 @@ def build() -> Path:
             },
             "precomputedSimilarity": {
                 "formula": (
-                    "0.70 * cosine(base, base) + "
-                    "0.30 * cosine(contextCentroid, contextCentroid)"
+                    "0.70 * cosine(base, base) + 0.30 * cosine(contextCentroid, contextCentroid)"
                 ),
                 "candidateMethod": (
                     "60 projected candidate neighbors followed by exact fused-feature "
@@ -1204,19 +1148,14 @@ def build() -> Path:
             "sourceSha256": source_hashes(),
         }
         write_json(stage / "manifest.json", manifest)
-        (stage / "README.md").write_text(
-            package_readme(counts, canonical_index), encoding="utf-8"
-        )
+        (stage / "README.md").write_text(package_readme(counts, canonical_index), encoding="utf-8")
         (stage / "load_example.py").write_text(usage_example(), encoding="utf-8")
 
         packaged_files = sorted(path for path in stage.rglob("*") if path.is_file())
         checksum_lines = [
-            f"{sha256(path)}  {path.relative_to(stage).as_posix()}"
-            for path in packaged_files
+            f"{sha256(path)}  {path.relative_to(stage).as_posix()}" for path in packaged_files
         ]
-        (stage / "CHECKSUMS.sha256").write_text(
-            "\n".join(checksum_lines) + "\n", encoding="utf-8"
-        )
+        (stage / "CHECKSUMS.sha256").write_text("\n".join(checksum_lines) + "\n", encoding="utf-8")
         packaged_files = sorted(path for path in stage.rglob("*") if path.is_file())
 
         temporary_fd, temporary_zip_name = tempfile.mkstemp(
@@ -1238,9 +1177,7 @@ def build() -> Path:
                 bad_member = archive.testzip()
                 if bad_member is not None:
                     raise RuntimeError(f"ZIP CRC validation failed: {bad_member}")
-                expected_members = {
-                    path.relative_to(stage).as_posix() for path in packaged_files
-                }
+                expected_members = {path.relative_to(stage).as_posix() for path in packaged_files}
                 if set(archive.namelist()) != expected_members:
                     raise RuntimeError("ZIP member inventory does not match staging files")
             os.replace(temporary_zip, OUTPUT_PATH)

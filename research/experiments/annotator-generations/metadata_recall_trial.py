@@ -83,7 +83,8 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], li
         }
         for triple in triples
     ]
-    return f"""<TARGET_PAGE_TEXT>
+    return (
+        f"""<TARGET_PAGE_TEXT>
 {masked_text}
 </TARGET_PAGE_TEXT>
 
@@ -92,10 +93,15 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], li
 </EXISTING_TRIPLES_READ_ONLY>
 
 {METADATA_ENRICHMENT_PROMPT}
-""", page, triples
+""",
+        page,
+        triples,
+    )
 
 
-def validate(result: RecallResult, page: dict[str, Any], triples: list[dict[str, Any]]) -> list[str]:
+def validate(
+    result: RecallResult, page: dict[str, Any], triples: list[dict[str, Any]]
+) -> list[str]:
     warnings: list[str] = []
     source = {row["id"]: row for row in triples}
     target = normalized(page["canonicalText"])
@@ -105,15 +111,20 @@ def validate(result: RecallResult, page: dict[str, Any], triples: list[dict[str,
             warnings.append(f"M[{index}]: unknown id {row.id}")
             continue
         categories = {
-            "time": row.time, "place": row.place, "quantity": row.quantity,
-            "manner": row.manner, "reason": row.reason,
+            "time": row.time,
+            "place": row.place,
+            "quantity": row.quantity,
+            "manner": row.manner,
+            "reason": row.reason,
         }
         items = [item for item in categories.values() if item is not None]
         if not items:
             warnings.append(f"M[{index}]: empty record should have been omitted")
         for category in ("time", "place", "quantity"):
             if categories[category] is not None and original.get(category):
-                warnings.append(f"M[{index}]: category {category} already had data and will be stripped")
+                warnings.append(
+                    f"M[{index}]: category {category} already had data and will be stripped"
+                )
         for item in items:
             if normalized(item.my) not in target:
                 warnings.append(f"M[{index}]: addition span absent from page: {item.my}")
@@ -194,7 +205,9 @@ def run(volume: int, page_number: int, output_name: str) -> Path:
         "usage": response.usage_metadata.model_dump(mode="json") if response.usage_metadata else {},
         "result": parsed_result,
     }
-    (output_dir / "result.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (output_dir / "result.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     write_review(output_dir / "review.md", page, triples, parsed_result)
     return output_dir
 

@@ -81,10 +81,7 @@ def read_active_roster() -> list[dict[str, Any]]:
                 "source_candidates": int(row["source_candidates"]),
             }
         )
-    if not all(
-        left["mentions"] >= right["mentions"]
-        for left, right in zip(parsed, parsed[1:])
-    ):
+    if not all(left["mentions"] >= right["mentions"] for left, right in zip(parsed, parsed[1:])):
         raise RuntimeError("Active roster is no longer frequency-descending")
     return parsed
 
@@ -131,17 +128,11 @@ def first_wave_summary() -> dict[str, Any]:
         "submittedCalls": manifest["submittedPages"],
         "newAssignedEntities": manifest["assignedEntities"],
         "newAssignedEligibleParents": manifest["assignedEligibleParents"],
-        "futureCallsAvoided": (
-            manifest["assignedEligibleParents"] - manifest["submittedPages"]
-        ),
-        "singletonAliases": (
-            manifest["assignedEntities"] - manifest["assignedEligibleParents"]
-        ),
+        "futureCallsAvoided": (manifest["assignedEligibleParents"] - manifest["submittedPages"]),
+        "singletonAliases": (manifest["assignedEntities"] - manifest["assignedEligibleParents"]),
         "multiEntityClusters": manifest["multiEntityClusters"],
         "conformanceDroppedStrings": manifest["conformanceDroppedStrings"],
-        "candidateRowsRemoved": manifest["mutation"][
-            "candidateRowsRemovedThisRecoveryPass"
-        ],
+        "candidateRowsRemoved": manifest["mutation"]["candidateRowsRemovedThisRecoveryPass"],
         "remainingEligibleParents": manifest["remainingEligibleParents"],
         "usage": manifest["usage"],
         "audit": manifest["globalExclusionAudit"],
@@ -219,9 +210,7 @@ def select_wave(roster: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], lis
             "scan_order": scan_order,
             "wave_order": len(selected) + 1,
             "active_candidates": len(candidates),
-            "footprint_sha256": hashlib.sha256(
-                "\n".join(footprint).encode("utf-8")
-            ).hexdigest(),
+            "footprint_sha256": hashlib.sha256("\n".join(footprint).encode("utf-8")).hexdigest(),
         }
         selected.append(record)
         for tag in footprint:
@@ -249,14 +238,10 @@ def write_wave_selection(
         "file",
         "footprint_sha256",
     ]
-    with (wave_directory / "selection.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (wave_directory / "selection.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=selection_fields, lineterminator="\n")
         writer.writeheader()
-        writer.writerows(
-            [{field: row[field] for field in selection_fields} for row in selected]
-        )
+        writer.writerows([{field: row[field] for field in selection_fields} for row in selected])
     skip_fields = [
         "scan_order",
         "id",
@@ -268,9 +253,7 @@ def write_wave_selection(
         "conflicting_parent",
         "conflict_count",
     ]
-    with (wave_directory / "conflict_skips.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (wave_directory / "conflict_skips.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=skip_fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(skipped)
@@ -299,8 +282,7 @@ def load_or_create_selection(wave: int) -> tuple[Path, list[dict[str, Any]]]:
         selected, skipped = select_wave(read_active_roster())
         write_wave_selection(wave_directory, selected, skipped)
         print(
-            f"wave {wave}: selected {len(selected)} pages; "
-            f"skipped {len(skipped)} overlaps",
+            f"wave {wave}: selected {len(selected)} pages; skipped {len(skipped)} overlaps",
             flush=True,
         )
         return wave_directory, selected
@@ -325,8 +307,10 @@ def load_or_create_selection(wave: int) -> tuple[Path, list[dict[str, Any]]]:
 
 def response_directory(wave_directory: Path, parent: dict[str, Any]) -> Path:
     """Give each wave page a stable, readable, and collision-free response folder."""
-    return wave_directory / "responses" / (
-        f"page_{parent['wave_order']:03d}_{parent['id']}_{base.safe_name(parent['entity'])}"
+    return (
+        wave_directory
+        / "responses"
+        / (f"page_{parent['wave_order']:03d}_{parent['id']}_{base.safe_name(parent['entity'])}")
     )
 
 
@@ -384,14 +368,10 @@ def submit_or_resume_page(
             raise RuntimeError("API retry loop ended unexpectedly")
 
     answer = base.answer_from_raw(raw)
-    (directory / "answer_returned.json").write_text(
-        answer + "\n", encoding="utf-8", newline="\n"
-    )
+    (directory / "answer_returned.json").write_text(answer + "\n", encoding="utf-8", newline="\n")
     raw_decision = BinaryDecision.model_validate_json(answer)
     base.write_json(directory / "raw_decision.json", raw_decision.model_dump(mode="json"))
-    decision, conformance = conform_binary_decision(
-        raw_decision, parent["entity"], candidates
-    )
+    decision, conformance = conform_binary_decision(raw_decision, parent["entity"], candidates)
     validate_binary_decision(decision, parent["entity"], candidates)
     base.write_json(directory / "conformance.json", conformance)
     base.write_json(directory / "result.json", decision.model_dump(mode="json"))
@@ -417,9 +397,7 @@ def submit_or_resume_page(
         "parent": parent,
         "candidates": candidates,
         "yes": decision.y,
-        "different": [
-            row["entity"] for row in candidates if row["entity"] not in decision.y
-        ],
+        "different": [row["entity"] for row in candidates if row["entity"] not in decision.y],
         "usage": usage,
         "directory": str(directory.relative_to(OUTPUT)),
         "conformance": conformance,
@@ -464,8 +442,7 @@ def submit_wave(
                 },
             )
             print(
-                f"wave {wave} response {completed}/{len(selected)}: "
-                f"{parent['entity']} — {outcome}",
+                f"wave {wave} response {completed}/{len(selected)}: {parent['entity']} — {outcome}",
                 flush=True,
             )
     if failures:
@@ -552,9 +529,7 @@ def apply_pending(
     """Idempotently remove a complete wave everywhere before exposing its new state."""
     new_assignments = pending["assignments"]
     new_ids = set(new_assignments)
-    new_entities = {
-        assignment["entity"] for assignment in new_assignments.values()
-    }
+    new_entities = {assignment["entity"] for assignment in new_assignments.values()}
     targets = target_files_for_entities(new_entities)
     rows_removed = 0
     pages_changed = 0
@@ -600,9 +575,7 @@ def audit_global_exclusion(
 ) -> dict[str, Any]:
     """Exhaustively prove that all cumulative assignments are absent from lists and roster."""
     assigned_ids = set(assignments)
-    assigned_entities = {
-        assignment["entity"] for assignment in assignments.values()
-    }
+    assigned_entities = {assignment["entity"] for assignment in assignments.values()}
     eligible_ids = {row["id"] for row in eligible}
     active_files = {path.name for path in (OUTPUT / ACTIVE_LISTS).glob("*.csv")}
     retired_files = {path.name for path in (OUTPUT / RETIRED_LISTS).glob("*.csv")}
@@ -610,9 +583,7 @@ def audit_global_exclusion(
         raise RuntimeError("A materialized page exists in both active and retired folders")
     if len(active_files) + len(retired_files) != len(eligible):
         raise RuntimeError("Materialized eligible page count changed")
-    expected_retired = {
-        row["file"] for row in eligible if row["id"] in assigned_ids
-    }
+    expected_retired = {row["file"] for row in eligible if row["id"] in assigned_ids}
     if retired_files != expected_retired:
         raise RuntimeError("Retired pages do not match cumulative eligible assignments")
     candidate_rows = 0
@@ -623,9 +594,7 @@ def audit_global_exclusion(
             leaked = assigned_entities & {row["entity"] for row in rows}
             if leaked:
                 raise RuntimeError(f"Assigned tags leaked into {path.name}: {sorted(leaked)}")
-    with (OUTPUT / "active_roster.csv").open(
-        encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "active_roster.csv").open(encoding="utf-8", newline="") as handle:
         roster_ids = {row["id"] for row in csv.DictReader(handle)}
     expected_roster = eligible_ids - assigned_ids
     if roster_ids != expected_roster:
@@ -650,9 +619,7 @@ def usage_totals(clusters: list[dict[str, Any]]) -> dict[str, int]:
         "totalTokens": "total_token_count",
     }
     return {
-        output_key: sum(
-            int(cluster["usage"].get(api_key_name) or 0) for cluster in clusters
-        )
+        output_key: sum(int(cluster["usage"].get(api_key_name) or 0) for cluster in clusters)
         for output_key, api_key_name in keys.items()
     }
 
@@ -741,14 +708,10 @@ def write_wave_review(
                 "",
             ]
         )
-    (wave_directory / "REVIEW.md").write_text(
-        "\n".join(lines), encoding="utf-8", newline="\n"
-    )
+    (wave_directory / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
 
-def write_cumulative_exports(
-    state: dict[str, Any], all_rows: list[dict[str, Any]]
-) -> None:
+def write_cumulative_exports(state: dict[str, Any], all_rows: list[dict[str, Any]]) -> None:
     """Export a concise ten-wave ledger, manifest, and review for final inspection."""
     assignments = state["assignments"]
     with (OUTPUT / "resolved_entities_after_10_waves.csv").open(
@@ -784,13 +747,14 @@ def write_cumulative_exports(
         "candidateRowsRemoved",
         "remainingEligibleParents",
     ]
-    with (OUTPUT / "WAVE_SUMMARIES.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "WAVE_SUMMARIES.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=summary_fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(
-            [{field: summary.get(field, 0) for field in summary_fields} for summary in state["waveSummaries"]]
+            [
+                {field: summary.get(field, 0) for field in summary_fields}
+                for summary in state["waveSummaries"]
+            ]
         )
     total_usage = {
         key: sum(int(summary["usage"].get(key) or 0) for summary in state["waveSummaries"])
@@ -857,9 +821,7 @@ def write_cumulative_exports(
             "the original `REVIEW.md` contains wave one.",
         ]
     )
-    (OUTPUT / "TEN_WAVE_REVIEW.md").write_text(
-        "\n".join(lines), encoding="utf-8", newline="\n"
-    )
+    (OUTPUT / "TEN_WAVE_REVIEW.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
 
 def write_full_completion_exports(
@@ -927,9 +889,7 @@ def write_full_completion_exports(
         "candidateRowsRemoved",
         "remainingEligibleParents",
     ]
-    with (OUTPUT / "ALL_WAVE_SUMMARIES.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "ALL_WAVE_SUMMARIES.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=summary_fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(
@@ -940,15 +900,10 @@ def write_full_completion_exports(
         )
 
     total_usage = {
-        key: sum(
-            int(summary["usage"].get(key) or 0)
-            for summary in state["waveSummaries"]
-        )
+        key: sum(int(summary["usage"].get(key) or 0) for summary in state["waveSummaries"])
         for key in ("promptTokens", "answerTokens", "thinkingTokens", "totalTokens")
     }
-    total_calls = sum(
-        int(summary["submittedCalls"]) for summary in state["waveSummaries"]
-    )
+    total_calls = sum(int(summary["submittedCalls"]) for summary in state["waveSummaries"])
     manifest = {
         "status": "completed_non_singleton_pass",
         "completedAt": datetime.now(timezone.utc).isoformat(),
@@ -966,8 +921,7 @@ def write_full_completion_exports(
         "totalAssignedEntityTags": len(assignments),
         "totalAliasesAbsorbedWithoutOwnCall": len(assignments) - total_calls,
         "conformanceDroppedStrings": sum(
-            int(summary.get("conformanceDroppedStrings", 0))
-            for summary in state["waveSummaries"]
+            int(summary.get("conformanceDroppedStrings", 0)) for summary in state["waveSummaries"]
         ),
         "usage": total_usage,
         "finalGlobalExclusionAudit": audit,

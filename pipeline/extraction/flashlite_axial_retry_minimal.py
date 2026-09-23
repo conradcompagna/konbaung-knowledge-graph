@@ -110,10 +110,7 @@ def submit() -> dict[str, Any]:
     else:
         batch = client.batches.create(
             model=full.MODEL,
-            src=[
-                build_request(job, cache_name, template, schema)
-                for job in jobs
-            ],
+            src=[build_request(job, cache_name, template, schema) for job in jobs],
             config=types.CreateBatchJobConfig(
                 display_name=f"konbaung_axial_retry_minimal_{full.utc_stamp()}"
             ),
@@ -154,9 +151,7 @@ def status() -> dict[str, Any]:
         "checked_at": full.utc_now(),
         "name": batch.name,
         "state": full.enum_name(batch.state),
-        "completion_stats": full.json_safe(
-            getattr(batch, "completion_stats", None)
-        ),
+        "completion_stats": full.json_safe(getattr(batch, "completion_stats", None)),
     }
     full.write_json(RETRY_ROOT / "batch_latest.json", full.json_safe(batch))
     full.write_json(RETRY_ROOT / "status.json", record)
@@ -165,9 +160,7 @@ def status() -> dict[str, Any]:
 
 def process_batch(batch: Any, jobs: list[full.PageJob]) -> dict[str, Any]:
     if full.enum_name(batch.state) != "JOB_STATE_SUCCEEDED":
-        raise RuntimeError(
-            f"{batch.name} ended in {full.enum_name(batch.state)}"
-        )
+        raise RuntimeError(f"{batch.name} ended in {full.enum_name(batch.state)}")
     by_key = {job.key: job for job in jobs}
     responses = getattr(getattr(batch, "dest", None), "inlined_responses", None) or []
     seen: set[str] = set()
@@ -177,9 +170,7 @@ def process_batch(batch: Any, jobs: list[full.PageJob]) -> dict[str, Any]:
         metadata = getattr(inlined, "metadata", None) or {}
         job = by_key.get(metadata.get("key", ""))
         if job is None:
-            rows.append(
-                {"key": metadata.get("key"), "category": "unknown_response"}
-            )
+            rows.append({"key": metadata.get("key"), "category": "unknown_response"})
             totals["unknown_response"] += 1
             continue
         seen.add(job.key)
@@ -236,9 +227,7 @@ def process_batch(batch: Any, jobs: list[full.PageJob]) -> dict[str, Any]:
         "batch_name": batch.name,
         "state": full.enum_name(batch.state),
         "thinking_level": "minimal",
-        "completion_stats": full.json_safe(
-            getattr(batch, "completion_stats", None)
-        ),
+        "completion_stats": full.json_safe(getattr(batch, "completion_stats", None)),
         "totals": dict(totals),
         "results": rows,
     }
@@ -255,11 +244,7 @@ def backup_file(path: Path) -> None:
 
 
 def merge(summary: dict[str, Any], jobs: list[full.PageJob]) -> dict[str, Any]:
-    accepted = {
-        row["key"]
-        for row in summary["results"]
-        if row.get("category") == "accepted"
-    }
+    accepted = {row["key"] for row in summary["results"] if row.get("category") == "accepted"}
     for aggregate in (
         FULL_ROOT / "final_report.json",
         FULL_ROOT / "run_summary.json",
@@ -320,25 +305,16 @@ def merge(summary: dict[str, Any], jobs: list[full.PageJob]) -> dict[str, Any]:
         [*original_summaries, summary],
         prefix,
     )
-    remaining = [
-        row
-        for row in summary["results"]
-        if row.get("category") != "accepted"
-    ]
+    remaining = [row for row in summary["results"] if row.get("category") != "accepted"]
     report["retry_policy_applied"] = "one 16-page minimal-thinking batch"
     report["minimal_retry"] = {
         "batch_name": summary["batch_name"],
         "submitted_pages": len(jobs),
         "submitted_triples": sum(len(job.triples) for job in jobs),
         "accepted_pages": len(accepted),
-        "accepted_triples": sum(
-            len(by_key[key].triples) for key in accepted
-        ),
+        "accepted_triples": sum(len(by_key[key].triples) for key in accepted),
         "remaining_pages": remaining,
-        "usage": {
-            key: summary["totals"].get(key, 0)
-            for key in full.USAGE_KEYS
-        },
+        "usage": {key: summary["totals"].get(key, 0) for key in full.USAGE_KEYS},
     }
     full.write_json(FULL_ROOT / "final_report.json", report)
     full.write_json(
@@ -361,9 +337,9 @@ def merge(summary: dict[str, Any], jobs: list[full.PageJob]) -> dict[str, Any]:
             [
                 "---",
                 "",
-                (full.page_output_dir(FULL_ROOT, job) / "review.md").read_text(
-                    encoding="utf-8"
-                ).rstrip(),
+                (full.page_output_dir(FULL_ROOT, job) / "review.md")
+                .read_text(encoding="utf-8")
+                .rstrip(),
                 "",
             ]
         )

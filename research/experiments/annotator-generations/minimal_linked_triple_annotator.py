@@ -26,7 +26,12 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field, ValidationError
 
-from konbaung_gemini_page_kg_annotator import DEFAULT_ENV_FILE, DEFAULT_SOURCE_ROOT, PageJob, resolve_api_key
+from konbaung_gemini_page_kg_annotator import (
+    DEFAULT_ENV_FILE,
+    DEFAULT_SOURCE_ROOT,
+    PageJob,
+    resolve_api_key,
+)
 from konbaung_gemini_xlmr_seed_annotator import (
     DEFAULT_CONTEXT_RATIO,
     build_page_index_with_neighbors,
@@ -107,7 +112,9 @@ def validation_output_path(out_dir: Path, bucket: str, job: PageJob) -> Path:
     return out_dir / "validation" / bucket / job.volume_id / f"page_{job.page_num:04d}.json"
 
 
-def build_prompt(job: PageJob, page_index: dict[tuple[str, int], PageJob], context_ratio: float) -> str:
+def build_prompt(
+    job: PageJob, page_index: dict[tuple[str, int], PageJob], context_ratio: float
+) -> str:
     blocks = context_blocks(job, page_index, context_ratio)
     return PROMPT_TEMPLATE.format(
         job_id=job.job_id,
@@ -200,7 +207,9 @@ def resolve_span(job: PageJob, tx: str) -> tuple[dict[str, Any], list[str], Opti
     return resolved or {}, warnings, error
 
 
-def validate_annotation(job: PageJob, annotation: MinimalAnnotation) -> tuple[dict[str, Any], list[str], list[str]]:
+def validate_annotation(
+    job: PageJob, annotation: MinimalAnnotation
+) -> tuple[dict[str, Any], list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
     resolved: dict[str, Any] = {"T": [], "_review_T": []}
@@ -372,7 +381,9 @@ def run_page(args: argparse.Namespace) -> None:
 
     api_key = resolve_api_key(args)
     if not api_key:
-        raise RuntimeError("No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file.")
+        raise RuntimeError(
+            "No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file."
+        )
 
     client = genai.Client(api_key=api_key)
     annotation, usage = call_gemini(
@@ -415,7 +426,9 @@ def run_page(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run minimal linked triple extraction on one Konbaung OCR page.")
+    parser = argparse.ArgumentParser(
+        description="Run minimal linked triple extraction on one Konbaung OCR page."
+    )
     parser.add_argument("--source-root", default=str(DEFAULT_SOURCE_ROOT))
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     parser.add_argument("--volume-id", default="konbaung_vol1")

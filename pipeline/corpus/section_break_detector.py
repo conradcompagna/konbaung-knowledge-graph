@@ -208,7 +208,9 @@ def parse_toc_entries(ocr_json_dir: Path, toc_pages: list[int]) -> list[TocEntry
                 starts.append((idx, section_no))
         entry_records: list[dict[str, Any]] = []
         for entry_idx, (body_idx, section_no) in enumerate(starts):
-            next_body_idx = starts[entry_idx + 1][0] if entry_idx + 1 < len(starts) else len(body_lines)
+            next_body_idx = (
+                starts[entry_idx + 1][0] if entry_idx + 1 < len(starts) else len(body_lines)
+            )
             entry_lines = body_lines[body_idx:next_body_idx]
             y0 = min(line.y0 for line in entry_lines)
             y1 = max(line.y1 for line in entry_lines)
@@ -304,7 +306,9 @@ def detect_printed_page(lines: list[VisualLine]) -> Optional[int]:
 def build_printed_page_map(valid_page_nums: list[int], ocr_json_dir: Path) -> dict[int, int]:
     anchors: dict[int, int] = {}
     for page_num in valid_page_nums:
-        value = detect_printed_page(extract_visual_lines(ocr_json_dir / f"page_{page_num:04d}.json", page_num))
+        value = detect_printed_page(
+            extract_visual_lines(ocr_json_dir / f"page_{page_num:04d}.json", page_num)
+        )
         if value is not None:
             anchors[page_num] = value
 
@@ -326,7 +330,9 @@ def build_printed_page_map(valid_page_nums: list[int], ocr_json_dir: Path) -> di
 
 
 def is_punctuation_only(text: str) -> bool:
-    return not re.search(r"[\u1000-\u109F]", text) or all(ch in "။၊.:-–—()[] 0123456789၀၁၂၃၄၅၆၇၈၉ " for ch in text)
+    return not re.search(r"[\u1000-\u109F]", text) or all(
+        ch in "။၊.:-–—()[] 0123456789၀၁၂၃၄၅၆၇၈၉ " for ch in text
+    )
 
 
 def heading_line_score(lines: list[VisualLine], index: int) -> tuple[bool, str]:
@@ -349,8 +355,17 @@ def heading_line_score(lines: list[VisualLine], index: int) -> tuple[bool, str]:
     gap_below = next_line.y0 - line.y1 if next_line else 999
     text_signal = any(key in text for key in ["ခြင်း", "အကြောင်း", "အနွယ်", "ဖြစ်တော်စဉ်", "အတ္ထုပ္ပတ္တိ"])
     centered = line.center_deviation <= 0.075 and line.width_ratio <= 0.62
-    spaced_centered = line.center_deviation <= 0.11 and line.width_ratio <= 0.58 and (gap_above >= 55 or gap_below >= 55)
-    signal_centered = text_signal and line.center_deviation <= 0.13 and line.width_ratio <= 0.68 and (gap_above >= 45 or gap_below >= 45)
+    spaced_centered = (
+        line.center_deviation <= 0.11
+        and line.width_ratio <= 0.58
+        and (gap_above >= 55 or gap_below >= 55)
+    )
+    signal_centered = (
+        text_signal
+        and line.center_deviation <= 0.13
+        and line.width_ratio <= 0.68
+        and (gap_above >= 45 or gap_below >= 45)
+    )
     if centered or spaced_centered or signal_centered:
         return True, (
             f"width={line.width_ratio:.3f};center_dev={line.center_deviation:.3f};"
@@ -417,7 +432,9 @@ def similarity(a: str, b: str) -> float:
 
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    path.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -431,7 +448,9 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def maybe_write_crops(out_dir: Path, image_dir: Path, rows: list[dict[str, Any]], padding: int = 120) -> None:
+def maybe_write_crops(
+    out_dir: Path, image_dir: Path, rows: list[dict[str, Any]], padding: int = 120
+) -> None:
     try:
         from PIL import Image, ImageDraw
     except Exception:
@@ -461,7 +480,9 @@ def maybe_write_crops(out_dir: Path, image_dir: Path, rows: list[dict[str, Any]]
                 outline="red",
                 width=6,
             )
-            crop_name = f"section_{int(row['section_no']):04d}_page_{int(row['ocr_page_num']):04d}.png"
+            crop_name = (
+                f"section_{int(row['section_no']):04d}_page_{int(row['ocr_page_num']):04d}.png"
+            )
             crop.save(crop_dir / crop_name)
             row["review_crop"] = str(crop_dir / crop_name)
 
@@ -487,10 +508,14 @@ def _row_review_label(row: dict[str, Any]) -> str:
 
 
 def _has_heading_box(row: dict[str, Any]) -> bool:
-    return all(row.get(key) != "" for key in ("heading_x0", "heading_y0", "heading_x1", "heading_y1"))
+    return all(
+        row.get(key) != "" for key in ("heading_x0", "heading_y0", "heading_x1", "heading_y1")
+    )
 
 
-def maybe_write_review_contact_sheets(out_dir: Path, image_dir: Path, rows: list[dict[str, Any]]) -> None:
+def maybe_write_review_contact_sheets(
+    out_dir: Path, image_dir: Path, rows: list[dict[str, Any]]
+) -> None:
     try:
         from PIL import Image, ImageDraw
     except Exception:
@@ -610,8 +635,7 @@ def run(args: argparse.Namespace) -> None:
         ocr_by_printed.setdefault(printed_page, ocr_page)
 
     heading_by_page = {
-        page_num: detect_heading_candidates(page_num, ocr_json_dir)
-        for page_num in valid_page_nums
+        page_num: detect_heading_candidates(page_num, ocr_json_dir) for page_num in valid_page_nums
     }
 
     rows: list[dict[str, Any]] = []
@@ -633,7 +657,9 @@ def run(args: argparse.Namespace) -> None:
         for page_num in search_pages:
             for heading in heading_by_page.get(page_num, []):
                 candidates.append((similarity(entry.title, heading.text), heading))
-        candidates.sort(key=lambda pair: (pair[0], -abs(pair[1].page_num - predicted_page)), reverse=True)
+        candidates.sort(
+            key=lambda pair: (pair[0], -abs(pair[1].page_num - predicted_page)), reverse=True
+        )
         best_score, best_heading = candidates[0] if candidates else (0.0, None)
 
         row = {
@@ -644,7 +670,9 @@ def run(args: argparse.Namespace) -> None:
             "toc_page_num": entry.toc_page_num,
             "ocr_page_num": predicted_page,
             "in_valid_range": predicted_page in valid_page_set,
-            "image_path": str(image_dir / f"page_{predicted_page:04d}.png") if predicted_page else "",
+            "image_path": str(image_dir / f"page_{predicted_page:04d}.png")
+            if predicted_page
+            else "",
             "heading_match_score": round(best_score, 4),
             "heading_text": best_heading.text if best_heading else "",
             "heading_line_start": best_heading.line_start if best_heading else "",
@@ -666,7 +694,11 @@ def run(args: argparse.Namespace) -> None:
     write_json(out_dir / f"{volume_id}_printed_page_map.json", printed_by_ocr)
     write_json(
         out_dir / f"{volume_id}_all_heading_candidates.json",
-        {str(page_num): [asdict(item) for item in items] for page_num, items in heading_by_page.items() if items},
+        {
+            str(page_num): [asdict(item) for item in items]
+            for page_num, items in heading_by_page.items()
+            if items
+        },
     )
     summary = {
         "volume_id": volume_id,
@@ -674,7 +706,9 @@ def run(args: argparse.Namespace) -> None:
         "toc_entries": len(toc_entries),
         "predicted_breaks_in_valid_range": len(rows),
         "with_heading_candidate": sum(1 for row in rows if row["heading_text"]),
-        "with_strong_heading_match_score_ge_0_25": sum(1 for row in rows if float(row["heading_match_score"]) >= 0.25),
+        "with_strong_heading_match_score_ge_0_25": sum(
+            1 for row in rows if float(row["heading_match_score"]) >= 0.25
+        ),
         "out_dir": str(out_dir),
     }
     write_json(out_dir / "run_summary.json", summary)
@@ -682,7 +716,9 @@ def run(args: argparse.Namespace) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Deterministically compute Konbaung section break candidates.")
+    parser = argparse.ArgumentParser(
+        description="Deterministically compute Konbaung section break candidates."
+    )
     parser.add_argument("--volume-id", default="konbaung_vol1")
     parser.add_argument("--ocr-root", default="konbaung-google-ocr")
     parser.add_argument("--valid-root", default="konbaung_viable_pages_manual_ranges")

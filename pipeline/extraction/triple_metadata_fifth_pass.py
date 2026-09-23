@@ -29,17 +29,33 @@ class SpanGloss(BaseModel):
 class AuxiliaryArgument(BaseModel):
     my: str = Field(description="Exact Burmese auxiliary argument span from TARGET_PAGE_TEXT.")
     en: str = Field(description="Short English gloss.")
-    type: str = Field(description="Concise open type such as reason, instrument, method, condition, or result.")
+    type: str = Field(
+        description="Concise open type such as reason, instrument, method, condition, or result."
+    )
 
 
 class TripleMetadataAddition(BaseModel):
     id: str = Field(description="Exact existing triple ID receiving these additions.")
-    time: list[SpanGloss] | None = Field(default=None, description="All new governing date or time details.")
-    place: list[SpanGloss] | None = Field(default=None, description="All new governing location details.")
-    quantity: list[SpanGloss] | None = Field(default=None, description="All new governing quantities or measurements.")
-    othersubjects: list[SpanGloss] | None = Field(default=None, description="All additional subjects or co-agents beyond the main subject.")
-    otherobjects: list[SpanGloss] | None = Field(default=None, description="All additional objects, recipients, targets, or affected entities beyond the main object.")
-    auxiliaryarguments: list[AuxiliaryArgument] | None = Field(default=None, description="All additional reasons, conditions, methods, instruments, routes, procedures, or results.")
+    time: list[SpanGloss] | None = Field(
+        default=None, description="All new governing date or time details."
+    )
+    place: list[SpanGloss] | None = Field(
+        default=None, description="All new governing location details."
+    )
+    quantity: list[SpanGloss] | None = Field(
+        default=None, description="All new governing quantities or measurements."
+    )
+    othersubjects: list[SpanGloss] | None = Field(
+        default=None, description="All additional subjects or co-agents beyond the main subject."
+    )
+    otherobjects: list[SpanGloss] | None = Field(
+        default=None,
+        description="All additional objects, recipients, targets, or affected entities beyond the main object.",
+    )
+    auxiliaryarguments: list[AuxiliaryArgument] | None = Field(
+        default=None,
+        description="All additional reasons, conditions, methods, instruments, routes, procedures, or results.",
+    )
 
 
 class FifthPassResult(BaseModel):
@@ -106,11 +122,11 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], li
 {FIFTH_PASS_PROMPT}
 
 <EXISTING_SUMMARY_READ_ONLY>
-{page.get('summary') or ''}
+{page.get("summary") or ""}
 </EXISTING_SUMMARY_READ_ONLY>
 
 <TARGET_PAGE_TEXT>
-{page['canonicalText']}
+{page["canonicalText"]}
 </TARGET_PAGE_TEXT>
 
 <EXISTING_TRIPLES_READ_ONLY>
@@ -124,7 +140,9 @@ def normalized(value: str) -> str:
     return re.sub(r"\s+", "", value)
 
 
-def validate(result: FifthPassResult, page: dict[str, Any], triples: list[dict[str, Any]]) -> list[str]:
+def validate(
+    result: FifthPassResult, page: dict[str, Any], triples: list[dict[str, Any]]
+) -> list[str]:
     target = normalized(page["canonicalText"])
     existing = {item["id"]: item for item in triples}
     warnings: list[str] = []

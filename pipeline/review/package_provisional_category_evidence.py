@@ -23,9 +23,7 @@ ZIP_PATH = ROOT / f"{PACKAGE_NAME}.zip"
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
@@ -86,17 +84,13 @@ def main() -> None:
 
     prefix, _, _ = full.load_prompt_package()
     taxonomy_labels = full.taxonomy_labels(prefix)
-    provisional_by_id = {
-        (category["key"], category["id"]): category for category in categories
-    }
+    provisional_by_id = {(category["key"], category["id"]): category for category in categories}
     page_cache: dict[str, dict[str, Any]] = {}
     sentence_cache: dict[tuple[str, str], dict[str, str]] = {}
     for category in categories:
         key = category["key"]
         volume = int(key[3])
-        page_data = full.read_json(
-            RUN_ROOT / "pages" / f"vol{volume}" / key / "page_data.json"
-        )
+        page_data = full.read_json(RUN_ROOT / "pages" / f"vol{volume}" / key / "page_data.json")
         page_cache[key] = page_data
         for sentence in page_data["sentences"]:
             sentence_cache[(key, sentence["sid"])] = sentence
@@ -110,9 +104,7 @@ def main() -> None:
             if triple["key"] != page_key:
                 continue
             positions = [
-                field
-                for field, tag_id in triple["tags"].items()
-                if tag_id == category["id"]
+                field for field, tag_id in triple["tags"].items() if tag_id == category["id"]
             ]
             if not positions:
                 continue
@@ -128,9 +120,7 @@ def main() -> None:
                 for field, tag_id in triple["tags"].items()
             }
             row = {
-                "association_id": (
-                    f"{scoped_id}:{triple['sid']}:{int(triple['i']):03d}"
-                ),
+                "association_id": (f"{scoped_id}:{triple['sid']}:{int(triple['i']):03d}"),
                 "category_scoped_id": scoped_id,
                 "category_positions": positions,
                 "page": {
@@ -164,19 +154,13 @@ def main() -> None:
             {
                 "scoped_id": scoped_id,
                 "page_key": category["key"],
-                "kind": (
-                    "entity"
-                    if category["kind"] == "new_entity_categories"
-                    else "relation"
-                ),
+                "kind": ("entity" if category["kind"] == "new_entity_categories" else "relation"),
                 "temporary_id": category["id"],
                 "label": category["label"],
                 "definition": category["definition"],
                 "justification": category["justification"],
                 "usage_triples": len(usages),
-                "usage_sentences": len(
-                    {usage["sentence"]["sid"] for usage in usages}
-                ),
+                "usage_sentences": len({usage["sentence"]["sid"] for usage in usages}),
                 "evidence": usages,
             }
         )
@@ -203,10 +187,7 @@ def main() -> None:
         )
         if row["category_scoped_id"] not in value["category_scoped_ids"]:
             value["category_scoped_ids"].append(row["category_scoped_id"])
-        triple_id = (
-            f"{row['page']['key']}:{row['triple']['sid']}:"
-            f"{int(row['triple']['i']):03d}"
-        )
+        triple_id = f"{row['page']['key']}:{row['triple']['sid']}:{int(row['triple']['i']):03d}"
         if triple_id not in value["triple_ids"]:
             value["triple_ids"].append(triple_id)
     sentence_rows = list(sentence_groups.values())
@@ -307,12 +288,8 @@ Temporary category IDs are page-scoped and have therefore been namespaced as
         "source_run": str(RUN_ROOT),
         "counts": {
             "provisional_categories": len(category_records),
-            "entity_categories": sum(
-                row["kind"] == "entity" for row in category_records
-            ),
-            "relation_categories": sum(
-                row["kind"] == "relation" for row in category_records
-            ),
+            "entity_categories": sum(row["kind"] == "entity" for row in category_records),
+            "relation_categories": sum(row["kind"] == "relation" for row in category_records),
             "unique_evidence_triples": len(unique_triples),
             "category_triple_associations": len(evidence_rows),
             "unique_sentence_contexts": len(sentence_rows),

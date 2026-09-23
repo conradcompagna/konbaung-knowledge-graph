@@ -105,14 +105,10 @@ def initialize_output(
             raise RuntimeError(f"Output exists without a recoverable state: {OUTPUT}")
         return
     index_by_id = {row["id"]: row for row in all_rows}
-    remaining_roster = read_csv(
-        PRIOR / "remaining_singletons_after_nonsingleton_completion.csv"
-    )
+    remaining_roster = read_csv(PRIOR / "remaining_singletons_after_nonsingleton_completion.csv")
     eligible = [index_by_id[row["id"]] for row in remaining_roster]
     baseline_assignments = baseline_state["assignments"]
-    baseline_entities = {
-        assignment["entity"] for assignment in baseline_assignments.values()
-    }
+    baseline_entities = {assignment["entity"] for assignment in baseline_assignments.values()}
     if len(eligible) != 14671 or any(row["mentions"] != 1 for row in eligible):
         raise RuntimeError("Expected exactly 14,671 remaining singleton parents.")
     if set(index_by_id) != set(baseline_assignments) | {row["id"] for row in eligible}:
@@ -130,9 +126,7 @@ def initialize_output(
             source_rows = base.read_candidate_csv(SOURCE / "entities" / parent["file"])
             if len(source_rows) != 20:
                 raise RuntimeError(f"Singleton source page is not top 20: {parent['file']}")
-            retained = [
-                row for row in source_rows if row["entity"] not in baseline_entities
-            ]
+            retained = [row for row in source_rows if row["entity"] not in baseline_entities]
             retained_rows += len(retained)
             removed_rows += len(source_rows) - len(retained)
             base.write_candidate_csv(active / parent["file"], retained)
@@ -171,9 +165,7 @@ def initialize_output(
                 "candidateRowsAfterBaselinePurge": retained_rows,
                 "firstSingletonWave": FIRST_SINGLETON_WAVE,
                 "workerCap": MAX_WORKERS,
-                "priorManifest": str(
-                    PRIOR / "full_nonsingleton_run_manifest.json"
-                ),
+                "priorManifest": str(PRIOR / "full_nonsingleton_run_manifest.json"),
                 "priorUsage": baseline_manifest["usage"],
             },
         )
@@ -228,8 +220,7 @@ def submit_wave_capped(
                 },
             )
             print(
-                f"wave {wave} response {completed}/{len(selected)}: "
-                f"{parent['entity']} - {outcome}",
+                f"wave {wave} response {completed}/{len(selected)}: {parent['entity']} - {outcome}",
                 flush=True,
             )
     if failures:
@@ -272,9 +263,7 @@ def write_singleton_wave_review(
                 "",
             ]
         )
-    (wave_directory / "REVIEW.md").write_text(
-        "\n".join(lines), encoding="utf-8", newline="\n"
-    )
+    (wave_directory / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
 
 # Sum exact usage metadata across committed singleton waves.
@@ -287,7 +276,9 @@ def summed_usage(summaries: list[dict[str, Any]]) -> dict[str, int]:
 
 # Escape field separators so entity strings remain readable in compact Markdown lists.
 def markdown_value(value: object) -> str:
-    return str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+    return (
+        str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+    )
 
 
 # Write only positive singleton decisions into one compact aggregate review.
@@ -350,34 +341,25 @@ def finalize(
     baseline_ids = set(baseline_state["assignments"])
     singleton_clusters = state["clusters"]
     baseline_clusters = json.loads(
-        (PRIOR / "resolved_clusters_after_nonsingleton_completion.json").read_text(
-            encoding="utf-8"
-        )
+        (PRIOR / "resolved_clusters_after_nonsingleton_completion.json").read_text(encoding="utf-8")
     )
     combined_clusters = [*baseline_clusters, *singleton_clusters]
-    member_ids = [
-        entity_id for cluster in combined_clusters for entity_id in cluster["memberIds"]
-    ]
+    member_ids = [entity_id for cluster in combined_clusters for entity_id in cluster["memberIds"]]
     if len(member_ids) != len(set(member_ids)) or set(member_ids) != set(assignments):
         raise RuntimeError("Combined clusters are not a unique cover of final assignments.")
 
     singleton_usage = summed_usage(state["waveSummaries"])
     combined_usage = {
-        key: int(baseline_manifest["usage"][key]) + singleton_usage[key]
-        for key in singleton_usage
+        key: int(baseline_manifest["usage"][key]) + singleton_usage[key] for key in singleton_usage
     }
-    singleton_calls = sum(
-        int(summary["submittedCalls"]) for summary in state["waveSummaries"]
-    )
+    singleton_calls = sum(int(summary["submittedCalls"]) for summary in state["waveSummaries"])
     singleton_positive = sum(
         int(summary["multiEntityClusters"]) for summary in state["waveSummaries"]
     )
     singleton_aliases = len(eligible) - singleton_calls
     total_calls = int(baseline_manifest["totalCalls"]) + singleton_calls
 
-    with (OUTPUT / "resolved_entities_all.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "resolved_entities_all.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(
             (
@@ -462,8 +444,7 @@ def finalize(
             6,
         ),
         "conformanceDroppedStringsSingletonPhase": sum(
-            int(summary.get("conformanceDroppedStrings", 0))
-            for summary in state["waveSummaries"]
+            int(summary.get("conformanceDroppedStrings", 0)) for summary in state["waveSummaries"]
         ),
         "finalGlobalExclusionAudit": audit,
     }
@@ -522,23 +503,17 @@ def main() -> None:
     initialize_output(all_rows, baseline_manifest, baseline_state)
     eligible_ids = {
         row["id"]
-        for row in read_csv(
-            PRIOR / "remaining_singletons_after_nonsingleton_completion.csv"
-        )
+        for row in read_csv(PRIOR / "remaining_singletons_after_nonsingleton_completion.csv")
     }
     eligible = [row for row in all_rows if row["id"] in eligible_ids]
     index_by_id = {row["id"]: row for row in all_rows}
     index_by_entity = {row["entity"]: row for row in all_rows}
     engine.initialize_location_database()
-    state = engine.resume_pending_if_needed(
-        engine.read_state(), eligible, index_by_id
-    )
+    state = engine.resume_pending_if_needed(engine.read_state(), eligible, index_by_id)
     initial_audit = engine.audit_global_exclusion(state["assignments"], eligible)
     if not args.execute:
         selected, skipped = engine.select_wave(engine.read_active_roster())
-        base.write_json(
-            OUTPUT / "INITIAL_GLOBAL_EXCLUSION_AUDIT.json", initial_audit
-        )
+        base.write_json(OUTPUT / "INITIAL_GLOBAL_EXCLUSION_AUDIT.json", initial_audit)
         print(
             json.dumps(
                 {
@@ -558,9 +533,7 @@ def main() -> None:
         raise RuntimeError("GEMINI_API_KEY is not configured.")
     if state.get("status") == "completed_all_entities":
         print(
-            (OUTPUT / "FINAL_ALL_ENTITY_RESOLUTION_MANIFEST.json").read_text(
-                encoding="utf-8"
-            ),
+            (OUTPUT / "FINAL_ALL_ENTITY_RESOLUTION_MANIFEST.json").read_text(encoding="utf-8"),
             flush=True,
         )
         return
@@ -569,16 +542,12 @@ def main() -> None:
         wave = int(state["completedWaves"]) + 1
         wave_directory, selected = engine.load_or_create_selection(wave)
         results = submit_wave_capped(wave, wave_directory, selected)
-        pending = engine.build_pending(
-            wave, results, index_by_entity, state["assignments"]
-        )
+        pending = engine.build_pending(wave, results, index_by_entity, state["assignments"])
         base.write_json(wave_directory / "pending_commit.json", pending)
         state["pendingWave"] = wave
         state["status"] = "responses_validated_pending_commit"
         engine.write_state(state)
-        summary = engine.complete_pending(
-            state, pending, eligible, index_by_id
-        )
+        summary = engine.complete_pending(state, pending, eligible, index_by_id)
         write_singleton_wave_review(wave_directory, pending["clusters"], summary)
         print(
             f"wave {wave} committed: calls={summary['submittedCalls']}, "
@@ -589,9 +558,7 @@ def main() -> None:
         )
         state = engine.read_state()
 
-    manifest = finalize(
-        state, all_rows, eligible, baseline_manifest, baseline_state
-    )
+    manifest = finalize(state, all_rows, eligible, baseline_manifest, baseline_state)
     state["status"] = "completed_all_entities"
     state["pendingWave"] = None
     engine.write_state(state)

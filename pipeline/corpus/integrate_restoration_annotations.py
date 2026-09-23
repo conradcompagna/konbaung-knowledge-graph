@@ -14,7 +14,9 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parent
-PACKAGE = Path(r"C:\Users\conra\Downloads\konbaung_restoration_annotations_predicate_spans_20260717.zip")
+PACKAGE = Path(
+    r"C:\Users\conra\Downloads\konbaung_restoration_annotations_predicate_spans_20260717.zip"
+)
 BASE_SENTENCES = ROOT / "konbaung_sentence_corpus_20260713_repaired"
 BASE_TRANSLATIONS = ROOT / "konbaung_sentence_translation_full_batch_20260713_repaired"
 BASE_TRIPLES = ROOT / "konbaung_translated_sentence_triples_full_batch_20260713_high_thinking"
@@ -22,7 +24,7 @@ LIVE_READER = ROOT / "konbaung_reader_app" / "static" / "data" / "konbaung"
 OUT_SENTENCES = ROOT / "konbaung_sentence_corpus_20260718_restoration_integrated"
 OUT_TRANSLATIONS = ROOT / "konbaung_sentence_translation_20260718_restoration_integrated"
 OUT_TRIPLES = ROOT / "konbaung_triples_20260718_restoration_integrated"
-IGNORED_MATCH_CHARS = set("]“”\"?J၀၁၂၃၄၅၆၇၈၉0123456789")
+IGNORED_MATCH_CHARS = set(']“”"?J၀၁၂၃၄၅၆၇၈၉0123456789')
 
 
 def read_json(path: Path) -> Any:
@@ -30,7 +32,9 @@ def read_json(path: Path) -> Any:
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -41,14 +45,20 @@ def write_json(path: Path, value: Any) -> None:
 def write_jsonl(path: Path, values: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        "".join(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n" for value in values),
+        "".join(
+            json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n" for value in values
+        ),
         encoding="utf-8",
     )
 
 
 def load_package() -> list[dict[str, Any]]:
     with zipfile.ZipFile(PACKAGE) as archive:
-        name = next(name for name in archive.namelist() if name.endswith("corrected_source_unit_annotations.json"))
+        name = next(
+            name
+            for name in archive.namelist()
+            if name.endswith("corrected_source_unit_annotations.json")
+        )
         value = json.loads(archive.read(name).decode("utf-8"))
     return list(value["S"])
 
@@ -73,7 +83,9 @@ def utf16_offset(value: str, codepoint_offset: int) -> int:
 
 
 def canonical_text(volume: int, page: int) -> str:
-    return str(read_json(LIVE_READER / "pages" / f"vol{volume}" / f"{page:04d}.json")["canonicalText"])
+    return str(
+        read_json(LIVE_READER / "pages" / f"vol{volume}" / f"{page:04d}.json")["canonicalText"]
+    )
 
 
 def find_source_piece(volume: int, page: int, needle: str) -> dict[str, Any]:
@@ -152,9 +164,24 @@ def apply_conservative_tweaks(units: list[dict[str, Any]]) -> None:
     ritual["T"].insert(
         0,
         {
-            "s": {"my": "မင်းတရားကြီး", "en": "the King", "tag": "RoyalRitualAuthority", "source": "inferred"},
-            "p": {"my": "ရထားတင်၍", "en": "placed on a chariot", "tag": "PLACES_ON_CHARIOT", "source": "sentence"},
-            "o": {"my": "မဟာပိန္နဲနတ်", "en": "Maha Peinne nat", "tag": "RoyalCultDeity", "source": "sentence"},
+            "s": {
+                "my": "မင်းတရားကြီး",
+                "en": "the King",
+                "tag": "RoyalRitualAuthority",
+                "source": "inferred",
+            },
+            "p": {
+                "my": "ရထားတင်၍",
+                "en": "placed on a chariot",
+                "tag": "PLACES_ON_CHARIOT",
+                "source": "sentence",
+            },
+            "o": {
+                "my": "မဟာပိန္နဲနတ်",
+                "en": "Maha Peinne nat",
+                "tag": "RoyalCultDeity",
+                "source": "sentence",
+            },
         },
     )
 
@@ -225,7 +252,9 @@ def map_and_build_sentences(
                     continue
                 candidates.append(candidate)
             if len(candidates) != 1:
-                raise ValueError(f"Expected one current repair target for {unit['sid']}; got {[item['id'] for item in candidates]}")
+                raise ValueError(
+                    f"Expected one current repair target for {unit['sid']}; got {[item['id'] for item in candidates]}"
+                )
             old = candidates[0]
             target_id = old["id"]
             old_norm = relaxed(old["text"])
@@ -254,19 +283,32 @@ def map_and_build_sentences(
 
     output = [replacements.get(record["id"], record) for record in base_records]
     existing_ids = {record["id"] for record in base_records}
-    output.extend(record for target_id, record in replacements.items() if target_id not in existing_ids)
-    output.sort(key=lambda item: (int(item["volume"]), int(item["owner_page"]), int(item["source"][0]["start_codepoint"]), item["id"]))
+    output.extend(
+        record for target_id, record in replacements.items() if target_id not in existing_ids
+    )
+    output.sort(
+        key=lambda item: (
+            int(item["volume"]),
+            int(item["owner_page"]),
+            int(item["source"][0]["start_codepoint"]),
+            item["id"],
+        )
+    )
     return output, source_to_target, integrated_units
 
 
-def validate_units(units_by_target: dict[str, dict[str, Any]], sentences: dict[str, dict[str, Any]]) -> None:
+def validate_units(
+    units_by_target: dict[str, dict[str, Any]], sentences: dict[str, dict[str, Any]]
+) -> None:
     for target, unit in units_by_target.items():
         sentence = sentences[target]["text"]
         for index, triple in enumerate(unit["T"], start=1):
             for role in ("s", "p", "o"):
                 endpoint = triple[role]
                 if endpoint["source"] == "sentence" and endpoint["my"] not in sentence:
-                    raise ValueError(f"{target} T{index} {role}: exact span not in restored sentence: {endpoint['my']}")
+                    raise ValueError(
+                        f"{target} T{index} {role}: exact span not in restored sentence: {endpoint['my']}"
+                    )
 
 
 def update_sentence_root(records: list[dict[str, Any]]) -> None:
@@ -296,8 +338,12 @@ def update_sentence_root(records: list[dict[str, Any]]) -> None:
             ),
         )
         page_record["sentence_ids"] = [record["id"] for record in page_sentences]
-        page_record["owned_sentence_ids"] = [record["id"] for record in page_sentences if int(record["owner_page"]) == key[1]]
-        page_record["cross_page_sentence_ids"] = [record["id"] for record in page_sentences if record["cross_page"]]
+        page_record["owned_sentence_ids"] = [
+            record["id"] for record in page_sentences if int(record["owner_page"]) == key[1]
+        ]
+        page_record["cross_page_sentence_ids"] = [
+            record["id"] for record in page_sentences if record["cross_page"]
+        ]
         write_json(path, page_record)
 
     manifest = read_json(OUT_SENTENCES / "manifest.json")
@@ -313,9 +359,13 @@ def update_sentence_root(records: list[dict[str, Any]]) -> None:
         volume = int(volume_record["volume"])
         subset = [record for record in records if int(record["volume"]) == volume]
         volume_record["sentence_count"] = len(subset)
-        volume_record["cross_page_sentence_count"] = sum(bool(record["cross_page"]) for record in subset)
+        volume_record["cross_page_sentence_count"] = sum(
+            bool(record["cross_page"]) for record in subset
+        )
     manifest["totals"]["sentence_count"] = len(records)
-    manifest["totals"]["cross_page_sentence_count"] = sum(bool(record["cross_page"]) for record in records)
+    manifest["totals"]["cross_page_sentence_count"] = sum(
+        bool(record["cross_page"]) for record in records
+    )
     write_json(OUT_SENTENCES / "manifest.json", manifest)
     (OUT_SENTENCES / "README_RESTORATION_INTEGRATION.md").write_text(
         "# Restoration-integrated sentence corpus\n\nDerived from `konbaung_sentence_corpus_20260713_repaired`; originals are unchanged. Eleven chronicle sentences were restored and eleven cross-page sentence records were repaired using exact canonical-page offsets.\n",
@@ -328,7 +378,10 @@ def update_translation_root(
     units_by_target: dict[str, dict[str, Any]],
 ) -> None:
     shutil.copytree(BASE_TRANSLATIONS, OUT_TRANSLATIONS)
-    base = {record["id"]: record for record in read_jsonl(BASE_TRANSLATIONS / "translations" / "all_volumes.jsonl")}
+    base = {
+        record["id"]: record
+        for record in read_jsonl(BASE_TRANSLATIONS / "translations" / "all_volumes.jsonl")
+    }
     sentence_by_id = {record["id"]: record for record in sentence_records}
     for target, unit in units_by_target.items():
         sentence = sentence_by_id[target]
@@ -346,10 +399,15 @@ def update_translation_root(
             }
         )
         base[target] = record
-    records = sorted(base.values(), key=lambda item: (int(item["volume"]), int(item["owner_page"]), item["id"]))
+    records = sorted(
+        base.values(), key=lambda item: (int(item["volume"]), int(item["owner_page"]), item["id"])
+    )
     write_jsonl(OUT_TRANSLATIONS / "translations" / "all_volumes.jsonl", records)
     for volume in (1, 2, 3):
-        write_jsonl(OUT_TRANSLATIONS / "translations" / f"vol{volume}.jsonl", [item for item in records if int(item["volume"]) == volume])
+        write_jsonl(
+            OUT_TRANSLATIONS / "translations" / f"vol{volume}.jsonl",
+            [item for item in records if int(item["volume"]) == volume],
+        )
 
 
 def convert_triples(unit: dict[str, Any]) -> list[dict[str, Any]]:
@@ -393,7 +451,14 @@ def update_triple_root(
         sentence = sentences[target]
         key = (int(sentence["volume"]), int(sentence["owner_page"]))
         if key not in page_by_key:
-            page = {"page_id": f"vol{key[0]}-p{key[1]:04d}", "volume": key[0], "page": key[1], "summary": "", "S": [], "provenance": "manual_restoration"}
+            page = {
+                "page_id": f"vol{key[0]}-p{key[1]:04d}",
+                "volume": key[0],
+                "page": key[1],
+                "summary": "",
+                "S": [],
+                "provenance": "manual_restoration",
+            }
             pages.append(page)
             page_by_key[key] = page
         page_by_key[key]["S"].append(
@@ -410,7 +475,10 @@ def update_triple_root(
         page["S"].sort(key=lambda group: group["sid"])
     write_jsonl(OUT_TRIPLES / "annotations" / "all_pages.jsonl", pages)
     for volume in (1, 2, 3):
-        write_jsonl(OUT_TRIPLES / "annotations" / f"vol{volume}.jsonl", [page for page in pages if int(page["volume"]) == volume])
+        write_jsonl(
+            OUT_TRIPLES / "annotations" / f"vol{volume}.jsonl",
+            [page for page in pages if int(page["volume"]) == volume],
+        )
 
     grounding_rows = []
     for target, unit in units_by_target.items():
@@ -444,7 +512,9 @@ def main() -> None:
     report = {
         "package_units": len(units),
         "new_sentences": sum(unit["integration"]["action"] == "ADD_NEW_SENTENCE" for unit in units),
-        "repaired_sentences": sum(unit["integration"]["action"] == "REPAIR_EXISTING_SENTENCE" for unit in units),
+        "repaired_sentences": sum(
+            unit["integration"]["action"] == "REPAIR_EXISTING_SENTENCE" for unit in units
+        ),
         "restoration_triples_after_tweaks": sum(len(unit["T"]) for unit in units),
         "source_to_current_target": source_to_target,
         "output_sentence_count": len(records),

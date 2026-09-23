@@ -21,9 +21,20 @@ OUTPUT_ROOT = ROOT / "konbaung_v4_delta_repair_trials"
 MODEL = "gemini-3.1-flash-lite"
 SEED = 20260718
 USED_PAGES = {
-    "vol1-p0082", "vol1-p0152", "vol1-p0282", "vol1-p0304", "vol1-p0340",
-    "vol2-p0072", "vol2-p0201", "vol2-p0236", "vol2-p0258",
-    "vol3-p0133", "vol3-p0221", "vol3-p0241", "vol3-p0271", "vol3-p0333",
+    "vol1-p0082",
+    "vol1-p0152",
+    "vol1-p0282",
+    "vol1-p0304",
+    "vol1-p0340",
+    "vol2-p0072",
+    "vol2-p0201",
+    "vol2-p0236",
+    "vol2-p0258",
+    "vol3-p0133",
+    "vol3-p0221",
+    "vol3-p0241",
+    "vol3-p0271",
+    "vol3-p0333",
 }
 
 PROMPT = """You will receive one page of the Konbaung Chronicle containing every Burmese sentence, its English translation, and all existing triples attached to that sentence.
@@ -117,7 +128,9 @@ def read_json(path: Path) -> Any:
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -178,7 +191,13 @@ def choose_page(pages: list[dict[str, Any]]) -> dict[str, Any]:
     for page in pages:
         triple_count = sum(len(group.get("T", [])) for group in page.get("S", []))
         page_id = page["page_id"]
-        record_path = V3 / "sentence_corpus" / "page_records" / f"vol{page['volume']}" / f"page_{int(page['page']):04d}.json"
+        record_path = (
+            V3
+            / "sentence_corpus"
+            / "page_records"
+            / f"vol{page['volume']}"
+            / f"page_{int(page['page']):04d}.json"
+        )
         if page_id in USED_PAGES or not record_path.exists() or not 12 <= triple_count <= 24:
             continue
         page_record = read_json(record_path)
@@ -215,7 +234,9 @@ def build_payload() -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
             item = {"id": f"{sid}_t{index:03d}", **triple}
             triples.append(item)
             old_by_id[item["id"]] = triple
-        records.append({"sid": sid, "my": sentences[sid]["text"], "en": translations[sid], "T": triples})
+        records.append(
+            {"sid": sid, "my": sentences[sid]["text"], "en": translations[sid], "T": triples}
+        )
     payload = {"page_id": page["page_id"], "S": records}
     return payload, old_by_id
 
@@ -309,7 +330,12 @@ def main() -> None:
     output.mkdir(parents=True)
     ids = list(old_by_id)
     schema = response_schema(ids)
-    prompt_sent = PROMPT + "\n\nPAGE_DATA\n" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\nEND_PAGE_DATA"
+    prompt_sent = (
+        PROMPT
+        + "\n\nPAGE_DATA\n"
+        + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        + "\nEND_PAGE_DATA"
+    )
     client = genai.Client(api_key=api_key())
     response = client.models.generate_content(
         model=MODEL,
@@ -345,7 +371,21 @@ def main() -> None:
         },
     )
     (output / "review.md").write_text(review_markdown(payload, result), encoding="utf-8")
-    print(json.dumps({"output": str(output), "page_id": page_id, "triples": len(ids), "R": len(result.get("R", [])), "D": len(result.get("D", [])), "errors": errors, "usage": usage}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "output": str(output),
+                "page_id": page_id,
+                "triples": len(ids),
+                "R": len(result.get("R", [])),
+                "D": len(result.get("D", [])),
+                "errors": errors,
+                "usage": usage,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

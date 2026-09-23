@@ -20,8 +20,7 @@ import repair_konbaung_sentence_corpus as repaired
 
 CORPUS_ROOT = Path("konbaung_sentence_corpus_20260713_repaired")
 SOURCE_ARCHIVE = Path(
-    "konbaung_reader_app/data_archives/"
-    "konbaung_reader_pre_sentence_annotations_20260713/pages"
+    "konbaung_reader_app/data_archives/konbaung_reader_pre_sentence_annotations_20260713/pages"
 )
 DEFAULT_OUTPUT = Path("konbaung_v2_removal_audit_20260715")
 REPORTED_CASE = (3, 50)
@@ -411,7 +410,9 @@ def main() -> None:
         extra = sorted(combined_keys - set(sources))
         errors.extend([f"Unaccounted source pages: {missing}", f"Unknown accounted pages: {extra}"])
     if set(page_records) & set(exclusions):
-        errors.append(f"Excluded pages also have v2 page records: {sorted(set(page_records) & set(exclusions))}")
+        errors.append(
+            f"Excluded pages also have v2 page records: {sorted(set(page_records) & set(exclusions))}"
+        )
     check_item(
         checks,
         "every_source_page_accounted_for",
@@ -461,18 +462,24 @@ def main() -> None:
 
             try:
                 lookup = {repaired.text_key(text): key}
-                rebuilt_cleaned, source_positions, rebuilt_removals, _ = repaired.cleaned_page_with_repairs(
-                    text, lookup
+                rebuilt_cleaned, source_positions, rebuilt_removals, _ = (
+                    repaired.cleaned_page_with_repairs(text, lookup)
                 )
             except Exception as exc:  # pragma: no cover - audit error path
                 rebuild_errors.append(f"vol{volume} page {page}: cleaner rerun failed: {exc}")
                 rebuilt_cleaned, source_positions, rebuilt_removals = "", [], []
 
             record_removals = list(payload["removals"])
-            final_items = [item for item in record_removals if item["reason"] == "final_unterminated_caption"]
-            nonfinal_items = [item for item in record_removals if item["reason"] != "final_unterminated_caption"]
+            final_items = [
+                item for item in record_removals if item["reason"] == "final_unterminated_caption"
+            ]
+            nonfinal_items = [
+                item for item in record_removals if item["reason"] != "final_unterminated_caption"
+            ]
             if rebuilt_removals != nonfinal_items:
-                rebuild_errors.append(f"vol{volume} page {page}: rerun removal records differ from v2 record")
+                rebuild_errors.append(
+                    f"vol{volume} page {page}: rerun removal records differ from v2 record"
+                )
             if final_items:
                 if not rebuilt_cleaned.startswith(payload["cleaned_text"]):
                     rebuild_errors.append(
@@ -480,7 +487,9 @@ def main() -> None:
                     )
                 source_positions = source_positions[: len(payload["cleaned_text"])]
             elif rebuilt_cleaned != payload["cleaned_text"]:
-                rebuild_errors.append(f"vol{volume} page {page}: rerun cleaned text differs from v2 record")
+                rebuild_errors.append(
+                    f"vol{volume} page {page}: rerun cleaned text differs from v2 record"
+                )
 
             intervals: list[tuple[int, int, str]] = []
             for ordinal, item in enumerate(record_removals, start=1):
@@ -532,7 +541,9 @@ def main() -> None:
                     for position in range(int(item["start_codepoint"]), int(item["end_codepoint"]))
                     if 0 <= position < len(text) and not text[position].isspace()
                 }
-                source_nonspace = {position for position, char in enumerate(text) if not char.isspace()}
+                source_nonspace = {
+                    position for position, char in enumerate(text) if not char.isspace()
+                }
                 overlap = retained_nonspace & removed_nonspace
                 missing = source_nonspace - retained_nonspace - removed_nonspace
                 extra = (retained_nonspace | removed_nonspace) - source_nonspace
@@ -654,7 +665,9 @@ def main() -> None:
     )
     fatal_errors.extend(errors)
 
-    all_removals.sort(key=lambda item: (item["volume"], item["page"], item["start_codepoint"], item["id"]))
+    all_removals.sort(
+        key=lambda item: (item["volume"], item["page"], item["start_codepoint"], item["id"])
+    )
     write_jsonl(output / "all_removed_spans.jsonl", all_removals)
     with (output / "all_removed_spans.tsv").open("w", encoding="utf-8", newline="\n") as handle:
         writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
@@ -887,7 +900,7 @@ Volume 3 page 50 lines 26-33 are main chronicle content but v2 removed them as `
 
 ## Validation
 
-Status: **{test_results['status'].upper()}**. The audit checked source hashes, exact source slices, line/offset correctness, non-overlap, manifest counts, a rerun of the v2 cleaner, full non-whitespace character coverage, and the reported failure.
+Status: **{test_results["status"].upper()}**. The audit checked source hashes, exact source slices, line/offset correctness, non-overlap, manifest counts, a rerun of the v2 cleaner, full non-whitespace character coverage, and the reported failure.
 """
     write_text_lf(output / "README_FIRST.md", readme)
 
@@ -896,7 +909,9 @@ Status: **{test_results['status'].upper()}**. The audit checked source hashes, e
             f"Audit validation failed with {len(fatal_errors)} errors; outputs were retained at {output}"
         )
 
-    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    with zipfile.ZipFile(
+        zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
+    ) as archive:
         for path in sorted(output.rglob("*")):
             if path.is_file():
                 archive.write(path, (Path(output.name) / path.relative_to(output)).as_posix())

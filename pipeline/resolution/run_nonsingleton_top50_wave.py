@@ -96,10 +96,7 @@ def read_index() -> list[dict[str, Any]]:
         raise RuntimeError("Entity IDs are not unique")
     if len({row["entity"] for row in rows}) != len(rows):
         raise RuntimeError("Entity tags are not unique")
-    if not all(
-        left["mentions"] >= right["mentions"]
-        for left, right in zip(rows, rows[1:])
-    ):
+    if not all(left["mentions"] >= right["mentions"] for left, right in zip(rows, rows[1:])):
         raise RuntimeError("Entity index is not frequency-descending")
     eligible = [row for row in rows if row["mentions"] >= MINIMUM_PARENT_MENTIONS]
     if len(eligible) != 6498 or any(row["candidates"] != 50 for row in eligible):
@@ -165,9 +162,7 @@ def build_frequency_greedy_wave(
             **parent,
             "scan_order": scan_order,
             "wave_order": len(selected) + 1,
-            "footprint_sha256": hashlib.sha256(
-                "\n".join(footprint).encode("utf-8")
-            ).hexdigest(),
+            "footprint_sha256": hashlib.sha256("\n".join(footprint).encode("utf-8")).hexdigest(),
         }
         selected.append(record)
         for tag in footprint:
@@ -225,9 +220,7 @@ def write_active_roster(
         writer.writerow(("id", "entity", "mentions", "source_candidates", "file"))
         for row in eligible:
             if row["id"] not in assigned_ids:
-                writer.writerow(
-                    (row["id"], row["entity"], row["mentions"], 50, row["file"])
-                )
+                writer.writerow((row["id"], row["entity"], row["mentions"], 50, row["file"]))
     os.replace(temporary, path)
 
 
@@ -319,9 +312,7 @@ def initialize_output(
 
 def load_frozen_trial(index_by_id: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     """Reload the frozen capped selection so a resume cannot alter the paid inputs."""
-    with (OUTPUT / "first_wave_trial_first100.csv").open(
-        encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "first_wave_trial_first100.csv").open(encoding="utf-8", newline="") as handle:
         frozen = list(csv.DictReader(handle))
     if not frozen or len(frozen) > TRIAL_PAGE_CAP:
         raise RuntimeError("Frozen trial must contain between 1 and 100 pages")
@@ -424,14 +415,10 @@ def submit_or_resume_page(parent: dict[str, Any]) -> dict[str, Any]:
             raise RuntimeError("API retry loop ended unexpectedly")
 
     answer = answer_from_raw(raw)
-    (directory / "answer_returned.json").write_text(
-        answer + "\n", encoding="utf-8", newline="\n"
-    )
+    (directory / "answer_returned.json").write_text(answer + "\n", encoding="utf-8", newline="\n")
     raw_decision = BinaryDecision.model_validate_json(answer)
     write_json(directory / "raw_decision.json", raw_decision.model_dump(mode="json"))
-    decision, conformance = conform_binary_decision(
-        raw_decision, parent["entity"], candidates
-    )
+    decision, conformance = conform_binary_decision(raw_decision, parent["entity"], candidates)
     validate_binary_decision(decision, parent["entity"], candidates)
     write_json(directory / "conformance.json", conformance)
     write_json(directory / "result.json", decision.model_dump(mode="json"))
@@ -550,9 +537,7 @@ def apply_pending_commit(
 ) -> dict[str, Any]:
     """Idempotently purge all resolved tags globally and retire eligible assigned pages."""
     assigned_ids = set(pending["assignments"])
-    assigned_entities = {
-        assignment["entity"] for assignment in pending["assignments"].values()
-    }
+    assigned_entities = {assignment["entity"] for assignment in pending["assignments"].values()}
     rows_removed = 0
     pages_changed = 0
     for folder_name in (ACTIVE_LISTS, RETIRED_LISTS):
@@ -585,14 +570,10 @@ def apply_pending_commit(
     }
 
 
-def audit_commit(
-    pending: dict[str, Any], eligible: list[dict[str, Any]]
-) -> dict[str, Any]:
+def audit_commit(pending: dict[str, Any], eligible: list[dict[str, Any]]) -> dict[str, Any]:
     """Scan every working page and roster to prove the global exclusion invariant."""
     assigned_ids = set(pending["assignments"])
-    assigned_entities = {
-        assignment["entity"] for assignment in pending["assignments"].values()
-    }
+    assigned_entities = {assignment["entity"] for assignment in pending["assignments"].values()}
     eligible_ids = {row["id"] for row in eligible}
     active_files = {path.name for path in (OUTPUT / ACTIVE_LISTS).glob("*.csv")}
     retired_files = {path.name for path in (OUTPUT / RETIRED_LISTS).glob("*.csv")}
@@ -600,9 +581,7 @@ def audit_commit(
         raise RuntimeError("A page exists in both active and retired folders")
     if len(active_files) + len(retired_files) != len(eligible):
         raise RuntimeError("Materialized eligible page count changed")
-    expected_retired = {
-        row["file"] for row in eligible if row["id"] in assigned_ids
-    }
+    expected_retired = {row["file"] for row in eligible if row["id"] in assigned_ids}
     if retired_files != expected_retired:
         raise RuntimeError("Retired pages do not exactly match assigned eligible entities")
 
@@ -614,9 +593,7 @@ def audit_commit(
             leaked = assigned_entities & {row["entity"] for row in rows}
             if leaked:
                 raise RuntimeError(f"Resolved tags leaked into {path.name}: {sorted(leaked)}")
-    with (OUTPUT / "active_roster.csv").open(
-        encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "active_roster.csv").open(encoding="utf-8", newline="") as handle:
         roster_ids = {row["id"] for row in csv.DictReader(handle)}
     expected_roster = eligible_ids - assigned_ids
     if roster_ids != expected_roster:
@@ -641,9 +618,7 @@ def write_exports(
 ) -> dict[str, Any]:
     """Create compact review files and exact API token totals for the completed trial."""
     assignments = pending["assignments"]
-    with (OUTPUT / "resolved_entities.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "resolved_entities.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(("id", "entity", "mentions", "parent_id", "parent_entity", "wave_order"))
         for row in all_rows:
@@ -670,8 +645,7 @@ def write_exports(
     }
     usage = {
         output_key: sum(
-            int(cluster["usage"].get(api_key_name) or 0)
-            for cluster in pending["clusters"]
+            int(cluster["usage"].get(api_key_name) or 0) for cluster in pending["clusters"]
         )
         for output_key, api_key_name in usage_keys.items()
     }
@@ -687,18 +661,20 @@ def write_exports(
         "candidatesPerPage": 50,
         "workerCap": MAX_WORKERS,
         "workersUsed": min(MAX_WORKERS, len(pending["clusters"])),
-        "firstWavePages": sum(1 for _ in csv.DictReader((OUTPUT / "first_wave_all_pages.csv").open(encoding="utf-8", newline=""))),
+        "firstWavePages": sum(
+            1
+            for _ in csv.DictReader(
+                (OUTPUT / "first_wave_all_pages.csv").open(encoding="utf-8", newline="")
+            )
+        ),
         "initialEligibleParents": len(eligible),
         "excludedSingletonParents": len(all_rows) - len(eligible),
         "assignedEntities": len(assignments),
         "assignedEligibleParents": len(set(assignments) & eligible_ids),
         "remainingEligibleParents": len(eligible_ids - set(assignments)),
-        "multiEntityClusters": sum(
-            len(cluster["members"]) > 1 for cluster in pending["clusters"]
-        ),
+        "multiEntityClusters": sum(len(cluster["members"]) > 1 for cluster in pending["clusters"]),
         "conformanceDroppedStrings": sum(
-            len(cluster["conformance"]["dropped"])
-            for cluster in pending["clusters"]
+            len(cluster["conformance"]["dropped"]) for cluster in pending["clusters"]
         ),
         "mutation": mutation,
         "globalExclusionAudit": audit,
@@ -732,9 +708,7 @@ def write_exports(
                 "",
             ]
         )
-    (OUTPUT / "REVIEW.md").write_text(
-        "\n".join(lines), encoding="utf-8", newline="\n"
-    )
+    (OUTPUT / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return manifest
 
 
@@ -746,8 +720,7 @@ def main() -> None:
     if not OUTPUT.exists():
         selected, skipped = build_frequency_greedy_wave(eligible)
         print(
-            f"frequency-greedy first wave: {len(selected)} pages; "
-            f"{len(skipped)} conflict skips",
+            f"frequency-greedy first wave: {len(selected)} pages; {len(skipped)} conflict skips",
             flush=True,
         )
         initialize_output(all_rows, selected, skipped)
@@ -757,7 +730,11 @@ def main() -> None:
     trial = load_frozen_trial(index_by_id)
     state = json.loads((OUTPUT / "state.json").read_text(encoding="utf-8"))
     if not args.execute:
-        print(json.dumps(json.loads((OUTPUT / "plan_manifest.json").read_text(encoding="utf-8")), indent=2))
+        print(
+            json.dumps(
+                json.loads((OUTPUT / "plan_manifest.json").read_text(encoding="utf-8")), indent=2
+            )
+        )
         return
     if not api_key():
         raise RuntimeError("GEMINI_API_KEY is not configured")
@@ -783,7 +760,11 @@ def main() -> None:
     write_json(OUTPUT / "state.json", state)
     write_json(
         OUTPUT / "plan_manifest.json",
-        {**json.loads((OUTPUT / "plan_manifest.json").read_text(encoding="utf-8")), "status": "completed", "apiCallsMade": len(results)},
+        {
+            **json.loads((OUTPUT / "plan_manifest.json").read_text(encoding="utf-8")),
+            "status": "completed",
+            "apiCallsMade": len(results),
+        },
     )
     print(json.dumps(manifest, ensure_ascii=False, indent=2), flush=True)
 

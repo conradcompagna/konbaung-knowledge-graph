@@ -101,7 +101,9 @@ def coverage_record(page: dict[str, Any]) -> dict[str, Any]:
     for start, end in evidence_intervals:
         evidence.update(range(start, end))
     debris = debris_positions(text)
-    retained = {index for index, char in enumerate(text) if not char.isspace() and index not in debris}
+    retained = {
+        index for index, char in enumerate(text) if not char.isspace() and index not in debris
+    }
     uncovered = retained - evidence
     uncovered_pct = 100 * len(uncovered) / len(retained) if retained else 0.0
     return {
@@ -175,16 +177,21 @@ def compact_existing(page: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def public_coverage(coverage: dict[str, Any]) -> dict[str, Any]:
-    return {key: coverage[key] for key in (
-        "retained_characters",
-        "annotated_characters",
-        "unannotated_characters",
-        "coverage_pct",
-        "unannotated_pct",
-    )}
+    return {
+        key: coverage[key]
+        for key in (
+            "retained_characters",
+            "annotated_characters",
+            "unannotated_characters",
+            "coverage_pct",
+            "unannotated_pct",
+        )
+    }
 
 
-def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], dict[str, Any], list[tuple[int, int]]]:
+def build_prompt(
+    volume: int, page_number: int
+) -> tuple[str, dict[str, Any], dict[str, Any], list[tuple[int, int]]]:
     page = load_page(volume, page_number)
     coverage = coverage_record(page)
     intervals = uncovered_intervals(page, coverage)
@@ -196,7 +203,7 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], di
 {FOURTH_PASS_PROMPT}
 
 <EXISTING_SUMMARY_READ_ONLY>
-{page.get('summary') or ''}
+{page.get("summary") or ""}
 </EXISTING_SUMMARY_READ_ONLY>
 
 <EXISTING_TRIPLES_READ_ONLY>
@@ -204,8 +211,8 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], di
 </EXISTING_TRIPLES_READ_ONLY>
 
 <PAGE_COVERAGE>
-Current evidence coverage: {coverage['coverage_pct']:.2f}%
-Uncovered text: {coverage['unannotated_pct']:.2f}% ({coverage['unannotated_characters']} of {coverage['retained_characters']} retained characters)
+Current evidence coverage: {coverage["coverage_pct"]:.2f}%
+Uncovered text: {coverage["unannotated_pct"]:.2f}% ({coverage["unannotated_characters"]} of {coverage["retained_characters"]} retained characters)
 </PAGE_COVERAGE>
 
 <TARGET_PAGE_TEXT_WITH_MARKERS>
@@ -223,7 +230,11 @@ def validate(result: FourthPassResult, page: dict[str, Any], coverage: dict[str,
     text = page["canonicalText"]
     compact_text = normalized(text)
     existing = {
-        (normalized(item["subject"]["text"]), item["relation"]["rawLabel"], normalized(item["object"]["text"]))
+        (
+            normalized(item["subject"]["text"]),
+            item["relation"]["rawLabel"],
+            normalized(item["object"]["text"]),
+        )
         for item in page["annotations"]
     }
     warnings: list[str] = []
@@ -255,7 +266,9 @@ def write_coverage_catalogue() -> dict[str, Any]:
         "page_count": len(rows),
         "pages": rows,
     }
-    COVERAGE_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    COVERAGE_PATH.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return payload
 
 
@@ -265,7 +278,12 @@ def run(volume: int, page_number: int, output_name: str) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "prompt_sent.txt").write_text(prompt, encoding="utf-8")
     (output_dir / "coverage_before.json").write_text(
-        json.dumps({**public_coverage(coverage), "unannotated_intervals": intervals}, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(
+            {**public_coverage(coverage), "unannotated_intervals": intervals},
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
         encoding="utf-8",
     )
 

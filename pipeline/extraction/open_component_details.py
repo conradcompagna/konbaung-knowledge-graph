@@ -143,8 +143,7 @@ def prompt_triples(triples: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "p": {
                 "tag": triple["p"]["tag"],
                 "details": [
-                    {"tag": detail["tag"], "en": detail["en"]}
-                    for detail in triple["p"]["details"]
+                    {"tag": detail["tag"], "en": detail["en"]} for detail in triple["p"]["details"]
                 ],
             },
             "o": {"tag": triple["o"]["tag"], "en": triple["o"]["en"]},
@@ -171,7 +170,7 @@ The text inside this block is the complete original prompt that created the firs
 </TARGET_PAGE_TEXT>
 
 <EXISTING_SUMMARY_READ_ONLY>
-{page.get('summary') or ''}
+{page.get("summary") or ""}
 </EXISTING_SUMMARY_READ_ONLY>
 
 <EXISTING_TRIPLES_READ_ONLY>
@@ -181,7 +180,9 @@ The text inside this block is the complete original prompt that created the firs
     return prompt, page, triples
 
 
-def validate(result: OpenDetailsResult, page: dict[str, Any], triples: list[dict[str, Any]]) -> list[str]:
+def validate(
+    result: OpenDetailsResult, page: dict[str, Any], triples: list[dict[str, Any]]
+) -> list[str]:
     flags: list[str] = []
     source = {row["id"]: row for row in triples}
     visible_target = normalized(page["canonicalText"])

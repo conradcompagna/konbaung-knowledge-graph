@@ -6,10 +6,7 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = (
-    Path(__file__).resolve().parent
-    / "konbaung_v3_manual_seeded_clustering_20260724"
-)
+ROOT = Path(__file__).resolve().parent / "konbaung_v3_manual_seeded_clustering_20260724"
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -21,11 +18,7 @@ def markdown_text(value: Any) -> str:
     if value is None:
         return ""
     return (
-        str(value)
-        .replace("\r", " ")
-        .replace("\n", " ")
-        .replace("\\", "\\\\")
-        .replace("|", "\\|")
+        str(value).replace("\r", " ").replace("\n", " ").replace("\\", "\\\\").replace("|", "\\|")
     )
 
 
@@ -34,9 +27,7 @@ def inline_code(value: Any) -> str:
 
 
 def write_inventory(kind: str, title: str, output_name: str) -> dict[str, int]:
-    clusters = json.loads(
-        (ROOT / f"{kind}_clusters.json").read_text(encoding="utf-8")
-    )
+    clusters = json.loads((ROOT / f"{kind}_clusters.json").read_text(encoding="utf-8"))
     assignments = load_jsonl(ROOT / f"{kind}_assignments.jsonl")
     expected_indices = list(range(len(assignments)))
     actual_indices = [int(row["index"]) for row in assignments]
@@ -57,12 +48,8 @@ def write_inventory(kind: str, title: str, output_name: str) -> dict[str, int]:
             f"extra={sorted(set(members) - set(cluster_by_id))[:10]}"
         )
 
-    manual_clusters = [
-        row for row in clusters if row["clusterType"] == "manual_seed"
-    ]
-    residual_clusters = [
-        row for row in clusters if row["clusterType"] == "residual_louvain"
-    ]
+    manual_clusters = [row for row in clusters if row["clusterType"] == "manual_seed"]
+    residual_clusters = [row for row in clusters if row["clusterType"] == "residual_louvain"]
     manual_clusters.sort(
         key=lambda row: (
             -int(row["mentionCount"]),
@@ -115,27 +102,19 @@ def write_inventory(kind: str, title: str, output_name: str) -> dict[str, int]:
                 int(row["index"]),
             ),
         )
-        mention_count = sum(
-            int(row["frequency"]) for row in cluster_members
-        )
+        mention_count = sum(int(row["frequency"]) for row in cluster_members)
         if mention_count != int(cluster["mentionCount"]):
-            raise RuntimeError(
-                f"{kind} cluster {cluster_id} mention total mismatch"
-            )
+            raise RuntimeError(f"{kind} cluster {cluster_id} mention total mismatch")
         if len(cluster_members) != int(cluster["uniqueTags"]):
-            raise RuntimeError(
-                f"{kind} cluster {cluster_id} tag total mismatch"
-            )
+            raise RuntimeError(f"{kind} cluster {cluster_id} tag total mismatch")
 
         lines.extend(
             [
-                f"### {markdown_text(cluster_id)} — "
-                f"{markdown_text(cluster['canonicalLabel'])}",
+                f"### {markdown_text(cluster_id)} — {markdown_text(cluster['canonicalLabel'])}",
                 "",
                 f"- Meta-tag: {inline_code(cluster['canonicalLabel'])}",
                 f"- Cluster ID: {inline_code(cluster_id)}",
-                f"- Cluster type: "
-                f"{inline_code(cluster['clusterType'])}",
+                f"- Cluster type: {inline_code(cluster['clusterType'])}",
                 f"- Total count: **{mention_count:,}**",
                 f"- Unique tags: **{len(cluster_members):,}**",
             ]
@@ -143,12 +122,9 @@ def write_inventory(kind: str, title: str, output_name: str) -> dict[str, int]:
         if cluster["clusterType"] == "manual_seed":
             lines.extend(
                 [
-                    f"- Workbook action: "
-                    f"{inline_code(cluster.get('manualAction'))}",
-                    f"- Reviewed tags: **"
-                    f"{int(cluster['manualMemberCount']):,}**",
-                    f"- Automatically attached tags: **"
-                    f"{int(cluster['automaticMemberCount']):,}**",
+                    f"- Workbook action: {inline_code(cluster.get('manualAction'))}",
+                    f"- Reviewed tags: **{int(cluster['manualMemberCount']):,}**",
+                    f"- Automatically attached tags: **{int(cluster['automaticMemberCount']):,}**",
                 ]
             )
         basis = cluster.get("basis")

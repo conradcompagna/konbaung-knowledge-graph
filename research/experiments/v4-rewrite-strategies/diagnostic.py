@@ -94,18 +94,18 @@ def render_input(payload: dict[str, Any]) -> str:
             lines.extend(
                 [
                     f'<TRIPLE id="{triple["id"]}">',
-                    f's_my: {triple["s"]["my"]}',
-                    f'p_my: {triple["predicate_grounding"]["my"]}',
-                    f'o_my: {triple["o"]["my"]}',
-                    f's_en: {triple["s"]["en"]}',
-                    f'p_en: {triple["predicate_grounding"]["en"]}',
-                    f'o_en: {triple["o"]["en"]}',
-                    f's_tag: {triple["s"]["tag"]}',
-                    f'p_tag: {triple["p"]}',
-                    f'o_tag: {triple["o"]["tag"]}',
-                    f's_source: {triple["s"]["source"]}',
-                    f'p_source: {triple["predicate_grounding"]["source"]}',
-                    f'o_source: {triple["o"]["source"]}',
+                    f"s_my: {triple['s']['my']}",
+                    f"p_my: {triple['predicate_grounding']['my']}",
+                    f"o_my: {triple['o']['my']}",
+                    f"s_en: {triple['s']['en']}",
+                    f"p_en: {triple['predicate_grounding']['en']}",
+                    f"o_en: {triple['o']['en']}",
+                    f"s_tag: {triple['s']['tag']}",
+                    f"p_tag: {triple['p']}",
+                    f"o_tag: {triple['o']['tag']}",
+                    f"s_source: {triple['s']['source']}",
+                    f"p_source: {triple['predicate_grounding']['source']}",
+                    f"o_source: {triple['o']['source']}",
                     "</TRIPLE>",
                     "",
                 ]
@@ -220,14 +220,14 @@ def returned_thoughts(response: Any) -> str:
 
 def review_markdown(payload: dict[str, Any], result: dict[str, Any]) -> str:
     evaluations = {row["id"]: row for row in result.get("E", [])}
-    lines = [f'# {payload["page_id"]} — flagged triples', ""]
+    lines = [f"# {payload['page_id']} — flagged triples", ""]
     for sentence in payload["S"]:
         flagged = [triple for triple in sentence["T"] if triple["id"] in evaluations]
         if not flagged:
             continue
         lines.extend(
             [
-                f'## {sentence["sid"]}',
+                f"## {sentence['sid']}",
                 "",
                 sentence["my"],
                 "",
@@ -239,17 +239,17 @@ def review_markdown(payload: dict[str, Any], result: dict[str, Any]) -> str:
             row = evaluations[triple["id"]]
             lines.extend(
                 [
-                    f'### {triple["id"]}',
+                    f"### {triple['id']}",
                     "",
                     "```json",
                     json.dumps(display(triple), ensure_ascii=False, indent=2),
                     "```",
                     "",
-                    f'**Spans:** {row["spans"]}',
+                    f"**Spans:** {row['spans']}",
                     "",
-                    f'**Glosses:** {row["glosses"]}',
+                    f"**Glosses:** {row['glosses']}",
                     "",
-                    f'**Tags:** {row["tags"]}',
+                    f"**Tags:** {row['tags']}",
                     "",
                     "Proposed replacement:",
                     "",

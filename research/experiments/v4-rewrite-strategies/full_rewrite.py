@@ -82,15 +82,15 @@ def model_input_text(payload: dict[str, Any]) -> str:
             lines.extend(
                 [
                     f'<TRIPLE id="{triple["id"]}">',
-                    f's_my: {triple["s"]["my"]}',
-                    f'p_my: {triple["predicate_grounding"]["my"]}',
-                    f'o_my: {triple["o"]["my"]}',
-                    f's_en: {triple["s"]["en"]}',
-                    f'p_en: {triple["predicate_grounding"]["en"]}',
-                    f'o_en: {triple["o"]["en"]}',
-                    f's_tag: {triple["s"]["tag"]}',
-                    f'p_tag: {triple["p"]}',
-                    f'o_tag: {triple["o"]["tag"]}',
+                    f"s_my: {triple['s']['my']}",
+                    f"p_my: {triple['predicate_grounding']['my']}",
+                    f"o_my: {triple['o']['my']}",
+                    f"s_en: {triple['s']['en']}",
+                    f"p_en: {triple['predicate_grounding']['en']}",
+                    f"o_en: {triple['o']['en']}",
+                    f"s_tag: {triple['s']['tag']}",
+                    f"p_tag: {triple['p']}",
+                    f"o_tag: {triple['o']['tag']}",
                     "</TRIPLE>",
                     "",
                 ]
@@ -211,7 +211,12 @@ def main() -> None:
     payload = read_json(SOURCE)
     ids = triple_ids(payload)
     schema = response_schema(ids)
-    prompt_sent = PROMPT + "\n\nPAGE_DATA\n" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\nEND_PAGE_DATA"
+    prompt_sent = (
+        PROMPT
+        + "\n\nPAGE_DATA\n"
+        + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        + "\nEND_PAGE_DATA"
+    )
     client = genai.Client(api_key=api_key())
     response = client.models.generate_content(
         model=MODEL,
@@ -245,7 +250,19 @@ def main() -> None:
         },
     )
     (OUTPUT / "review.md").write_text(review_markdown(payload, result), encoding="utf-8")
-    print(json.dumps({"output": str(OUTPUT), "triples": len(ids), "returned": len(result.get("R", [])), "errors": errors, "usage": usage}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "output": str(OUTPUT),
+                "triples": len(ids),
+                "returned": len(result.get("R", [])),
+                "errors": errors,
+                "usage": usage,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

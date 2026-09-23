@@ -62,12 +62,8 @@ def build_chunks() -> list[Chunk]:
     chunks: list[Chunk] = []
     for original in original_jobs():
         total = (len(original.triples) + CHUNK_SIZE - 1) // CHUNK_SIZE
-        sentence_by_sid = {
-            sentence["sid"]: sentence for sentence in original.sentences
-        }
-        selection_by_sid = {
-            selection["sid"]: selection for selection in original.selections
-        }
+        sentence_by_sid = {sentence["sid"]: sentence for sentence in original.sentences}
+        selection_by_sid = {selection["sid"]: selection for selection in original.selections}
         for index, start in enumerate(
             range(0, len(original.triples), CHUNK_SIZE),
             start=1,
@@ -173,9 +169,7 @@ def write_plan(chunks: list[Chunk], cache_record: dict[str, Any]) -> None:
                     "original_triple_start": chunk.start,
                     "original_triple_stop": chunk.stop,
                     "triple_count": len(chunk.job.triples),
-                    "sentence_ids": [
-                        sentence["sid"] for sentence in chunk.job.sentences
-                    ],
+                    "sentence_ids": [sentence["sid"] for sentence in chunk.job.sentences],
                 }
                 for chunk in chunks
             ],
@@ -195,10 +189,7 @@ def submit() -> dict[str, Any]:
     else:
         batch = client.batches.create(
             model=full.MODEL,
-            src=[
-                build_request(chunk, cache_name, template, schema)
-                for chunk in chunks
-            ],
+            src=[build_request(chunk, cache_name, template, schema) for chunk in chunks],
             config=types.CreateBatchJobConfig(
                 display_name=f"konbaung_axial_chunk_retry_{full.utc_stamp()}"
             ),
@@ -229,9 +220,7 @@ def status() -> dict[str, Any]:
         "checked_at": full.utc_now(),
         "name": batch.name,
         "state": full.enum_name(batch.state),
-        "completion_stats": full.json_safe(
-            getattr(batch, "completion_stats", None)
-        ),
+        "completion_stats": full.json_safe(getattr(batch, "completion_stats", None)),
     }
     full.write_json(RETRY_ROOT / "batch_latest.json", full.json_safe(batch))
     full.write_json(RETRY_ROOT / "status.json", record)
@@ -244,9 +233,7 @@ def process_batch(
     artifact_root: Path = RETRY_ROOT,
 ) -> dict[str, Any]:
     if full.enum_name(batch.state) != "JOB_STATE_SUCCEEDED":
-        raise RuntimeError(
-            f"{batch.name} ended in {full.enum_name(batch.state)}"
-        )
+        raise RuntimeError(f"{batch.name} ended in {full.enum_name(batch.state)}")
     by_key = {chunk.job.key: chunk for chunk in chunks}
     responses = getattr(getattr(batch, "dest", None), "inlined_responses", None) or []
     seen: set[str] = set()
@@ -256,9 +243,7 @@ def process_batch(
         metadata = getattr(inlined, "metadata", None) or {}
         chunk = by_key.get(metadata.get("key", ""))
         if chunk is None:
-            rows.append(
-                {"key": metadata.get("key"), "category": "unknown_response"}
-            )
+            rows.append({"key": metadata.get("key"), "category": "unknown_response"})
             totals["unknown_response"] += 1
             continue
         job = chunk.job
@@ -351,9 +336,7 @@ def reassemble_page(
     errors: list[str] = []
     results: list[dict[str, Any]] = []
     for chunk in page_chunks:
-        attempt = full.read_json(
-            artifact_root / "attempts" / f"{chunk.job.key}.json"
-        )
+        attempt = full.read_json(artifact_root / "attempts" / f"{chunk.job.key}.json")
         if attempt["category"] != "accepted":
             errors.append(
                 f"{chunk.job.key}: {attempt['category']}: "
@@ -453,9 +436,7 @@ def reassemble_and_merge(
         reassembly_record = {
             "key": original.key,
             "chunk_keys": [chunk.job.key for chunk in page_chunks],
-            "chunk_ranges": [
-                [chunk.start, chunk.stop] for chunk in page_chunks
-            ],
+            "chunk_ranges": [[chunk.start, chunk.stop] for chunk in page_chunks],
             "triple_count": len(original.triples),
             "accepted": result is not None,
             "errors": errors,
@@ -477,10 +458,7 @@ def reassemble_and_merge(
         accepted_pages.add(original.key)
         accepted_triples += len(original.triples)
         for path in (
-            FULL_ROOT
-            / "attempts"
-            / f"vol{original.volume}"
-            / f"{original.key}.json",
+            FULL_ROOT / "attempts" / f"vol{original.volume}" / f"{original.key}.json",
             full.page_output_dir(FULL_ROOT, original) / "review.md",
         ):
             backup_file(path)
@@ -489,13 +467,9 @@ def reassemble_and_merge(
         full.write_json(target / "result.json", result)
         chunk_usage: Counter[str] = Counter()
         for chunk in page_chunks:
-            attempt = full.read_json(
-                RETRY_ROOT / "attempts" / f"{chunk.job.key}.json"
-            )
+            attempt = full.read_json(RETRY_ROOT / "attempts" / f"{chunk.job.key}.json")
             for usage_key in full.USAGE_KEYS:
-                chunk_usage[usage_key] += int(
-                    attempt.get("usage", {}).get(usage_key, 0)
-                )
+                chunk_usage[usage_key] += int(attempt.get("usage", {}).get(usage_key, 0))
         full.write_json(
             target / "run_metadata.json",
             {
@@ -513,10 +487,7 @@ def reassemble_and_merge(
             },
         )
         full.write_json(
-            FULL_ROOT
-            / "attempts"
-            / f"vol{original.volume}"
-            / f"{original.key}.json",
+            FULL_ROOT / "attempts" / f"vol{original.volume}" / f"{original.key}.json",
             {
                 "key": original.key,
                 "category": "accepted",
@@ -547,9 +518,7 @@ def reassemble_and_merge(
 
     page_totals: Counter[str] = Counter(row["category"] for row in page_rows)
     for usage_key in full.USAGE_KEYS:
-        page_totals[usage_key] = int(
-            chunk_summary["totals"].get(usage_key, 0)
-        )
+        page_totals[usage_key] = int(chunk_summary["totals"].get(usage_key, 0))
     page_summary = {
         "batch_name": chunk_summary["batch_name"],
         "state": chunk_summary["state"],
@@ -565,9 +534,7 @@ def reassemble_and_merge(
         full.read_json(FULL_ROOT / "batch_results" / f"axial_vol{volume}.json")
         for volume in (1, 2, 3)
     ]
-    first_retry = full.read_json(
-        FULL_ROOT / "retry_minimal_20260729" / "batch_result.json"
-    )
+    first_retry = full.read_json(FULL_ROOT / "retry_minimal_20260729" / "batch_result.json")
     report = full.finalize(
         FULL_ROOT,
         all_jobs,
@@ -576,9 +543,7 @@ def reassemble_and_merge(
     )
     if "minimal_retry" in previous_report:
         report["minimal_retry"] = previous_report["minimal_retry"]
-    remaining = [
-        row for row in page_rows if row["category"] != "accepted"
-    ]
+    remaining = [row for row in page_rows if row["category"] != "accepted"]
     report["retry_policy_applied"] = (
         "one 16-page minimal-thinking retry followed by one ordered "
         "30-triple chunk retry for the eight remaining pages"
@@ -592,10 +557,7 @@ def reassemble_and_merge(
         "accepted_pages": len(accepted_pages),
         "accepted_triples": accepted_triples,
         "remaining_pages": remaining,
-        "usage": {
-            key: chunk_summary["totals"].get(key, 0)
-            for key in full.USAGE_KEYS
-        },
+        "usage": {key: chunk_summary["totals"].get(key, 0) for key in full.USAGE_KEYS},
     }
     full.write_json(FULL_ROOT / "final_report.json", report)
     full.write_json(
