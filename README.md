@@ -70,7 +70,11 @@ npm run test:graph
 npm run build:frontend
 ```
 
-Eight unit tests cover source spans, UTF-16 offsets, dictionary display fields, and cross-page projection using synthetic text. The graph frontend builds from TypeScript; generated bundles are not tracked.
+Eight Python unit tests cover source spans, UTF-16 offsets, dictionary display
+fields, and cross-page projection using synthetic text. Eight graph regressions
+cover controller state, navigation, filters, and layout-worker responses. The
+frontend build runs these graph checks, TypeScript checking, and the 2,000-line
+source limit before bundling.
 
 The source release includes software, methods, and selected research outputs. Full
 corpus and model assets are provisioned separately; see [setup](docs/SETUP.md) and

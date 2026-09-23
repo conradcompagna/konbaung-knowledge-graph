@@ -1,8 +1,7 @@
 # Graph interface modules
 
 [`../graph.ts`](../graph.ts) binds page controls and publishes `window.ChronicleGraph`.
-The bundle still builds to `static/build/graph.js`, with the same reader API and
-worker URLs managed by Vite.
+Vite builds `static/build/graph.js` and manages the layout-worker assets.
 
 | Responsibility | Modules |
 |---|---|
