@@ -63,13 +63,15 @@ def build_clusters() -> tuple[list[dict], list[dict], dict]:
     def finalize(raw: dict) -> list[dict]:
         result = []
         for key, cluster in raw.items():
-            result.append({
-                "cluster_key": key,
-                "mention_count": len(cluster["triples"]),
-                "gloss_forms": sorted(cluster["gloss_forms"], key=str.casefold),
-                "burmese_spans": sorted(cluster["burmese_spans"]),
-                "triples": cluster["triples"],
-            })
+            result.append(
+                {
+                    "cluster_key": key,
+                    "mention_count": len(cluster["triples"]),
+                    "gloss_forms": sorted(cluster["gloss_forms"], key=str.casefold),
+                    "burmese_spans": sorted(cluster["burmese_spans"]),
+                    "triples": cluster["triples"],
+                }
+            )
         return sorted(result, key=lambda item: (-item["mention_count"], item["cluster_key"]))
 
     date_clusters = finalize(dates)
@@ -100,12 +102,14 @@ def main() -> None:
                 label = cluster["gloss_forms"][0]
                 for item in cluster["triples"]:
                     triple = item["triple"]
-                    writer.writerow({
-                        heading: label,
-                        "subject": triple.get("sg", ""),
-                        "relation": triple.get("p", ""),
-                        "object": triple.get("og", ""),
-                    })
+                    writer.writerow(
+                        {
+                            heading: label,
+                            "subject": triple.get("sg", ""),
+                            "relation": triple.get("p", ""),
+                            "object": triple.get("og", ""),
+                        }
+                    )
 
     write_review_csv(OUTPUT_ROOT / "triples_by_date_compact.csv", "date", date_clusters)
     write_review_csv(OUTPUT_ROOT / "triples_by_location_compact.csv", "location", location_clusters)

@@ -100,35 +100,60 @@ def main() -> None:
         "cluster membership disagrees with the resolved ledger",
     )
 
-    singleton_member_ids = [member_id for cluster in singleton_clusters for member_id in cluster["memberIds"]]
+    singleton_member_ids = [
+        member_id for cluster in singleton_clusters for member_id in cluster["memberIds"]
+    ]
     singleton_parent_ids = [cluster["parentId"] for cluster in singleton_clusters]
     singleton_waves = sorted({int(cluster["wave"]) for cluster in singleton_clusters})
     check(len(singleton_clusters) == 12_735, "singleton cluster/call count is not 12,735")
-    check(len(singleton_parent_ids) == len(set(singleton_parent_ids)), "singleton parent IDs repeat")
+    check(
+        len(singleton_parent_ids) == len(set(singleton_parent_ids)), "singleton parent IDs repeat"
+    )
     check(len(singleton_member_ids) == len(set(singleton_member_ids)), "singleton members repeat")
     check(len(singleton_member_ids) == 14_671, "singleton clusters do not cover 14,671 tags")
     check(
         all(row_by_id[member_id]["phase"] == "singleton" for member_id in singleton_member_ids),
         "singleton clusters contain a baseline-phase entity",
     )
-    check(all(int(cluster["parentMentions"]) == 1 for cluster in singleton_clusters), "singleton parent mentions differ")
-    check(singleton_waves == list(range(96, 156)), "singleton wave numbers are not the complete 96-155 range")
+    check(
+        all(int(cluster["parentMentions"]) == 1 for cluster in singleton_clusters),
+        "singleton parent mentions differ",
+    )
+    check(
+        singleton_waves == list(range(96, 156)),
+        "singleton wave numbers are not the complete 96-155 range",
+    )
 
     singleton_usage = usage_totals(singleton_clusters)
     baseline_clusters = all_clusters[: len(all_clusters) - len(singleton_clusters)]
     baseline_usage = usage_totals(baseline_clusters)
     combined_usage = usage_totals(all_clusters)
-    check(singleton_usage == manifest["singletonUsage"], "singleton usage does not sum to its manifest")
-    check(combined_usage == manifest["combinedUsage"], "combined usage does not sum to its manifest")
-    check(baseline_usage == baseline_manifest["usage"], "baseline usage does not sum to its prior manifest")
     check(
-        singleton_usage["promptTokens"] + singleton_usage["answerTokens"] + singleton_usage["thinkingTokens"]
+        singleton_usage == manifest["singletonUsage"],
+        "singleton usage does not sum to its manifest",
+    )
+    check(
+        combined_usage == manifest["combinedUsage"], "combined usage does not sum to its manifest"
+    )
+    check(
+        baseline_usage == baseline_manifest["usage"],
+        "baseline usage does not sum to its prior manifest",
+    )
+    check(
+        singleton_usage["promptTokens"]
+        + singleton_usage["answerTokens"]
+        + singleton_usage["thinkingTokens"]
         == singleton_usage["totalTokens"],
         "singleton token components do not equal total tokens",
     )
 
-    dropped = sum(len(cluster.get("conformance", {}).get("dropped", [])) for cluster in singleton_clusters)
-    check(dropped == manifest["conformanceDroppedStringsSingletonPhase"] == 17, "conformance-drop count differs")
+    dropped = sum(
+        len(cluster.get("conformance", {}).get("dropped", [])) for cluster in singleton_clusters
+    )
+    check(
+        dropped == manifest["conformanceDroppedStringsSingletonPhase"] == 17,
+        "conformance-drop count differs",
+    )
 
     raw_responses = list((OUTPUT / "waves").rglob("raw_response.json"))
     page_manifests = list((OUTPUT / "waves").rglob("page_manifest.json"))
@@ -141,11 +166,16 @@ def main() -> None:
     submitted_calls = sum(int(row["submittedCalls"]) for row in wave_rows)
     assigned_entities = sum(int(row["newAssignedEntities"]) for row in wave_rows)
     avoided_calls = sum(int(row["futureCallsAvoided"]) for row in wave_rows)
-    check(wave_numbers == list(range(96, 156)), "wave summary rows are not the complete 96-155 range")
+    check(
+        wave_numbers == list(range(96, 156)), "wave summary rows are not the complete 96-155 range"
+    )
     check(submitted_calls == 12_735, "wave summary submitted calls do not total 12,735")
     check(assigned_entities == 14_671, "wave summary assignments do not total 14,671")
     check(avoided_calls == 1_936, "wave summary avoided calls do not total 1,936")
-    check(submitted_calls + avoided_calls == 14_671, "submitted plus avoided singleton calls is not 14,671")
+    check(
+        submitted_calls + avoided_calls == 14_671,
+        "submitted plus avoided singleton calls is not 14,671",
+    )
 
     active_files = list((OUTPUT / "active_candidate_lists").glob("*.csv"))
     retired_files = list((OUTPUT / "retired_candidate_lists").glob("*.csv"))
@@ -165,8 +195,14 @@ def main() -> None:
         combined_usage["promptTokens"] * 0.25 / 1_000_000
         + (combined_usage["answerTokens"] + combined_usage["thinkingTokens"]) * 1.50 / 1_000_000
     )
-    check(abs(calculated_singleton_cost - manifest["singletonStandardListPriceUsd"]) < 0.000001, "singleton cost differs")
-    check(abs(calculated_combined_cost - manifest["combinedStandardListPriceUsd"]) < 0.000001, "combined cost differs")
+    check(
+        abs(calculated_singleton_cost - manifest["singletonStandardListPriceUsd"]) < 0.000001,
+        "singleton cost differs",
+    )
+    check(
+        abs(calculated_combined_cost - manifest["combinedStandardListPriceUsd"]) < 0.000001,
+        "combined cost differs",
+    )
 
     report = {
         "status": "passed" if not errors else "failed",

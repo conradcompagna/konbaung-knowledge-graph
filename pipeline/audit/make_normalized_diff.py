@@ -63,7 +63,9 @@ def deletion_reason(raw_line: str, normalized_line: str, page_num: int) -> Optio
     if kg.looks_like_footnote_line(normalized_line):
         return "footnote_or_date_line"
     # Drop OCR-inserted footnote date clusters such as "၁။ ၁၈ ... ၂။ ..." at bottoms.
-    ascii_line = normalized_line.translate(str.maketrans(kg.MYANMAR_DIGITS, kg.ASCII_DIGITS)).replace("ဝ", "0")
+    ascii_line = normalized_line.translate(
+        str.maketrans(kg.MYANMAR_DIGITS, kg.ASCII_DIGITS)
+    ).replace("ဝ", "0")
     if (
         normalized_line.count("။") >= 2
         and re.search(r"[၁၂၃၄၅၆၇၈၉]\s*။", normalized_line)
@@ -205,7 +207,9 @@ def normalized_volume_text(pages: list[ReviewPage]) -> str:
     for page in pages:
         if page.drop_reason or not page.clean_text.strip():
             continue
-        parts.append(f"[[BOOK={page.volume_id} PAGE={page.page_num:04d}]]\n{page.clean_text}".rstrip())
+        parts.append(
+            f"[[BOOK={page.volume_id} PAGE={page.page_num:04d}]]\n{page.clean_text}".rstrip()
+        )
     return "\n\n".join(parts).rstrip() + "\n"
 
 
@@ -249,7 +253,9 @@ def write_volume_html(path: Path, pages: list[ReviewPage]) -> None:
         "<h3>Full Pages Removed</h3>",
     ]
     if removed_pages:
-        doc.append("<table><thead><tr><th>Page</th><th>Reason</th><th>Clean chars before page removal</th></tr></thead><tbody>")
+        doc.append(
+            "<table><thead><tr><th>Page</th><th>Reason</th><th>Clean chars before page removal</th></tr></thead><tbody>"
+        )
         for p in removed_pages:
             doc.append(
                 "<tr>"
@@ -284,16 +290,14 @@ def write_volume_html(path: Path, pages: list[ReviewPage]) -> None:
         deleted_chunks: list[str] = []
         if page.drop_reason and page.clean_text.strip():
             deleted_chunks.append(
-                f"FULL PAGE REMOVED ({page.drop_reason})\n"
-                + deleted_display_text(page.clean_text)
+                f"FULL PAGE REMOVED ({page.drop_reason})\n" + deleted_display_text(page.clean_text)
             )
         for d in page.deleted_lines:
             shown = d.normalized_line or d.raw_line
             if not shown.strip():
                 continue
             deleted_chunks.append(
-                f"LINE {d.line_number} REMOVED ({d.reason})\n"
-                + deleted_display_text(shown)
+                f"LINE {d.line_number} REMOVED ({d.reason})\n" + deleted_display_text(shown)
             )
         deleted_text = "\n\n".join(deleted_chunks)
         doc.append(f'<pre class="deleted deleted-block">{html.escape(deleted_text)}</pre></div>')
@@ -387,7 +391,9 @@ def write_reports(out_dir: Path, all_pages: list[ReviewPage], copied_inputs: lis
         "full_pages_removed_by_reason": by_reason,
         "line_deletions": sum(len(p.deleted_lines) for p in all_pages),
     }
-    write_text(out_dir / "reports/summary.json", json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
+    write_text(
+        out_dir / "reports/summary.json", json.dumps(summary, ensure_ascii=False, indent=2) + "\n"
+    )
 
     md_lines = [
         "# Full Pages Removed",
@@ -442,9 +448,15 @@ def run(args: argparse.Namespace) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build normalized Konbaung text copies and HTML deletion diffs.")
-    parser.add_argument("--inputs", nargs="*", default=None, help="Optional input full-text OCR files.")
-    parser.add_argument("--out-dir", default="konbaung_normalized_review", help="Derived output directory.")
+    parser = argparse.ArgumentParser(
+        description="Build normalized Konbaung text copies and HTML deletion diffs."
+    )
+    parser.add_argument(
+        "--inputs", nargs="*", default=None, help="Optional input full-text OCR files."
+    )
+    parser.add_argument(
+        "--out-dir", default="konbaung_normalized_review", help="Derived output directory."
+    )
     parser.add_argument("--drop-front-matter", action="store_true", default=True)
     parser.add_argument("--keep-front-matter", dest="drop_front_matter", action="store_false")
     parser.add_argument(

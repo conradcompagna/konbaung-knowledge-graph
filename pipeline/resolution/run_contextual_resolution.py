@@ -31,9 +31,7 @@ PAGE_COUNT = 40
 MAX_OUTPUT_TOKENS = 30000
 
 
-def read_jsonl_member(
-    archive: zipfile.ZipFile, member: str
-) -> list[dict[str, Any]]:
+def read_jsonl_member(archive: zipfile.ZipFile, member: str) -> list[dict[str, Any]]:
     """Read one UTF-8 JSONL table from the canonical package."""
     rows: list[dict[str, Any]] = []
     with archive.open(member) as raw:
@@ -49,9 +47,7 @@ def clean_line(value: Any) -> str:
     return " ".join(str(value).replace("\t", " ").split())
 
 
-def load_corpus() -> tuple[
-    list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]
-]:
+def load_corpus() -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
     """Load the three normalized source tables required for contextual resolution."""
     with zipfile.ZipFile(ARCHIVE) as archive:
         pages = read_jsonl_member(archive, "data/pages.jsonl")
@@ -118,9 +114,7 @@ def build_window(
 
     lines.append("ENTITIES\t(tag then supporting sentence IDs)")
     for tag in sorted(entity_contexts, key=lambda value: (value.casefold(), value)):
-        sentence_ids = sorted(
-            entity_contexts[tag], key=lambda value: int(value.removeprefix("s"))
-        )
+        sentence_ids = sorted(entity_contexts[tag], key=lambda value: int(value.removeprefix("s")))
         lines.append(f"{clean_line(tag)}\t{','.join(sentence_ids)}")
 
     return {
@@ -179,7 +173,7 @@ PRIOR_REGISTER_JSON
 {prior_text}
 
 CURRENT_WINDOW
-{window['bundle']}
+{window["bundle"]}
 """
 
 
@@ -313,11 +307,7 @@ def mechanically_conform_result(
     for tag in allowed_tags:
         exact_by_normalized[normalized(tag)].append(tag)
 
-    returned_exact = {
-        tag
-        for tag in result_tags(result)
-        if tag in allowed_tags
-    }
+    returned_exact = {tag for tag in result_tags(result) if tag in allowed_tags}
     initially_missing = required_tags - returned_exact
     mapped_aliases: list[dict[str, str]] = []
     removed_unknown: list[str] = []
@@ -359,9 +349,7 @@ def mechanically_conform_result(
     cleaned_ambiguities: list[list[str]] = []
     for tag, guess, reason in result["a"]:
         replacement = exact_or_safe_replacement(tag)
-        if replacement is not None and all(
-            row[0] != replacement for row in cleaned_ambiguities
-        ):
+        if replacement is not None and all(row[0] != replacement for row in cleaned_ambiguities):
             cleaned_ambiguities.append([replacement, guess, reason])
     ambiguous_tags = {row[0] for row in cleaned_ambiguities}
 
@@ -389,9 +377,7 @@ def mechanically_conform_result(
             final_groups.append([canonical, kept])
 
     covered = {tag for _, aliases in final_groups for tag in aliases} | ambiguous_tags
-    added_singletons = sorted(
-        required_tags - covered, key=lambda value: (value.casefold(), value)
-    )
+    added_singletons = sorted(required_tags - covered, key=lambda value: (value.casefold(), value))
     final_groups.extend([[tag, [tag]] for tag in added_singletons])
     conformed = {"r": final_groups, "a": cleaned_ambiguities}
     audit = {
@@ -438,9 +424,7 @@ def apply_delta(
         expansion_claims.update(expanded)
         expanded_groups.append([canonical, expanded])
 
-    consumed = {
-        tag for _, aliases in expanded_groups for tag in aliases
-    } | delta_ambiguous_tags
+    consumed = {tag for _, aliases in expanded_groups for tag in aliases} | delta_ambiguous_tags
     merged_groups: list[list[Any]] = []
     for canonical, aliases in prior["r"]:
         remaining = [alias for alias in aliases if alias not in consumed]
@@ -448,9 +432,7 @@ def apply_delta(
             merged_groups.append([canonical, remaining])
     merged_groups.extend(expanded_groups)
 
-    merged_ambiguities = [
-        row for row in prior["a"] if row[0] not in consumed
-    ]
+    merged_ambiguities = [row for row in prior["a"] if row[0] not in consumed]
     merged_ambiguities.extend(delta["a"])
     cumulative = {"r": merged_groups, "a": merged_ambiguities}
     validate_result(cumulative, cumulative_tags)
@@ -510,9 +492,7 @@ def submit_window(
     output_dir = OUTPUT / f"window_{window_number:02d}"
     output_dir.mkdir(parents=True, exist_ok=True)
     prompt = build_prompt(window, prior)
-    (output_dir / "prompt_sent.txt").write_text(
-        prompt, encoding="utf-8", newline="\n"
-    )
+    (output_dir / "prompt_sent.txt").write_text(prompt, encoding="utf-8", newline="\n")
     write_json(
         output_dir / "window_manifest.json",
         {
@@ -542,9 +522,7 @@ def submit_window(
     )
     raw_response = response.model_dump(mode="json", exclude_none=True)
     write_json(output_dir / "raw_response.json", raw_response)
-    (output_dir / "response_text.json").write_text(
-        response.text, encoding="utf-8", newline="\n"
-    )
+    (output_dir / "response_text.json").write_text(response.text, encoding="utf-8", newline="\n")
 
     model_result = parse_result(response.text)
     conformance_audit: dict[str, Any] = {}
@@ -556,9 +534,7 @@ def submit_window(
             model_result, conformance_audit = mechanically_conform_result(
                 model_result, cumulative_expected_tags
             )
-            write_json(
-                output_dir / "mechanical_conformance.json", conformance_audit
-            )
+            write_json(output_dir / "mechanical_conformance.json", conformance_audit)
         result = model_result
     else:
         current_tags = set(window["entities"])
@@ -571,9 +547,7 @@ def submit_window(
                 cumulative_expected_tags,
                 required_tags=current_tags,
             )
-            write_json(
-                output_dir / "mechanical_conformance.json", conformance_audit
-            )
+            write_json(output_dir / "mechanical_conformance.json", conformance_audit)
         validate_delta(model_result, current_tags, cumulative_expected_tags)
         write_json(output_dir / "delta_result.json", model_result)
         result = apply_delta(prior, model_result, cumulative_expected_tags)
@@ -596,9 +570,7 @@ def submit_window(
 
 def write_entity_index(windows: list[dict[str, Any]]) -> None:
     """Write a compact inventory showing which raw tags enter in each page window."""
-    with (OUTPUT / "window_entity_index.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "window_entity_index.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(("window", "entity"))
         for window_number, window in enumerate(windows, start=1):
@@ -614,9 +586,7 @@ def main() -> None:
     pages, sentences, triples = load_corpus()
     selected_pages = pages[:PAGE_COUNT]
     windows = [
-        build_window(
-            selected_pages[start : start + WINDOW_SIZE], sentences, triples
-        )
+        build_window(selected_pages[start : start + WINDOW_SIZE], sentences, triples)
         for start in range(0, PAGE_COUNT, WINDOW_SIZE)
     ]
     OUTPUT.mkdir(exist_ok=True)
@@ -637,12 +607,8 @@ def main() -> None:
                 validation = validate_result(prior, cumulative_tags)
             except RuntimeError:
                 write_json(output_dir / "result_model_raw.json", prior)
-                prior, conformance_audit = mechanically_conform_result(
-                    prior, cumulative_tags
-                )
-                write_json(
-                    output_dir / "mechanical_conformance.json", conformance_audit
-                )
+                prior, conformance_audit = mechanically_conform_result(prior, cumulative_tags)
+                write_json(output_dir / "mechanical_conformance.json", conformance_audit)
                 write_json(output_dir / "result.json", prior)
                 validation = validate_result(prior, cumulative_tags)
             raw_response_path = output_dir / "raw_response.json"
@@ -660,9 +626,7 @@ def main() -> None:
             )
             metadata = {"validation": validation, "usage": combined_usage}
         else:
-            prior, metadata = submit_window(
-                client, window_number, window, prior, cumulative_tags
-            )
+            prior, metadata = submit_window(client, window_number, window, prior, cumulative_tags)
         run_rows.append(
             {
                 "window": window_number,

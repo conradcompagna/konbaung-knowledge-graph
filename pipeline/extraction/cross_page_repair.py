@@ -76,7 +76,7 @@ def page_block(volume: int, page_number: int) -> tuple[str, dict[str, Any], list
     triples = existing_triples(page)
     block = f"""<PAGE number=\"{page_number}\">
 <PAGE_TEXT>
-{page['canonicalText']}
+{page["canonicalText"]}
 </PAGE_TEXT>
 <EXISTING_TRIPLES_READ_ONLY>
 {json.dumps(triples, ensure_ascii=False, indent=2)}
@@ -85,7 +85,9 @@ def page_block(volume: int, page_number: int) -> tuple[str, dict[str, Any], list
     return block, page, triples
 
 
-def build_prompt(volume: int, first_page: int) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
+def build_prompt(
+    volume: int, first_page: int
+) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
     first_block, first, first_triples = page_block(volume, first_page)
     second_block, second, second_triples = page_block(volume, first_page + 1)
     prompt = f"""<ORIGINAL_FIRST_PASS_PROMPT_READ_ONLY>
@@ -101,7 +103,9 @@ def build_prompt(volume: int, first_page: int) -> tuple[str, list[dict[str, Any]
     return prompt, [first, second], first_triples + second_triples
 
 
-def validate(result: RepairResult, pages: list[dict[str, Any]], triples: list[dict[str, Any]]) -> list[str]:
+def validate(
+    result: RepairResult, pages: list[dict[str, Any]], triples: list[dict[str, Any]]
+) -> list[str]:
     flags: list[str] = []
     ids = {triple["id"] for triple in triples}
     page_text = {int(page["pageNumber"]): normalized(page["canonicalText"]) for page in pages}
@@ -110,7 +114,9 @@ def validate(result: RepairResult, pages: list[dict[str, Any]], triples: list[di
         if repair.id not in ids:
             flags.append(f"R[{index}]: unknown triple ID {repair.id}")
         for evidence in repair.replacement.evidence:
-            if evidence.page not in page_text or normalized(evidence.my) not in page_text.get(evidence.page, ""):
+            if evidence.page not in page_text or normalized(evidence.my) not in page_text.get(
+                evidence.page, ""
+            ):
                 flags.append(f"R[{index}]: evidence does not resolve on page {evidence.page}")
         for category in ("time", "place", "quantity", "manner", "reason"):
             value = getattr(repair.replacement, category)
@@ -121,7 +127,9 @@ def validate(result: RepairResult, pages: list[dict[str, Any]], triples: list[di
 
 def run(volume: int, first_page: int, output_name: str) -> Path:
     prompt, pages, triples = build_prompt(volume, first_page)
-    output_dir = OUTPUT_ROOT / f"vol{volume}" / f"pages_{first_page:04d}_{first_page + 1:04d}" / output_name
+    output_dir = (
+        OUTPUT_ROOT / f"vol{volume}" / f"pages_{first_page:04d}_{first_page + 1:04d}" / output_name
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "prompt_sent.txt").write_text(prompt, encoding="utf-8")
     client = genai.Client(api_key=api_key())

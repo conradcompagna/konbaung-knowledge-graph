@@ -52,9 +52,7 @@ def main() -> None:
         result = json.loads(path.read_text(encoding="utf-8"))
         input_data = json.loads((path.parent / "input.json").read_text(encoding="utf-8"))
         validation = result["validation"]
-        source_sentences = {
-            sentence["sid"]: sentence for sentence in input_data["sentences"]
-        }
+        source_sentences = {sentence["sid"]: sentence for sentence in input_data["sentences"]}
         pages.append(
             {
                 "volume": result["volume"],

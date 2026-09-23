@@ -38,9 +38,7 @@ def load_clusters() -> dict[str, dict]:
 
 
 def readable_sources(sources: list[str]) -> str:
-    return "; ".join(
-        SOURCE_LABELS.get(source, source.replace("_", " ")) for source in sources
-    )
+    return "; ".join(SOURCE_LABELS.get(source, source.replace("_", " ")) for source in sources)
 
 
 def main() -> None:
@@ -103,9 +101,7 @@ def main() -> None:
                 "right_aliases": " | ".join(right["memberTags"]),
                 "right_tag_count": right["tagCount"],
                 "right_total_frequency": right["totalFrequency"],
-                "why_it_was_a_candidate": readable_sources(
-                    candidate["candidateSources"]
-                ),
+                "why_it_was_a_candidate": readable_sources(candidate["candidateSources"]),
             }
             writer.writerow(row)
             if clears_threshold:

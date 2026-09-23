@@ -19,10 +19,7 @@ from konbaung_gemini_summary_claim_completion_annotator import api_key
 
 ROOT = Path(__file__).resolve().parent
 CANONICAL_ROOT = (
-    ROOT
-    / "konbaung_reader_app"
-    / "data"
-    / "konbaung_historiography_v3_canonical_20260724"
+    ROOT / "konbaung_reader_app" / "data" / "konbaung_historiography_v3_canonical_20260724"
 )
 READER_PAGES = ROOT / "konbaung_reader_app" / "static" / "data" / "konbaung" / "pages"
 OUTPUT_ROOT = ROOT / "konbaung_v3_canonical_entity_span_trials"
@@ -87,9 +84,7 @@ def read_canonical_owner_page(
         if int(sentence["ownerPage"]) == page_number and sentence["triples"]
     ]
     if not sentences:
-        raise ValueError(
-            f"Canonical page vol{volume}-p{page_number:04d} has no triples"
-        )
+        raise ValueError(f"Canonical page vol{volume}-p{page_number:04d} has no triples")
     return sorted(sentences, key=lambda sentence: sentence["sid"])
 
 
@@ -151,13 +146,9 @@ def validate(
     errors: list[str] = []
     model_flags: list[str] = []
     if observed_ids != expected_ids:
-        errors.append(
-            f"triple IDs/order mismatch: expected {expected_ids}, got {observed_ids}"
-        )
+        errors.append(f"triple IDs/order mismatch: expected {expected_ids}, got {observed_ids}")
 
-    input_by_id = {
-        triple["triple_id"]: (sentence, triple) for sentence, triple in input_rows
-    }
+    input_by_id = {triple["triple_id"]: (sentence, triple) for sentence, triple in input_rows}
     page_text = supplied["physical_page_text"]
     supplied_burmese_contexts = [
         page_text,
@@ -190,10 +181,7 @@ def validate(
             if endpoint.status == "found":
                 if not model_span:
                     role_errors.append("found span is empty")
-                if not any(
-                    model_span in context
-                    for context in supplied_burmese_contexts
-                ):
+                if not any(model_span in context for context in supplied_burmese_contexts):
                     role_errors.append(
                         "span is not an exact substring of any supplied Burmese context"
                     )
@@ -202,9 +190,7 @@ def validate(
                     role_errors.append("not_found span is not empty")
 
             if role_errors:
-                model_flags.append(
-                    f"{returned.triple_id} {role}: " + "; ".join(role_errors)
-                )
+                model_flags.append(f"{returned.triple_id} {role}: " + "; ".join(role_errors))
                 final_status = "not_found"
                 final_span = ""
             else:
@@ -219,8 +205,7 @@ def validate(
                 "model_span": model_span,
                 "in_physical_page": bool(model_span) and model_span in page_text,
                 "in_corresponding_sentence": (
-                    bool(model_span)
-                    and model_span in sentence["burmese_sentence"]
+                    bool(model_span) and model_span in sentence["burmese_sentence"]
                 ),
                 "flag_reason": "; ".join(role_errors),
                 "validation_errors": role_errors,
@@ -277,24 +262,18 @@ def review_markdown(
             subject = audit["subject_grounding"]
             object_ = audit["object_grounding"]
             subject_display = (
-                f"`{subject['span']}`"
-                if subject["status"] == "found"
-                else "**NOT FOUND**"
+                f"`{subject['span']}`" if subject["status"] == "found" else "**NOT FOUND**"
             )
             if subject["flag_reason"]:
                 subject_display += (
-                    f" — rejected model span `{subject['model_span']}`"
-                    f" ({subject['flag_reason']})"
+                    f" — rejected model span `{subject['model_span']}` ({subject['flag_reason']})"
                 )
             object_display = (
-                f"`{object_['span']}`"
-                if object_["status"] == "found"
-                else "**NOT FOUND**"
+                f"`{object_['span']}`" if object_["status"] == "found" else "**NOT FOUND**"
             )
             if object_["flag_reason"]:
                 object_display += (
-                    f" — rejected model span `{object_['model_span']}`"
-                    f" ({object_['flag_reason']})"
+                    f" — rejected model span `{object_['model_span']}` ({object_['flag_reason']})"
                 )
             lines.extend(
                 [
@@ -348,14 +327,10 @@ def save_validated_result(
 
 
 def reprocess_existing(output_dir: Path) -> dict[str, Any]:
-    supplied = json.loads(
-        (output_dir / "input.json").read_text(encoding="utf-8")
-    )
+    supplied = json.loads((output_dir / "input.json").read_text(encoding="utf-8"))
     raw = (output_dir / "raw_response.json").read_text(encoding="utf-8")
     result = SpanResult.model_validate_json(raw)
-    old_result = json.loads(
-        (output_dir / "result.json").read_text(encoding="utf-8")
-    )
+    old_result = json.loads((output_dir / "result.json").read_text(encoding="utf-8"))
     return save_validated_result(
         output_dir,
         supplied,
@@ -405,11 +380,7 @@ def run(volume: int, page_number: int, output_name: str) -> Path:
     raw = response.text or ""
     (output_dir / "raw_response.json").write_text(raw + "\n", encoding="utf-8")
     result = SpanResult.model_validate_json(raw)
-    usage = (
-        response.usage_metadata.model_dump(mode="json")
-        if response.usage_metadata
-        else {}
-    )
+    usage = response.usage_metadata.model_dump(mode="json") if response.usage_metadata else {}
     validation = save_validated_result(output_dir, supplied, result, usage)
     print(
         json.dumps(
@@ -441,12 +412,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     if args.reprocess_existing:
-        output_dir = (
-            OUTPUT_ROOT
-            / f"vol{args.volume}"
-            / f"page_{args.page:04d}"
-            / args.output_name
-        )
+        output_dir = OUTPUT_ROOT / f"vol{args.volume}" / f"page_{args.page:04d}" / args.output_name
         validation = reprocess_existing(output_dir)
         print(
             json.dumps(

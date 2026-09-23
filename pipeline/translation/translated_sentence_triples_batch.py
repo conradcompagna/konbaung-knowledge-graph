@@ -32,7 +32,9 @@ from konbaung_gemini_translated_sentence_triples_test import (
 
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_OUTPUT_ROOT = ROOT / "konbaung_translated_sentence_triples_full_batch_20260713_high_thinking"
+DEFAULT_OUTPUT_ROOT = (
+    ROOT / "konbaung_translated_sentence_triples_full_batch_20260713_high_thinking"
+)
 TEST_OUTPUT_ROOT = ROOT / "konbaung_translated_sentence_triple_tests_unified"
 REUSED_TESTS = (
     (1, 55, "high_thinking_all_relevant_01"),
@@ -226,10 +228,7 @@ def submit_batch(
     max_output_tokens: int,
     thinking_budget: int | None = None,
 ) -> Any:
-    requests = [
-        build_request(job, cache_name, max_output_tokens, thinking_budget)
-        for job in jobs
-    ]
+    requests = [build_request(job, cache_name, max_output_tokens, thinking_budget) for job in jobs]
     batch = client.batches.create(
         model=MODEL,
         src=requests,
@@ -306,11 +305,20 @@ def materialize_reused_tests(out_dir: Path, jobs_by_key: dict[str, PageJob]) -> 
             "stored_accepted": stored_result.get("accepted") is True,
             "current_validation_errors": errors,
         }
-        if not all((checks["payload_exact"], checks["prompt_exact"], checks["stored_accepted"])) or errors:
+        if (
+            not all((checks["payload_exact"], checks["prompt_exact"], checks["stored_accepted"]))
+            or errors
+        ):
             raise RuntimeError(f"Reusable test failed current checks: {key}: {checks}")
         target = page_dir(out_dir, job)
         target.mkdir(parents=True, exist_ok=True)
-        for name in ("payload.json", "prompt_sent.txt", "raw_response.json", "result.json", "review.md"):
+        for name in (
+            "payload.json",
+            "prompt_sent.txt",
+            "raw_response.json",
+            "result.json",
+            "review.md",
+        ):
             shutil.copy2(source / name, target / name)
         provenance = {
             "source": "reused_final_high_thinking_test",
@@ -511,12 +519,18 @@ def finalize(out_dir: Path, jobs: list[PageJob]) -> dict[str, Any]:
     for volume in (1, 2, 3):
         write_text(
             annotation_dir / f"vol{volume}.jsonl",
-            "\n".join(json.dumps(row, ensure_ascii=False) for row in page_rows if row["volume"] == volume)
+            "\n".join(
+                json.dumps(row, ensure_ascii=False) for row in page_rows if row["volume"] == volume
+            )
             + "\n",
         )
         write_text(
             triple_dir / f"vol{volume}.jsonl",
-            "\n".join(json.dumps(row, ensure_ascii=False) for row in triple_rows if row["volume"] == volume)
+            "\n".join(
+                json.dumps(row, ensure_ascii=False)
+                for row in triple_rows
+                if row["volume"] == volume
+            )
             + "\n",
         )
     audit = {
@@ -645,9 +659,7 @@ def run(args: argparse.Namespace) -> None:
             volume_jobs = jobs_from_saved_plan(out_dir, label, jobs_by_key)
             batch_name = submitted_batch_name(out_dir, label)
         else:
-            volume_jobs = [
-                job for job in jobs if job.volume == volume and job.key not in completed
-            ]
+            volume_jobs = [job for job in jobs if job.volume == volume and job.key not in completed]
             if not volume_jobs:
                 continue
             save_plan(out_dir, label, volume_jobs)

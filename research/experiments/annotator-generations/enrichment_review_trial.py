@@ -260,9 +260,7 @@ def run(
     )
     raw, thoughts = response_parts(response)
     (output_dir / "raw_response.json").write_text(raw, encoding="utf-8")
-    (output_dir / "returned_thoughts.txt").write_text(
-        "\n\n".join(thoughts), encoding="utf-8"
-    )
+    (output_dir / "returned_thoughts.txt").write_text("\n\n".join(thoughts), encoding="utf-8")
     result = ReviewResult.model_validate_json(raw)
     errors = validate(payload, result)
     write_json(

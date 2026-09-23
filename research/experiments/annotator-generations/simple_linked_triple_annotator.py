@@ -20,7 +20,12 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field, ValidationError
 
-from konbaung_gemini_page_kg_annotator import DEFAULT_ENV_FILE, DEFAULT_SOURCE_ROOT, PageJob, resolve_api_key
+from konbaung_gemini_page_kg_annotator import (
+    DEFAULT_ENV_FILE,
+    DEFAULT_SOURCE_ROOT,
+    PageJob,
+    resolve_api_key,
+)
 from konbaung_gemini_xlmr_seed_annotator import (
     DEFAULT_CONTEXT_RATIO,
     build_page_index_with_neighbors,
@@ -43,25 +48,35 @@ class LinkedSpan(BaseModel):
     label: SimpleEntityType = Field(description="One simplified entity label.")
     en: str = Field(description="Compact English gloss for this span.")
     ln: int = Field(description="1-based starting line number in TARGET_PAGE_TEXT.")
-    i: int = Field(default=1, description="1-based occurrence of tx starting from ln; use >1 only when duplicated.")
+    i: int = Field(
+        default=1,
+        description="1-based occurrence of tx starting from ln; use >1 only when duplicated.",
+    )
 
 
 class EvidenceChunk(BaseModel):
     tx: str = Field(description="Exact Burmese evidence chunk copied from TARGET_PAGE_TEXT.")
     ln: int = Field(description="1-based starting line number in TARGET_PAGE_TEXT.")
-    i: int = Field(default=1, description="1-based occurrence of tx starting from ln; use >1 only when duplicated.")
+    i: int = Field(
+        default=1,
+        description="1-based occurrence of tx starting from ln; use >1 only when duplicated.",
+    )
 
 
 class LinkedTriple(BaseModel):
     n: int = Field(description="1-based triple number in reading order.")
     s: LinkedSpan = Field(description="Explicit subject/source span.")
-    p: str = Field(description="Short English verb phrase for the relation, e.g. ordered, attacked, moved to.")
+    p: str = Field(
+        description="Short English verb phrase for the relation, e.g. ordered, attacked, moved to."
+    )
     o: LinkedSpan = Field(description="Explicit object/target span.")
     e: EvidenceChunk = Field(description="Exact text chunk grounding the relation.")
 
 
 class LinkedTripleAnnotation(BaseModel):
-    T: list[LinkedTriple] = Field(description="Only triples with two explicit linked spans in TARGET_PAGE_TEXT.")
+    T: list[LinkedTriple] = Field(
+        description="Only triples with two explicit linked spans in TARGET_PAGE_TEXT."
+    )
 
 
 LABEL_DEFINITIONS = """- PERSON: individual person or named human title/person reference
@@ -109,7 +124,9 @@ page_num: {page_num}
 """
 
 
-def build_prompt(job: PageJob, page_index: dict[tuple[str, int], PageJob], context_ratio: float) -> str:
+def build_prompt(
+    job: PageJob, page_index: dict[tuple[str, int], PageJob], context_ratio: float
+) -> str:
     blocks = context_blocks(job, page_index, context_ratio)
     return PROMPT_TEMPLATE.format(
         label_definitions=LABEL_DEFINITIONS,
@@ -186,7 +203,9 @@ def page_metadata(job: PageJob) -> dict[str, Any]:
     }
 
 
-def validate_annotation(job: PageJob, annotation: LinkedTripleAnnotation) -> tuple[dict[str, Any], list[str], list[str]]:
+def validate_annotation(
+    job: PageJob, annotation: LinkedTripleAnnotation
+) -> tuple[dict[str, Any], list[str], list[str]]:
     lines = job.raw_text.splitlines()
     errors: list[str] = []
     warnings: list[str] = []
@@ -200,9 +219,15 @@ def validate_annotation(job: PageJob, annotation: LinkedTripleAnnotation) -> tup
         if not triple.p.strip():
             errors.append(f"{ref}: blank p")
 
-        s_resolved, s_error = resolve_text_ref(job.raw_text, lines, ln=triple.s.ln, tx=triple.s.tx, i=triple.s.i)
-        o_resolved, o_error = resolve_text_ref(job.raw_text, lines, ln=triple.o.ln, tx=triple.o.tx, i=triple.o.i)
-        e_resolved, e_error = resolve_text_ref(job.raw_text, lines, ln=triple.e.ln, tx=triple.e.tx, i=triple.e.i)
+        s_resolved, s_error = resolve_text_ref(
+            job.raw_text, lines, ln=triple.s.ln, tx=triple.s.tx, i=triple.s.i
+        )
+        o_resolved, o_error = resolve_text_ref(
+            job.raw_text, lines, ln=triple.o.ln, tx=triple.o.tx, i=triple.o.i
+        )
+        e_resolved, e_error = resolve_text_ref(
+            job.raw_text, lines, ln=triple.e.ln, tx=triple.e.tx, i=triple.e.i
+        )
         if s_error:
             errors.append(f"{ref}.s: {s_error}")
         if o_error:
@@ -238,7 +263,9 @@ def validate_annotation(job: PageJob, annotation: LinkedTripleAnnotation) -> tup
     return resolved, errors, warnings
 
 
-def collect_review_spans(annotation: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[tuple[int, int, str], str]]:
+def collect_review_spans(
+    annotation: dict[str, Any],
+) -> tuple[list[dict[str, Any]], dict[tuple[int, int, str], str]]:
     review_spans: list[dict[str, Any]] = []
     id_by_key: dict[tuple[int, int, str], str] = {}
     next_id = 1
@@ -356,7 +383,9 @@ def run_page(args: argparse.Namespace) -> None:
 
     api_key = resolve_api_key(args)
     if not api_key:
-        raise RuntimeError("No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file.")
+        raise RuntimeError(
+            "No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file."
+        )
 
     client = genai.Client(api_key=api_key)
     annotation, usage = call_gemini(
@@ -379,14 +408,31 @@ def run_page(args: argparse.Namespace) -> None:
         "validation_errors": errors,
         "validation_warnings": warnings,
     }
-    write_json(output_path(out_dir, "raw", bucket, job), {**record, "annotation": annotation.model_dump()})
+    write_json(
+        output_path(out_dir, "raw", bucket, job), {**record, "annotation": annotation.model_dump()}
+    )
     write_json(output_path(out_dir, "postprocessed", bucket, job), record)
     write_text(review_output_path(out_dir, bucket, job), build_review_text(job, resolved))
-    print(json.dumps({**summary, "bucket": bucket, "usage_metadata": usage, "triple_count": len(resolved["T"]), "errors": errors, "warnings": warnings}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                **summary,
+                "bucket": bucket,
+                "usage_metadata": usage,
+                "triple_count": len(resolved["T"]),
+                "errors": errors,
+                "warnings": warnings,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run one-pass simple linked triple extraction on one Konbaung OCR page.")
+    parser = argparse.ArgumentParser(
+        description="Run one-pass simple linked triple extraction on one Konbaung OCR page."
+    )
     parser.add_argument("--source-root", default=str(DEFAULT_SOURCE_ROOT))
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     parser.add_argument("--volume-id", default="konbaung_vol1")

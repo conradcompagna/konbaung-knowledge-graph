@@ -29,7 +29,9 @@ I built this project to investigate how power operated in the Konbaung dynasty t
 | Source alignment and integration checks | [tests/](tests/) |
 
 The [pipeline guide](pipeline/README.md) connects these stages, from model-assisted
-extraction to source inspection, entity review, and graph exploration.
+extraction to source inspection, entity review, and graph exploration. The
+[graph interface guide](konbaung_reader_app/frontend/graph/README.md) maps the
+frontend by navigation, rendering, filtering, layout, and evidence responsibilities.
 
 ---
 
@@ -63,6 +65,8 @@ connects each result to its model, source context, and validation checks.
 python -m unittest discover -s tests/unit -v
 cd konbaung_reader_app
 npm ci
+npm run check:types
+npm run test:graph
 npm run build:frontend
 ```
 

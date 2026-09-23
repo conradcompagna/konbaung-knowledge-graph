@@ -98,15 +98,15 @@ def render_input(payload: dict[str, Any]) -> str:
             lines.extend(
                 [
                     f'<TRIPLE id="{triple["id"]}">',
-                    f's_my: {triple["s"]["my"]}',
-                    f'p_my: {triple["predicate_grounding"]["my"]}',
-                    f'o_my: {triple["o"]["my"]}',
-                    f's_en: {triple["s"]["en"]}',
-                    f'p_en: {triple["predicate_grounding"]["en"]}',
-                    f'o_en: {triple["o"]["en"]}',
-                    f's_tag: {triple["s"]["tag"]}',
-                    f'p_tag: {triple["p"]}',
-                    f'o_tag: {triple["o"]["tag"]}',
+                    f"s_my: {triple['s']['my']}",
+                    f"p_my: {triple['predicate_grounding']['my']}",
+                    f"o_my: {triple['o']['my']}",
+                    f"s_en: {triple['s']['en']}",
+                    f"p_en: {triple['predicate_grounding']['en']}",
+                    f"o_en: {triple['o']['en']}",
+                    f"s_tag: {triple['s']['tag']}",
+                    f"p_tag: {triple['p']}",
+                    f"o_tag: {triple['o']['tag']}",
                     "</TRIPLE>",
                     "",
                 ]
@@ -193,7 +193,9 @@ def validate(payload: dict[str, Any], result: dict[str, Any]) -> list[str]:
             if value not in page_text:
                 original = old[item_id][endpoint]
                 if original.get("source") != "inferred" or value != original["my"]:
-                    errors.append(f"{item_id}: {role}_my is neither verbatim page text nor preserved inference")
+                    errors.append(
+                        f"{item_id}: {role}_my is neither verbatim page text nor preserved inference"
+                    )
         if row["p_my"] not in page_text:
             errors.append(f"{item_id}: p_my is not a verbatim span from the page")
     return errors
@@ -202,11 +204,11 @@ def validate(payload: dict[str, Any], result: dict[str, Any]) -> list[str]:
 def review_markdown(payload: dict[str, Any], result: dict[str, Any]) -> str:
     replacements = {row["id"]: row for row in result.get("R", [])}
     deletions = set(result.get("D", []))
-    lines = [f'# {payload["page_id"]}', ""]
+    lines = [f"# {payload['page_id']}", ""]
     for sentence in payload["S"]:
         lines.extend(
             [
-                f'## {sentence["sid"]}',
+                f"## {sentence['sid']}",
                 "",
                 sentence["my"],
                 "",
@@ -285,27 +287,36 @@ def main() -> None:
     (output / "prompt_sent.txt").write_text(prompt_sent, encoding="utf-8")
     write_json(output / "schema.json", schema)
     (output / "response.json").write_text(response_text + "\n", encoding="utf-8")
-    write_json(output / "status.json", {
-        "created": datetime.now(timezone.utc).isoformat(),
-        "page_id": page_id,
-        "model": MODEL,
-        "thinking_config": None,
-        "input_triples": len(ids),
-        "rewritten": len(result.get("R", [])),
-        "deleted": len(result.get("D", [])),
-        "errors": errors,
-        "usage": usage,
-    })
+    write_json(
+        output / "status.json",
+        {
+            "created": datetime.now(timezone.utc).isoformat(),
+            "page_id": page_id,
+            "model": MODEL,
+            "thinking_config": None,
+            "input_triples": len(ids),
+            "rewritten": len(result.get("R", [])),
+            "deleted": len(result.get("D", [])),
+            "errors": errors,
+            "usage": usage,
+        },
+    )
     (output / "review.md").write_text(review_markdown(payload, result), encoding="utf-8")
-    print(json.dumps({
-        "output": str(output),
-        "page_id": page_id,
-        "triples": len(ids),
-        "R": len(result.get("R", [])),
-        "D": len(result.get("D", [])),
-        "errors": errors,
-        "usage": usage,
-    }, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "output": str(output),
+                "page_id": page_id,
+                "triples": len(ids),
+                "R": len(result.get("R", [])),
+                "D": len(result.get("D", [])),
+                "errors": errors,
+                "usage": usage,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -9,9 +9,7 @@ from konbaung_gemini_remainder_completion_annotator import utf16_to_codepoint
 
 
 ROOT = Path("konbaung_reader_app/static/data/konbaung/pages")
-HEADER_RE = re.compile(
-    r"(မဟာရာဇဝင်တော်ကြီး|ဖြစ်တော်စဉ်|မြို့တည်နန်းတည်\s+မင်းတရားကြီး|နန်းစံ\s+မင်းတရားကြီး)"
-)
+HEADER_RE = re.compile(r"(မဟာရာဇဝင်တော်ကြီး|ဖြစ်တော်စဉ်|မြို့တည်နန်းတည်\s+မင်းတရားကြီး|နန်းစံ\s+မင်းတရားကြီး)")
 NUMBER_RE = re.compile(r"^[၀-၉0-9]+$")
 FOOTNOTE_RE = re.compile(r"^[၁၂၃၄၅၆၇၈၉၀0-9]+\s*[။.]")
 PUBLISHER_RE = re.compile(r"ရာပြည့်.*(?:စာ)?အုပ်တိုင်|ရာပြည့်.*(?:စာ)?အုပ်တိုက်|ရာပြည့်စာအုပ်တို့၏")
@@ -37,7 +35,9 @@ def debris_positions(text: str) -> set[int]:
         if HEADER_RE.search(stripped) or NUMBER_RE.fullmatch(stripped):
             debris.update(range(start, end))
 
-    publisher_lines = [index for index, (_, _, line) in enumerate(lines) if PUBLISHER_RE.search(line)]
+    publisher_lines = [
+        index for index, (_, _, line) in enumerate(lines) if PUBLISHER_RE.search(line)
+    ]
     if publisher_lines:
         publisher = publisher_lines[-1]
         start_line = publisher

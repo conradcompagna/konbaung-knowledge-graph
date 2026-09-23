@@ -27,7 +27,9 @@ from konbaung_gemini_summary_claim_completion_annotator import api_key
 
 
 ROOT = Path(__file__).resolve().parent
-SOURCE_ROOT = ROOT / "konbaung_translated_sentence_triples_full_batch_20260713_high_thinking" / "pages"
+SOURCE_ROOT = (
+    ROOT / "konbaung_translated_sentence_triples_full_batch_20260713_high_thinking" / "pages"
+)
 OUTPUT_ROOT = ROOT / "konbaung_relation_predicate_grounding_full_batch_20260717"
 TERMINAL_STATES = {
     "JOB_STATE_SUCCEEDED",
@@ -36,11 +38,16 @@ TERMINAL_STATES = {
     "JOB_STATE_EXPIRED",
 }
 SEED_TRIALS = {
-    (1, 193): ROOT / "konbaung_relation_predicate_grounding_trials/vol1/page_0193/user_prompt_minimal_trial_02",
-    (1, 392): ROOT / "konbaung_relation_predicate_grounding_trials/vol1/page_0392/user_prompt_minimal_trial_03",
-    (2, 245): ROOT / "konbaung_relation_predicate_grounding_trials/vol2/page_0245/user_prompt_minimal_trial_04",
-    (2, 336): ROOT / "konbaung_relation_predicate_grounding_trials/vol2/page_0336/user_prompt_minimal_trial_05",
-    (2, 342): ROOT / "konbaung_relation_predicate_grounding_trials/vol2/page_0342/user_prompt_minimal_trial_06",
+    (1, 193): ROOT
+    / "konbaung_relation_predicate_grounding_trials/vol1/page_0193/user_prompt_minimal_trial_02",
+    (1, 392): ROOT
+    / "konbaung_relation_predicate_grounding_trials/vol1/page_0392/user_prompt_minimal_trial_03",
+    (2, 245): ROOT
+    / "konbaung_relation_predicate_grounding_trials/vol2/page_0245/user_prompt_minimal_trial_04",
+    (2, 336): ROOT
+    / "konbaung_relation_predicate_grounding_trials/vol2/page_0336/user_prompt_minimal_trial_05",
+    (2, 342): ROOT
+    / "konbaung_relation_predicate_grounding_trials/vol2/page_0342/user_prompt_minimal_trial_06",
 }
 
 
@@ -107,7 +114,12 @@ def discover_jobs() -> list[PageJob]:
 
 def prompt_for(job: PageJob) -> str:
     input_data = {"page_id": job.payload["page_id"], "records": job.records}
-    return INSTRUCTION + "\n\n<INPUT>\n" + json.dumps(input_data, ensure_ascii=False, separators=(",", ":")) + "\n</INPUT>"
+    return (
+        INSTRUCTION
+        + "\n\n<INPUT>\n"
+        + json.dumps(input_data, ensure_ascii=False, separators=(",", ":"))
+        + "\n</INPUT>"
+    )
 
 
 def build_request(job: PageJob) -> types.InlinedRequest:
@@ -282,7 +294,9 @@ def collect(out_dir: Path) -> dict[str, Any]:
             key = metadata.get("key", "")
             job = jobs_by_key.get(key)
             if job is None or getattr(inlined, "error", None) is not None:
-                rows.append({"key": key, "error": json_safe(getattr(inlined, "error", "unknown key"))})
+                rows.append(
+                    {"key": key, "error": json_safe(getattr(inlined, "error", "unknown key"))}
+                )
                 continue
             response = getattr(inlined, "response", None)
             raw = response_text(response)
@@ -354,7 +368,8 @@ def finalize(out_dir: Path, jobs: list[PageJob]) -> dict[str, Any]:
         "expected_groundings": sum(len(job.expected) for job in jobs),
         "accepted_pages": accepted_pages,
         "accepted_groundings": accepted_groundings,
-        "complete": accepted_pages == len(jobs) and accepted_groundings == sum(len(job.expected) for job in jobs),
+        "complete": accepted_pages == len(jobs)
+        and accepted_groundings == sum(len(job.expected) for job in jobs),
     }
 
 

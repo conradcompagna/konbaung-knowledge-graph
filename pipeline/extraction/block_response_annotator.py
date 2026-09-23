@@ -42,7 +42,9 @@ class CompletionTriple(BaseModel):
 
 class BlockResponse(BaseModel):
     e: str = Field(description="One complete supplied unannotated span, copied verbatim.")
-    T: list[CompletionTriple] = Field(description="New triples derived from this span, or an empty list for debris.")
+    T: list[CompletionTriple] = Field(
+        description="New triples derived from this span, or an empty list for debris."
+    )
 
 
 class CompletionResult(BaseModel):
@@ -101,10 +103,19 @@ def remainder_blocks(page: dict[str, Any]) -> list[dict[str, Any]]:
     cursor = 0
     for start, end in merged:
         if cursor < start and text[cursor:start].strip():
-            blocks.append({"id": f"R{len(blocks) + 1}", "start": cursor, "end": start, "text": text[cursor:start]})
+            blocks.append(
+                {
+                    "id": f"R{len(blocks) + 1}",
+                    "start": cursor,
+                    "end": start,
+                    "text": text[cursor:start],
+                }
+            )
         cursor = max(cursor, end)
     if cursor < len(text) and text[cursor:].strip():
-        blocks.append({"id": f"R{len(blocks) + 1}", "start": cursor, "end": len(text), "text": text[cursor:]})
+        blocks.append(
+            {"id": f"R{len(blocks) + 1}", "start": cursor, "end": len(text), "text": text[cursor:]}
+        )
     return blocks
 
 
@@ -145,8 +156,7 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], li
     blocks = remainder_blocks(page)
     original_prompt = ORIGINAL_PROMPT_PATH.read_text(encoding="utf-8-sig")
     block_text = "\n\n".join(
-        f'<SPAN id="{block["id"]}">\n{block["text"]}\n</SPAN>'
-        for block in blocks
+        f'<SPAN id="{block["id"]}">\n{block["text"]}\n</SPAN>' for block in blocks
     )
     prompt = f"""<ORIGINAL_FIRST_PASS_PROMPT_READ_ONLY>
 {original_prompt}
@@ -159,11 +169,11 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], li
 {THIRD_PASS_PROMPT}
 
 <TARGET_PAGE_TEXT>
-{page['canonicalText']}
+{page["canonicalText"]}
 </TARGET_PAGE_TEXT>
 
 <EXISTING_SUMMARY_READ_ONLY>
-{page.get('summary') or ''}
+{page.get("summary") or ""}
 </EXISTING_SUMMARY_READ_ONLY>
 
 <EXISTING_TRIPLES_AND_EVIDENCE_READ_ONLY>
@@ -191,10 +201,7 @@ def validate(
     target_text: str,
 ) -> tuple[list[str], list[dict[str, Any]], dict[str, Any]]:
     warnings: list[str] = []
-    coverage = {
-        item["id"]: [False] * len(item["text"])
-        for item in blocks
-    }
+    coverage = {item["id"]: [False] * len(item["text"]) for item in blocks}
     placements: list[dict[str, Any]] = []
 
     if len(result.B) != len(blocks):
@@ -212,11 +219,15 @@ def validate(
             for field in ("s", "o"):
                 value = getattr(triple, field)
                 if not contained(response_block.e, value) and not contained(target_text, value):
-                    warnings.append(f"B[{index}].T[{triple_index}].{field}: endpoint is absent from evidence and target page")
+                    warnings.append(
+                        f"B[{index}].T[{triple_index}].{field}: endpoint is absent from evidence and target page"
+                    )
             for field in ("d", "l", "q"):
                 value = getattr(triple, field)
                 if value and not contained(response_block.e, value):
-                    warnings.append(f"B[{index}].T[{triple_index}].{field}: modifier is not in evidence block")
+                    warnings.append(
+                        f"B[{index}].T[{triple_index}].{field}: modifier is not in evidence block"
+                    )
     missing_by_block: dict[str, int] = {}
     for block in blocks:
         missing = sum(
@@ -226,14 +237,13 @@ def validate(
         )
         if missing:
             missing_by_block[block["id"]] = missing
-            warnings.append(f'{block["id"]}: {missing} non-whitespace characters remain unassigned')
+            warnings.append(f"{block['id']}: {missing} non-whitespace characters remain unassigned")
     coverage_report = {
         "complete": not missing_by_block,
         "missing_by_block": missing_by_block,
         "assigned_characters": sum(sum(flags) for flags in coverage.values()),
         "required_characters": sum(
-            sum(not char.isspace() for char in block["text"])
-            for block in blocks
+            sum(not char.isspace() for char in block["text"]) for block in blocks
         ),
     }
     return warnings, placements, coverage_report

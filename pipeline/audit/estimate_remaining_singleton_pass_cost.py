@@ -138,7 +138,9 @@ def main() -> None:
     for cluster in clusters:
         parent_file = entity_to_row[cluster["parentEntity"]]["file"]
         source_candidates = read_csv(SOURCE / "entities" / parent_file)
-        rank_by_entity = {row["entity"]: rank for rank, row in enumerate(source_candidates, start=1)}
+        rank_by_entity = {
+            row["entity"]: rank for rank, row in enumerate(source_candidates, start=1)
+        }
         for alias in cluster["members"][1:]:
             if int(entity_to_row[alias]["mentions"]) <= 1:
                 continue
@@ -146,7 +148,9 @@ def main() -> None:
             if rank_by_entity[alias] <= 20:
                 top_twenty_eligible_aliases += 1
 
-    prior_calls = int(json.loads((RUN / "full_nonsingleton_run_manifest.json").read_text())["totalCalls"])
+    prior_calls = int(
+        json.loads((RUN / "full_nonsingleton_run_manifest.json").read_text())["totalCalls"]
+    )
     top_twenty_aliases_per_call = top_twenty_eligible_aliases / prior_calls
     expected_calls = len(remaining) / (1.0 + top_twenty_aliases_per_call)
     expected_fraction = expected_calls / len(remaining)

@@ -83,10 +83,7 @@ def read_index() -> list[dict[str, Any]]:
         raise RuntimeError("Entity IDs are not unique")
     if len({row["entity"] for row in rows}) != len(rows):
         raise RuntimeError("Entity tags are not unique")
-    if not all(
-        left["mentions"] >= right["mentions"]
-        for left, right in zip(rows, rows[1:])
-    ):
+    if not all(left["mentions"] >= right["mentions"] for left, right in zip(rows, rows[1:])):
         raise RuntimeError("Entity index is not frequency-descending")
     for row in rows:
         expected_candidates = 50 if row["mentions"] > 10 else 20
@@ -143,9 +140,7 @@ def initialize_working_archive(index_rows: list[dict[str, Any]]) -> None:
             raise RuntimeError(f"Incomplete output exists without state: {OUTPUT}")
         return
 
-    staging = Path(
-        tempfile.mkdtemp(prefix=f".{OUTPUT.name}.staging_", dir=OUTPUT.parent)
-    )
+    staging = Path(tempfile.mkdtemp(prefix=f".{OUTPUT.name}.staging_", dir=OUTPUT.parent))
     try:
         active = staging / ACTIVE_LISTS
         retired = staging / RETIRED_LISTS
@@ -172,9 +167,7 @@ def initialize_working_archive(index_rows: list[dict[str, Any]]) -> None:
                         f"indexed candidate locations for {position}/{len(index_rows)} pages",
                         flush=True,
                     )
-            database.execute(
-                "CREATE INDEX locations_candidate ON locations(candidate)"
-            )
+            database.execute("CREATE INDEX locations_candidate ON locations(candidate)")
             database.commit()
         finally:
             database.close()
@@ -252,17 +245,13 @@ def next_parent(
     raise RuntimeError("The unresolved roster is exhausted")
 
 
-def active_candidates(
-    parent: dict[str, Any], state: dict[str, Any]
-) -> list[dict[str, str]]:
+def active_candidates(parent: dict[str, Any], state: dict[str, Any]) -> list[dict[str, str]]:
     """Read the physically cleaned page and reject any leaked resolved candidate."""
     path = OUTPUT / ACTIVE_LISTS / parent["file"]
     if not path.is_file():
         raise RuntimeError(f"Unresolved parent has no active page: {parent['entity']}")
     rows = read_candidate_csv(path)
-    assigned_entities = {
-        assignment["entity"] for assignment in state["assignments"].values()
-    }
+    assigned_entities = {assignment["entity"] for assignment in state["assignments"].values()}
     leaked = assigned_entities & {row["entity"] for row in rows}
     if leaked:
         raise RuntimeError(f"Resolved candidates leaked into active page: {sorted(leaked)}")
@@ -271,9 +260,7 @@ def active_candidates(
 
 def build_prompt(parent: str, candidates: list[dict[str, str]]) -> str:
     """Ask Gemini to make strict same-referent decisions from the cleaned neighbor page."""
-    candidate_lines = [
-        f"{row['entity']}\t{row['emb']}\t{row['char']}" for row in candidates
-    ]
+    candidate_lines = [f"{row['entity']}\t{row['emb']}\t{row['char']}" for row in candidates]
     return f"""Decide which candidate tags denote exactly the same underlying entity as PARENT.
 
 Identity must be strict. Merge spelling, transliteration, capitalization, separator,
@@ -295,16 +282,12 @@ CANDIDATES\tentity,emb,char
 """
 
 
-def validate_decision(
-    decision: Decision, parent: str, candidates: list[dict[str, str]]
-) -> None:
+def validate_decision(decision: Decision, parent: str, candidates: list[dict[str, str]]) -> None:
     """Reject invented, repeated, overlapping, or parent-valued output strings."""
     allowed = {row["entity"] for row in candidates}
     if parent in decision.s or parent in decision.u:
         raise RuntimeError("Gemini included the parent in its candidate lists")
-    if len(decision.s) != len(set(decision.s)) or len(decision.u) != len(
-        set(decision.u)
-    ):
+    if len(decision.s) != len(set(decision.s)) or len(decision.u) != len(set(decision.u)):
         raise RuntimeError("Gemini repeated a candidate")
     if set(decision.s) & set(decision.u):
         raise RuntimeError("Gemini marked a candidate both same and uncertain")
@@ -398,9 +381,7 @@ def submit_or_resume_page(
     candidates: list[dict[str, str]],
 ) -> tuple[Decision, dict[str, Any], Path, dict[str, Any]]:
     """Submit one page once, or recover its saved response without another paid call."""
-    directory = OUTPUT / (
-        f"pass_{pass_number:03d}_{parent['id']}_{safe_name(parent['entity'])}"
-    )
+    directory = OUTPUT / (f"pass_{pass_number:03d}_{parent['id']}_{safe_name(parent['entity'])}")
     directory.mkdir(exist_ok=True)
     prompt = build_prompt(parent["entity"], candidates)
     prompt_path = directory / "prompt_sent.txt"
@@ -442,8 +423,7 @@ def submit_or_resume_page(
                     raise
                 delay = TRANSIENT_RETRY_DELAYS[attempt]
                 print(
-                    f"transient API failure on pass {pass_number}; retrying in {delay}s: "
-                    f"{error}",
+                    f"transient API failure on pass {pass_number}; retrying in {delay}s: {error}",
                     flush=True,
                 )
                 time.sleep(delay)
@@ -451,16 +431,10 @@ def submit_or_resume_page(
             raise RuntimeError("API retry loop ended unexpectedly") from last_error
 
     answer = answer_from_raw(raw)
-    (directory / "answer_returned.json").write_text(
-        answer + "\n", encoding="utf-8", newline="\n"
-    )
+    (directory / "answer_returned.json").write_text(answer + "\n", encoding="utf-8", newline="\n")
     raw_decision = Decision.model_validate_json(answer)
-    write_json(
-        directory / "raw_decision.json", raw_decision.model_dump(mode="json")
-    )
-    decision, conformance = conform_decision(
-        raw_decision, parent["entity"], candidates
-    )
+    write_json(directory / "raw_decision.json", raw_decision.model_dump(mode="json"))
+    decision, conformance = conform_decision(raw_decision, parent["entity"], candidates)
     write_json(directory / "conformance.json", conformance)
     validate_decision(decision, parent["entity"], candidates)
     write_json(directory / "result.json", decision.model_dump(mode="json"))
@@ -532,15 +506,11 @@ def located_files(database: sqlite3.Connection, entity: str) -> list[str]:
     """Look up every source page on which an entity was originally a candidate."""
     return [
         str(row[0])
-        for row in database.execute(
-            "SELECT file FROM locations WHERE candidate = ?", (entity,)
-        )
+        for row in database.execute("SELECT file FROM locations WHERE candidate = ?", (entity,))
     ]
 
 
-def purge_entities_from_lists(
-    entities: list[str], own_files: list[str]
-) -> dict[str, Any]:
+def purge_entities_from_lists(entities: list[str], own_files: list[str]) -> dict[str, Any]:
     """Physically remove resolved rows everywhere and retire their own parent pages."""
     entity_set = set(entities)
     candidate_rows_removed = 0
@@ -637,9 +607,7 @@ def complete_pending(
     state["pending"] = None
     write_active_roster(OUTPUT, index_rows, set(state["assignments"]))
     write_json(OUTPUT / "state.json", state)
-    write_json(
-        OUTPUT / pending["directory"] / "global_mutation.json", mutation
-    )
+    write_json(OUTPUT / pending["directory"] / "global_mutation.json", mutation)
 
 
 def audit_global_exclusion(
@@ -647,9 +615,7 @@ def audit_global_exclusion(
 ) -> dict[str, Any]:
     """Scan every working CSV to prove resolved entities occur in no candidate list."""
     assigned_ids = set(state["assignments"])
-    assigned_entities = {
-        assignment["entity"] for assignment in state["assignments"].values()
-    }
+    assigned_entities = {assignment["entity"] for assignment in state["assignments"].values()}
     active_files = {path.name for path in (OUTPUT / ACTIVE_LISTS).glob("*.csv")}
     retired_files = {path.name for path in (OUTPUT / RETIRED_LISTS).glob("*.csv")}
     if active_files & retired_files:
@@ -678,9 +644,7 @@ def audit_global_exclusion(
     if leaks:
         raise RuntimeError(f"Resolved entities remain in candidate lists: {leaks}")
 
-    with (OUTPUT / "active_roster.csv").open(
-        encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "active_roster.csv").open(encoding="utf-8", newline="") as handle:
         roster = list(csv.DictReader(handle))
     if {row["id"] for row in roster} != {
         row["id"] for row in index_rows if row["id"] not in assigned_ids
@@ -727,13 +691,9 @@ def write_exports(
 ) -> None:
     """Export compact review tables, totals, and the global-exclusion audit."""
     assignments = state["assignments"]
-    with (OUTPUT / "resolved_entities.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "resolved_entities.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
-        writer.writerow(
-            ("id", "entity", "mentions", "parent_id", "parent_entity", "pass")
-        )
+        writer.writerow(("id", "entity", "mentions", "parent_id", "parent_entity", "pass"))
         for row in index_rows:
             assignment = assignments.get(row["id"])
             if assignment is not None:
@@ -748,9 +708,7 @@ def write_exports(
                     )
                 )
 
-    with (OUTPUT / "skipped_parent_pages.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "skipped_parent_pages.csv").open("w", encoding="utf-8", newline="") as handle:
         fields = [
             "id",
             "entity",
@@ -765,20 +723,14 @@ def write_exports(
     write_json(OUTPUT / "resolved_clusters.json", state["clusters"])
     write_json(OUTPUT / "GLOBAL_EXCLUSION_AUDIT.json", audit)
 
-    prompt_tokens = sum(
-        int(row["usage"].get("prompt_token_count") or 0) for row in state["passes"]
-    )
+    prompt_tokens = sum(int(row["usage"].get("prompt_token_count") or 0) for row in state["passes"])
     answer_tokens = sum(
-        int(row["usage"].get("candidates_token_count") or 0)
-        for row in state["passes"]
+        int(row["usage"].get("candidates_token_count") or 0) for row in state["passes"]
     )
     thought_tokens = sum(
-        int(row["usage"].get("thoughts_token_count") or 0)
-        for row in state["passes"]
+        int(row["usage"].get("thoughts_token_count") or 0) for row in state["passes"]
     )
-    total_tokens = sum(
-        int(row["usage"].get("total_token_count") or 0) for row in state["passes"]
-    )
+    total_tokens = sum(int(row["usage"].get("total_token_count") or 0) for row in state["passes"])
     parent_mentions = [int(row["parentMentions"]) for row in state["passes"]]
     if not all(left >= right for left, right in zip(parent_mentions, parent_mentions[1:])):
         raise RuntimeError("Submitted parents are not frequency-descending")
@@ -797,12 +749,9 @@ def write_exports(
         "resolvedEntitiesRemovedFromRoster": len(assignments),
         "remainingRosterEntities": len(index_rows) - len(assignments),
         "clusters": len(state["clusters"]),
-        "multiEntityClusters": sum(
-            len(cluster["members"]) > 1 for cluster in state["clusters"]
-        ),
+        "multiEntityClusters": sum(len(cluster["members"]) > 1 for cluster in state["clusters"]),
         "conformanceDroppedStrings": sum(
-            len(row.get("conformance", {}).get("dropped", []))
-            for row in state["passes"]
+            len(row.get("conformance", {}).get("dropped", [])) for row in state["passes"]
         ),
         "globalExclusionAudit": audit,
         "usage": {
@@ -831,28 +780,24 @@ def write_exports(
     for row in state["passes"]:
         same = " | ".join(row["members"][1:]) or "none"
         uncertain = " | ".join(row["uncertain"]) or "none"
-        dropped = " | ".join(
-            item["entity"]
-            for item in row.get("conformance", {}).get("dropped", [])
-        ) or "none"
+        dropped = (
+            " | ".join(item["entity"] for item in row.get("conformance", {}).get("dropped", []))
+            or "none"
+        )
         lines.extend(
             [
-                f"### Pass {row['pass']}: {row['parentEntity']} "
-                f"({row['parentMentions']} mentions)",
+                f"### Pass {row['pass']}: {row['parentEntity']} ({row['parentMentions']} mentions)",
                 "",
                 f"- Same identity: {same}",
                 f"- Uncertain: {uncertain}",
                 f"- Non-candidate strings discarded: {dropped}",
-                f"- Candidates sent: {row['activeCandidateCount']} / "
-                f"{row['sourceCandidateCount']}",
+                f"- Candidates sent: {row['activeCandidateCount']} / {row['sourceCandidateCount']}",
                 f"- Candidate rows globally removed: "
                 f"{row['globalMutation']['candidateRowsRemoved']}",
                 "",
             ]
         )
-    (OUTPUT / "REVIEW.md").write_text(
-        "\n".join(lines), encoding="utf-8", newline="\n"
-    )
+    (OUTPUT / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
 
 def main() -> None:

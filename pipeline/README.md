@@ -42,6 +42,18 @@ generations of the annotator are in
 and the sequence of what each one fixed is the clearest statement of why the current
 schema looks the way it does.
 
+The accompanying analytical taxonomy was also revised through sampled review:
+round five examined 1,357 previously unreviewed triples across 750 pages, adding a
+category for private appropriation of public authority and merging categories whose
+distinctions did not hold up in context. The sample informed the revision rather
+than serving as an independent final test. For extraction, the
+[translated-sentence batch driver](translation/translated_sentence_triples_batch.py)
+combined batch requests with explicit prefix caching; one recorded pass processed
+31.5 million tokens, including retries/salvage, at an estimated historical cost of
+$13.73. The [sampling and cost excerpts](../research/findings/pipeline_development.json)
+retain the seed, category decisions, token accounting, pricing assumptions, and
+source hashes.
+
 **Resolution is a wave process.** The extraction produces an open vocabulary — 5,667
 entity labels and 13,727 relation labels, most occurring once
 ([distributions](../research/datasets/)). Canonicalising it runs in frequency-ordered

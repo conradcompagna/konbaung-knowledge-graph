@@ -176,11 +176,11 @@ The text inside this block is the complete original prompt that created the firs
 {DETAILS_PROMPT}
 
 <TARGET_PAGE_TEXT>
-{page['canonicalText']}
+{page["canonicalText"]}
 </TARGET_PAGE_TEXT>
 
 <EXISTING_SUMMARY_READ_ONLY>
-{page.get('summary') or ''}
+{page.get("summary") or ""}
 </EXISTING_SUMMARY_READ_ONLY>
 
 <EXISTING_TRIPLES_READ_ONLY>
@@ -190,7 +190,9 @@ The text inside this block is the complete original prompt that created the firs
     return prompt, page, triples
 
 
-def validate(result: OpenDetailsResult, page: dict[str, Any], triples: list[dict[str, Any]]) -> list[str]:
+def validate(
+    result: OpenDetailsResult, page: dict[str, Any], triples: list[dict[str, Any]]
+) -> list[str]:
     flags: list[str] = []
     source = {row["id"]: row for row in triples}
     target = normalized(page["canonicalText"])
@@ -221,7 +223,9 @@ def validate(result: OpenDetailsResult, page: dict[str, Any], triples: list[dict
         if not row.p.en.strip():
             flags.append(f"D[{index}]: predicate gloss is empty")
 
-        expected_predicate_details = [Detail.model_validate(item) for item in triple["p"]["details"]]
+        expected_predicate_details = [
+            Detail.model_validate(item) for item in triple["p"]["details"]
+        ]
         for detail in expected_predicate_details:
             if detail not in row.p.details:
                 flags.append(f"D[{index}]: existing predicate detail was not reproduced")

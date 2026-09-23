@@ -18,7 +18,9 @@ OUTPUT_PATH = ROOT / "MASTER_POSITIVE_RESOLUTIONS_REVIEW.md"
 
 # Escape characters that would otherwise split a compact Markdown value across fields.
 def markdown_value(value: object) -> str:
-    return str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+    return (
+        str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+    )
 
 
 # Render only clusters where Gemini accepted at least one supplied alias as the same entity.
@@ -33,7 +35,9 @@ def main() -> None:
     positive_tags = len(positive) + accepted_aliases
 
     if accepted_aliases != int(manifest["totalAliasesAbsorbedWithoutOwnCall"]):
-        raise RuntimeError("Positive-cluster alias total does not match the completed-run manifest.")
+        raise RuntimeError(
+            "Positive-cluster alias total does not match the completed-run manifest."
+        )
 
     lines = [
         "# Master review: positive entity resolutions",

@@ -2,7 +2,11 @@
   "name": "konbaung-reader-graph-layout",
   "private": true,
   "scripts": {
-    "build:frontend": "vite build"
+    "build:frontend": "vite build",
+    "check:types": "tsc --noEmit",
+    "test:graph": "node --test tests/graph_features.test.cjs",
+    "check:source": "python ../tools/check_source_sizes.py",
+    "prebuild:frontend": "npm run check:source && npm run check:types && npm run test:graph"
   },
   "dependencies": {
     "graphology": "0.26.0",

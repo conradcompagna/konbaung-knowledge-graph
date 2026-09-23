@@ -130,7 +130,9 @@ def build_prompt(job: PageJob) -> str:
 
 def write_json(path: Path, record: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    path.write_text(
+        json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def write_text(path: Path, text: str) -> None:
@@ -144,7 +146,13 @@ def output_path(out_dir: Path, bucket: str, job: PageJob, suffix: str) -> Path:
 
 def load_done_page_job_ids(out_dir: Path) -> set[str]:
     done: set[str] = set()
-    for bucket in ("postprocessed/valid", "postprocessed/invalid", "raw/valid", "raw/invalid", "errors"):
+    for bucket in (
+        "postprocessed/valid",
+        "postprocessed/invalid",
+        "raw/valid",
+        "raw/invalid",
+        "errors",
+    ):
         for path in (out_dir / bucket).glob("konbaung_vol*/page_*.*"):
             if path.suffix == ".json":
                 try:
@@ -187,7 +195,9 @@ def normalized_page_window(lines: list[str]) -> tuple[str, list[Optional[tuple[i
     return "".join(chars).strip(), positions
 
 
-def without_line_wrap_spaces(text: str, positions: list[Optional[tuple[int, int]]]) -> tuple[str, list[Optional[tuple[int, int]]]]:
+def without_line_wrap_spaces(
+    text: str, positions: list[Optional[tuple[int, int]]]
+) -> tuple[str, list[Optional[tuple[int, int]]]]:
     chars: list[str] = []
     kept_positions: list[Optional[tuple[int, int]]] = []
     for char, position in zip(text, positions):
@@ -215,7 +225,9 @@ def spans_from_match(
         indexes = by_line[ln]
         span_start = min(indexes)
         span_end = max(indexes) + 1
-        spans.append({"ln": ln, "s": span_start, "e": span_end, "tx": lines[ln - 1][span_start:span_end]})
+        spans.append(
+            {"ln": ln, "s": span_start, "e": span_end, "tx": lines[ln - 1][span_start:span_end]}
+        )
     return spans
 
 
@@ -251,7 +263,11 @@ def text_in_chunk(text: str, chunk: str) -> bool:
 
 def parse_tags(raw: str) -> list[str]:
     cleaned = raw.strip().strip(",").strip().strip("\"'")
-    return [part.strip().strip("\"'") for part in re.split(r"[+,]", cleaned) if part.strip().strip("\"'")]
+    return [
+        part.strip().strip("\"'")
+        for part in re.split(r"[+,]", cleaned)
+        if part.strip().strip("\"'")
+    ]
 
 
 def parse_text_and_tags(line: str) -> tuple[str, list[str]]:
@@ -260,7 +276,9 @@ def parse_text_and_tags(line: str) -> tuple[str, list[str]]:
         text, tags = cleaned.rsplit("|", 1)
         return text.strip().strip("\"'"), parse_tags(tags)
 
-    match = re.match(r"^(?P<text>.*?)[\s\u00a0]+[\"']?(?P<tags>[A-Z_]+(?:[+,][A-Z_]+)*)[\"']?$", cleaned)
+    match = re.match(
+        r"^(?P<text>.*?)[\s\u00a0]+[\"']?(?P<tags>[A-Z_]+(?:[+,][A-Z_]+)*)[\"']?$", cleaned
+    )
     if match:
         return match.group("text").strip().strip("\"'"), parse_tags(match.group("tags"))
     return cleaned.strip().strip("\"'"), []
@@ -311,14 +329,24 @@ def parse_plaintext_response(text: str) -> tuple[list[ParsedTriple], list[str]]:
             continue
         if ":" in line:
             key, value = line.split(":", 1)
-            if key.strip() in {"CHUNK", "SUBJECT", "SUBJECT_TAGS", "PREDICATE", "OBJECT", "OBJECT_TAGS", "GLOSS"}:
+            if key.strip() in {
+                "CHUNK",
+                "SUBJECT",
+                "SUBJECT_TAGS",
+                "PREDICATE",
+                "OBJECT",
+                "OBJECT_TAGS",
+                "GLOSS",
+            }:
                 line = value.strip()
         block.append(line)
     finish_block(block)
     return triples, errors
 
 
-def validate_and_resolve(job: PageJob, triples: list[ParsedTriple], parse_errors: list[str]) -> tuple[dict[str, Any], list[str]]:
+def validate_and_resolve(
+    job: PageJob, triples: list[ParsedTriple], parse_errors: list[str]
+) -> tuple[dict[str, Any], list[str]]:
     errors = list(parse_errors)
     lines = page_lines(job.raw_text)
     resolved: dict[str, Any] = {"T": []}
@@ -368,7 +396,9 @@ def triple_tag_line(triple: dict[str, Any]) -> str:
     return f"{subject_labels} --{triple.get('p', '')}--> {object_labels} | {triple.get('en', '')}"
 
 
-def build_marked_page_text(job: PageJob, annotation: dict[str, Any], validation_errors: list[str]) -> str:
+def build_marked_page_text(
+    job: PageJob, annotation: dict[str, Any], validation_errors: list[str]
+) -> str:
     lines = page_lines(job.raw_text)
     line_annotations: dict[int, list[dict[str, Any]]] = {}
     for triple_idx, triple in enumerate(annotation.get("T", []), start=1):
@@ -455,7 +485,9 @@ def call_gemini_plaintext(
             usage = {}
             if getattr(response, "usage_metadata", None) is not None:
                 raw_usage = response.usage_metadata
-                usage = raw_usage.model_dump() if hasattr(raw_usage, "model_dump") else dict(raw_usage)
+                usage = (
+                    raw_usage.model_dump() if hasattr(raw_usage, "model_dump") else dict(raw_usage)
+                )
             return response.text or "", usage
         except Exception as exc:
             last_err = exc
@@ -481,7 +513,9 @@ def prepare_outputs(args: argparse.Namespace, jobs: list[PageJob]) -> None:
         "jobs_prepared": len(jobs),
         "jobs_by_volume": by_volume,
         "will_call_api": bool(args.run),
-        "api_key_source": "not_resolved_in_prepare_mode" if not args.run else "resolved_at_run_time",
+        "api_key_source": "not_resolved_in_prepare_mode"
+        if not args.run
+        else "resolved_at_run_time",
     }
     write_json(out_dir / "run_summary.json", summary)
     if args.save_prompts:
@@ -497,7 +531,9 @@ def prepare_outputs(args: argparse.Namespace, jobs: list[PageJob]) -> None:
 def run_annotation(args: argparse.Namespace, jobs: list[PageJob]) -> None:
     api_key = resolve_api_key(args)
     if not api_key:
-        raise RuntimeError("No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file.")
+        raise RuntimeError(
+            "No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file."
+        )
     out_dir = Path(args.out_dir)
     done = load_done_page_job_ids(out_dir) if args.resume else set()
     client = genai.Client(api_key=api_key)
@@ -516,7 +552,9 @@ def run_annotation(args: argparse.Namespace, jobs: list[PageJob]) -> None:
                 retry_sleep=args.retry_sleep,
             )
             triples, parse_errors = parse_plaintext_response(raw_text)
-            resolved_annotation, validation_errors = validate_and_resolve(job, triples, parse_errors)
+            resolved_annotation, validation_errors = validate_and_resolve(
+                job, triples, parse_errors
+            )
             base_record = {
                 "job_id": job.job_id,
                 "volume_id": job.volume_id,
@@ -555,18 +593,49 @@ def run_annotation(args: argparse.Namespace, jobs: list[PageJob]) -> None:
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Prepare or run Gemini plain-text triple annotation over Konbaung pages.")
-    parser.add_argument("--source-root", default=str(DEFAULT_SOURCE_ROOT), help="Root containing konbaung_vol*/pages/page_*.txt.")
-    parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR), help="Output directory for plain-text triple annotations.")
+    parser = argparse.ArgumentParser(
+        description="Prepare or run Gemini plain-text triple annotation over Konbaung pages."
+    )
+    parser.add_argument(
+        "--source-root",
+        default=str(DEFAULT_SOURCE_ROOT),
+        help="Root containing konbaung_vol*/pages/page_*.txt.",
+    )
+    parser.add_argument(
+        "--out-dir",
+        default=str(DEFAULT_OUT_DIR),
+        help="Output directory for plain-text triple annotations.",
+    )
     parser.add_argument("--model", default="gemini-2.5-flash-lite")
-    parser.add_argument("--env-file", default=str(DEFAULT_ENV_FILE), help="Optional .env file containing GEMINI_API_KEY.")
-    parser.add_argument("--api-key", default=None, help="Optional Gemini API key. Prefer env var or --env-file.")
-    parser.add_argument("--run", action="store_true", help="Actually call Gemini. Omit for prepare-only.")
-    parser.add_argument("--volume-id", default=None, help="Optional single volume filter, e.g. konbaung_vol1.")
-    parser.add_argument("--page-num", type=int, default=None, help="Optional single page-number filter.")
+    parser.add_argument(
+        "--env-file",
+        default=str(DEFAULT_ENV_FILE),
+        help="Optional .env file containing GEMINI_API_KEY.",
+    )
+    parser.add_argument(
+        "--api-key", default=None, help="Optional Gemini API key. Prefer env var or --env-file."
+    )
+    parser.add_argument(
+        "--run", action="store_true", help="Actually call Gemini. Omit for prepare-only."
+    )
+    parser.add_argument(
+        "--volume-id", default=None, help="Optional single volume filter, e.g. konbaung_vol1."
+    )
+    parser.add_argument(
+        "--page-num", type=int, default=None, help="Optional single page-number filter."
+    )
     parser.add_argument("--limit", type=int, default=None, help="Limit jobs during API run.")
-    parser.add_argument("--save-prompts", action="store_true", help="Write debug prompt files without calling Gemini.")
-    parser.add_argument("--prompt-limit", type=int, default=25, help="Max prompts to save when --save-prompts is used. Use 0 for all.")
+    parser.add_argument(
+        "--save-prompts",
+        action="store_true",
+        help="Write debug prompt files without calling Gemini.",
+    )
+    parser.add_argument(
+        "--prompt-limit",
+        type=int,
+        default=25,
+        help="Max prompts to save when --save-prompts is used. Use 0 for all.",
+    )
     parser.add_argument("--max-output-tokens", type=int, default=DEFAULT_MAX_OUTPUT_TOKENS)
     parser.add_argument("--max-retries", type=int, default=3)
     parser.add_argument("--retry-sleep", type=float, default=3.0)

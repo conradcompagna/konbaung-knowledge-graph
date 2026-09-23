@@ -71,7 +71,7 @@ def attempt_groups(
         if not path.exists():
             continue
         batch = load_json(path)
-        responses = ((batch.get("dest") or {}).get("inlined_responses") or [])
+        responses = (batch.get("dest") or {}).get("inlined_responses") or []
         for item in responses:
             key = (item.get("metadata") or {}).get("key")
             if key not in wanted_keys:

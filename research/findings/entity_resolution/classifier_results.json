@@ -1,0 +1,184 @@
+{
+  "sources": [
+    {
+      "file": "konbaung_full_gold_pair_classifier_20260725/full_gold_training_summary.json",
+      "sha256": "1317844d0a156b2e547c7673052a77c8b8b47eafdc9fc07938a0027412366f3e"
+    },
+    {
+      "file": "konbaung_full_gold_pair_classifier_20260725/gold_construction_audit.json",
+      "sha256": "b9e2be4c594904f322fbbc0b280c9f1ce5f242297d19caa1c6f118c4ee1bc7c4"
+    },
+    {
+      "file": "konbaung_full_gold_pair_classifier_20260725/full_gold_cv_folds.csv",
+      "sha256": "55c8a400b62dace0fdf721b6da1a12bcefdfd12008fe7c6e9e1342142311796b"
+    }
+  ],
+  "selection": "Original aggregate metrics, source-label counts and thresholds; private model paths, training examples and original absolute input paths omitted.",
+  "training_data": {
+    "training_pairs": 16944,
+    "training_positives": 16363,
+    "training_negatives": 581,
+    "manual_positive_tag_pairs": 16122,
+    "cv_groups": 2331,
+    "conflicts_excluded": 5,
+    "source_counts": [
+      {
+        "source": "documented_frozen_correction",
+        "label": 1,
+        "pairs": 1
+      },
+      {
+        "source": "gpt_pro_complete_identity_cluster",
+        "label": 1,
+        "pairs": 16122
+      },
+      {
+        "source": "gpt_pro_corrected_bad_join",
+        "label": 0,
+        "pairs": 11
+      },
+      {
+        "source": "regex_context_manual_review",
+        "label": 0,
+        "pairs": 72
+      },
+      {
+        "source": "regex_context_manual_review",
+        "label": 1,
+        "pairs": 186
+      },
+      {
+        "source": "regex_context_manual_review;score_band_manual_adjudication",
+        "label": 0,
+        "pairs": 1
+      },
+      {
+        "source": "regex_context_manual_review;score_band_manual_adjudication",
+        "label": 1,
+        "pairs": 20
+      },
+      {
+        "source": "regex_context_manual_review;statistical_pass_manual_review",
+        "label": 1,
+        "pairs": 7
+      },
+      {
+        "source": "score_band_manual_adjudication",
+        "label": 0,
+        "pairs": 496
+      },
+      {
+        "source": "score_band_manual_adjudication",
+        "label": 1,
+        "pairs": 27
+      },
+      {
+        "source": "statistical_pass_manual_review",
+        "label": 0,
+        "pairs": 1
+      }
+    ]
+  },
+  "validation": {
+    "method": "Repeated StratifiedGroupKFold over connected identity/adjudication families",
+    "repeats": 8,
+    "folds_per_repeat": 5,
+    "fold_summary": "cv_folds.csv"
+  },
+  "selected_model": "hist_gradient_boosting",
+  "model_comparison_identity_weighted": {
+    "raw_embedding_similarity": {
+      "average_precision": 0.7480762483876839,
+      "roc_auc": 0.3303534886511457,
+      "brier_score": 0.18767811700328474,
+      "balanced_accuracy_at_0_5": 0.5,
+      "precision_at_0_5": 0.80238095238095,
+      "recall_at_0_5": 1.0,
+      "f1_at_0_5": 0.8903566710700117
+    },
+    "logistic_regression": {
+      "average_precision": 0.9846691596785584,
+      "roc_auc": 0.9434498601220087,
+      "brier_score": 0.09932339115493036,
+      "balanced_accuracy_at_0_5": 0.8670092445255555,
+      "precision_at_0_5": 0.9684537270858892,
+      "recall_at_0_5": 0.8458945647826169,
+      "f1_at_0_5": 0.9030347124164992
+    },
+    "hist_gradient_boosting": {
+      "average_precision": 0.9929001474042989,
+      "roc_auc": 0.9736391971227866,
+      "brier_score": 0.050615986075151866,
+      "balanced_accuracy_at_0_5": 0.908686643602669,
+      "precision_at_0_5": 0.9671388567611443,
+      "recall_at_0_5": 0.948182237291398,
+      "f1_at_0_5": 0.9575667367970525
+    }
+  },
+  "granularity_validation": {
+    "raw_tag_pair": {
+      "pairs": 16122,
+      "positives": 16122,
+      "negatives": 0,
+      "selected_model_oof": {
+        "average_precision": 1.0,
+        "roc_auc": null,
+        "brier_score": 0.06042167757343747,
+        "balanced_accuracy_at_0_5": 0.9157672745316958,
+        "precision_at_0_5": 1.0,
+        "recall_at_0_5": 0.9157672745316958,
+        "f1_at_0_5": 0.9560318590947354
+      },
+      "calibrated_oof": {
+        "average_precision": 1.0,
+        "roc_auc": null,
+        "brier_score": 0.025321446739476207,
+        "balanced_accuracy_at_0_5": 0.9824463466071207,
+        "precision_at_0_5": 1.0,
+        "recall_at_0_5": 0.9824463466071207,
+        "f1_at_0_5": 0.9911454585275805
+      }
+    },
+    "cluster_pair": {
+      "pairs": 822,
+      "positives": 241,
+      "negatives": 581,
+      "selected_model_oof": {
+        "average_precision": 0.8171657188334858,
+        "roc_auc": 0.9249683975975034,
+        "brier_score": 0.10550489425889781,
+        "balanced_accuracy_at_0_5": 0.8495332842930703,
+        "precision_at_0_5": 0.7246376811594203,
+        "recall_at_0_5": 0.8298755186721992,
+        "f1_at_0_5": 0.7736943907156673
+      },
+      "calibrated_oof": {
+        "average_precision": 0.8151292064333648,
+        "roc_auc": 0.9286214210725534,
+        "brier_score": 0.11989104633468353,
+        "balanced_accuracy_at_0_5": 0.8561430071203605,
+        "precision_at_0_5": 0.6330532212885154,
+        "recall_at_0_5": 0.9377593360995851,
+        "f1_at_0_5": 0.7558528428093646
+      }
+    }
+  },
+  "review_threshold": 0.288288298041464,
+  "review_threshold_validation": {
+    "target_weighted_recall": 0.99,
+    "weighted_recall": 0.9903440398796574,
+    "weighted_precision": 0.9423206055592597,
+    "selected_pairs": 16266,
+    "selected_positives": 16123,
+    "selected_negatives": 143,
+    "unweighted_positive_recall": 0.985332762940781
+  },
+  "high_precision_threshold": 0.9891951824280198,
+  "high_precision_threshold_validation": {
+    "threshold": 0.9891951824280198,
+    "cluster_pair_false_positives": 0,
+    "cluster_pair_true_positives": 18,
+    "cluster_pair_recall": 0.07468879668049792
+  },
+  "automatic_merge_policy": "disabled"
+}

@@ -18,7 +18,13 @@ from konbaung_gemini_summary_claim_completion_annotator import api_key
 
 
 ROOT = Path(__file__).resolve().parent
-SOURCE = ROOT / "konbaung_relation_predicate_grounding_full_batch_20260717" / "pages" / "vol1" / "page_0208"
+SOURCE = (
+    ROOT
+    / "konbaung_relation_predicate_grounding_full_batch_20260717"
+    / "pages"
+    / "vol1"
+    / "page_0208"
+)
 OUTPUT = ROOT / "konbaung_relation_predicate_grounding_page0208_repair_20260718"
 MODEL = "gemini-3.1-flash-lite"
 ITEMS_PER_REQUEST = 15
@@ -67,9 +73,16 @@ def jobs() -> list[dict[str, Any]]:
 
 
 def prompt(job: dict[str, Any]) -> str:
-    triples = [{"id": item["id"], "s": item["s"], "p": item["p"], "o": item["o"]} for item in job["T"]]
+    triples = [
+        {"id": item["id"], "s": item["s"], "p": item["p"], "o": item["o"]} for item in job["T"]
+    ]
     payload = {"sid": job["sid"], "my": job["my"], "en": job["en"], "T": triples}
-    return INSTRUCTION + "\n<INPUT>" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "</INPUT>"
+    return (
+        INSTRUCTION
+        + "\n<INPUT>"
+        + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        + "</INPUT>"
+    )
 
 
 def request(job: dict[str, Any]) -> types.InlinedRequest:
@@ -111,7 +124,9 @@ def submit() -> dict[str, Any]:
     batch = client.batches.create(
         model=MODEL,
         src=[request(job) for job in work],
-        config=types.CreateBatchJobConfig(display_name=f"konbaung_p0208_repair_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"),
+        config=types.CreateBatchJobConfig(
+            display_name=f"konbaung_p0208_repair_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+        ),
     )
     manifest = {
         "batch_name": batch.name,
@@ -177,7 +192,11 @@ def collect() -> dict[str, Any]:
         "errors": errors,
         "complete": len(rows) == len(expected) and not errors,
         "usage": usage,
-        "calculated_batch_cost_usd": round(usage["prompt_token_count"] / 1_000_000 * 0.125 + usage["candidates_token_count"] / 1_000_000 * 0.75, 8),
+        "calculated_batch_cost_usd": round(
+            usage["prompt_token_count"] / 1_000_000 * 0.125
+            + usage["candidates_token_count"] / 1_000_000 * 0.75,
+            8,
+        ),
     }
     write_json(OUTPUT / "status.json", status)
     return status
@@ -187,7 +206,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("submit", "collect"))
     args = parser.parse_args()
-    print(json.dumps(submit() if args.command == "submit" else collect(), ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            submit() if args.command == "submit" else collect(), ensure_ascii=False, indent=2
+        )
+    )
 
 
 if __name__ == "__main__":

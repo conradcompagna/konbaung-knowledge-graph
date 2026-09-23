@@ -118,7 +118,7 @@ def write_review(
         if placements:
             lines.extend(["", "**Metadata placement:**"])
             lines.extend(f"- {item.get('id')} -> {item.get('to')}" for item in placements)
-        additions = [*(('S', item) for item in out.get('s', []))]
+        additions = [*(("S", item) for item in out.get("s", []))]
         additions.extend(("P", item) for item in predicate.get("details", []))
         additions.extend(("O", item) for item in out.get("o", []))
         if additions:

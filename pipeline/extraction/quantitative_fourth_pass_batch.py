@@ -14,7 +14,12 @@ from google import genai
 from google.genai import types
 from pydantic import ValidationError
 
-from konbaung_gemini_page_kg_annotator import DEFAULT_ENV_FILE, DEFAULT_SOURCE_ROOT, PageJob, resolve_api_key
+from konbaung_gemini_page_kg_annotator import (
+    DEFAULT_ENV_FILE,
+    DEFAULT_SOURCE_ROOT,
+    PageJob,
+    resolve_api_key,
+)
 from konbaung_gemini_structured_open_coding_annotator import page_metadata, usage_dict
 from konbaung_gemini_cite_sources_annotator import ORIGINAL_PROMPT_PATH
 from konbaung_gemini_quantitative_fourth_pass import (
@@ -36,7 +41,12 @@ DEFAULT_MODEL = "gemini-3.1-flash-lite"
 DEFAULT_MAX_OUTPUT_TOKENS = 10000
 DEFAULT_COVERAGE_FILE = Path("konbaung_fourth_pass_below_80pct.json")
 DEFAULT_MANIFEST_FILE = Path("konbaung_summary_support_run_manifest.json")
-TERMINAL_STATES = {"JOB_STATE_SUCCEEDED", "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_PAUSED"}
+TERMINAL_STATES = {
+    "JOB_STATE_SUCCEEDED",
+    "JOB_STATE_FAILED",
+    "JOB_STATE_CANCELLED",
+    "JOB_STATE_PAUSED",
+}
 
 
 def utc_stamp() -> str:
@@ -90,7 +100,9 @@ def all_page_jobs(source_root: Path, volume_id: str, args: argparse.Namespace) -
     return [job for job in jobs if (volume, job.page_num) in targets]
 
 
-def first_volume_pages(source_root: Path, volume_id: str, count: int, args: argparse.Namespace) -> list[PageJob]:
+def first_volume_pages(
+    source_root: Path, volume_id: str, count: int, args: argparse.Namespace
+) -> list[PageJob]:
     return all_page_jobs(source_root, volume_id, args)[:count]
 
 
@@ -180,7 +192,9 @@ def token_count_total(response: Any) -> Optional[int]:
 def create_client(args: argparse.Namespace) -> genai.Client:
     api_key = resolve_api_key(args)
     if not api_key:
-        raise RuntimeError("No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file.")
+        raise RuntimeError(
+            "No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file."
+        )
     return genai.Client(api_key=api_key)
 
 
@@ -247,11 +261,17 @@ def wait_for_batch(
         write_json(out_dir / "batch_jobs" / f"{label}_latest.json", json_safe(job))
         state = batch_state_name(job.state)
         elapsed = int(time.time() - started)
-        print(json.dumps({"label": label, "batch": batch_name, "state": state, "elapsed_seconds": elapsed}))
+        print(
+            json.dumps(
+                {"label": label, "batch": batch_name, "state": state, "elapsed_seconds": elapsed}
+            )
+        )
         if state in TERMINAL_STATES:
             return job
         if elapsed >= max_wait_seconds:
-            raise TimeoutError(f"Batch {batch_name} did not finish within {max_wait_seconds} seconds")
+            raise TimeoutError(
+                f"Batch {batch_name} did not finish within {max_wait_seconds} seconds"
+            )
         time.sleep(poll_seconds)
 
 
@@ -275,7 +295,11 @@ def response_text(response: Any) -> str:
 def parse_annotation(response: Any) -> FourthPassResult:
     parsed = getattr(response, "parsed", None)
     if parsed is not None:
-        return parsed if isinstance(parsed, FourthPassResult) else FourthPassResult.model_validate(parsed)
+        return (
+            parsed
+            if isinstance(parsed, FourthPassResult)
+            else FourthPassResult.model_validate(parsed)
+        )
     text = response_text(response)
     return FourthPassResult.model_validate_json(text)
 
@@ -484,7 +508,9 @@ def load_submitted_batch_name(out_dir: Path, label: str) -> str:
 def require_smoke_success(smoke_summary: dict[str, Any], expected_count: int) -> None:
     totals = smoke_summary["totals"]
     if totals["responses_seen"] != expected_count:
-        raise RuntimeError(f"Smoke response count mismatch: {totals['responses_seen']} != {expected_count}")
+        raise RuntimeError(
+            f"Smoke response count mismatch: {totals['responses_seen']} != {expected_count}"
+        )
     if totals["response_errors"] or totals["schema_parse_errors"]:
         raise RuntimeError(f"Smoke had response/schema errors: {totals}")
     if totals["cached_content_token_count"] <= 0:
@@ -500,7 +526,9 @@ def load_cache_name(args: argparse.Namespace, out_dir: Path) -> str:
         return args.cache_name
     cache_record_path = out_dir / "cache_record.json"
     if not cache_record_path.exists():
-        raise FileNotFoundError(f"No cache record found at {cache_record_path}; pass --cache-name or run smoke first.")
+        raise FileNotFoundError(
+            f"No cache record found at {cache_record_path}; pass --cache-name or run smoke first."
+        )
     cache_record = load_json(cache_record_path)
     return cache_record["cache_name"]
 
@@ -533,7 +561,9 @@ def submit_and_process_full(
         label = f"full_{volume_id}"
         save_batch_plan(out_dir, label, jobs)
         requests = [build_request(job, cache_name, args.max_output_tokens) for job in jobs]
-        submitted = submit_batch(client, model=args.model, requests=requests, out_dir=out_dir, label=label)
+        submitted = submit_batch(
+            client, model=args.model, requests=requests, out_dir=out_dir, label=label
+        )
         submitted_full_jobs.append((label, submitted, jobs))
 
     if args.submit_only:
@@ -636,12 +666,16 @@ def run_smoke_and_full(args: argparse.Namespace) -> None:
         return
 
     if not args.execute:
-        raise RuntimeError("Refusing API work without --execute. Use --prepare-only to inspect plans.")
+        raise RuntimeError(
+            "Refusing API work without --execute. Use --prepare-only to inspect plans."
+        )
 
     client = create_client(args)
 
     if args.process_existing_full:
-        full_summaries = process_existing_full(args=args, client=client, static_prefix=static_prefix)
+        full_summaries = process_existing_full(
+            args=args, client=client, static_prefix=static_prefix
+        )
         aggregate = {
             "model": args.model,
             "source_root": str(source_root),
@@ -747,7 +781,9 @@ def run_smoke_and_full(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run cached Gemini Batch API annotation for all Konbaung volumes.")
+    parser = argparse.ArgumentParser(
+        description="Run cached Gemini Batch API annotation for all Konbaung volumes."
+    )
     parser.add_argument("--source-root", default=str(DEFAULT_SOURCE_ROOT))
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     parser.add_argument("--model", default=DEFAULT_MODEL)

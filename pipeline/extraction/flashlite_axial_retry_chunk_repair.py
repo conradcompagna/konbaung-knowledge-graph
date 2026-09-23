@@ -34,15 +34,9 @@ def repair_chunks() -> list[chunked.Chunk]:
     values: list[chunked.Chunk] = []
     for parent in parent_chunks():
         parent_job = parent.job
-        total = (
-            len(parent_job.triples) + REPAIR_CHUNK_SIZE - 1
-        ) // REPAIR_CHUNK_SIZE
-        sentence_by_sid = {
-            sentence["sid"]: sentence for sentence in parent_job.sentences
-        }
-        selection_by_sid = {
-            selection["sid"]: selection for selection in parent_job.selections
-        }
+        total = (len(parent_job.triples) + REPAIR_CHUNK_SIZE - 1) // REPAIR_CHUNK_SIZE
+        sentence_by_sid = {sentence["sid"]: sentence for sentence in parent_job.sentences}
+        selection_by_sid = {selection["sid"]: selection for selection in parent_job.selections}
         for index, start in enumerate(
             range(0, len(parent_job.triples), REPAIR_CHUNK_SIZE),
             start=1,
@@ -62,9 +56,7 @@ def repair_chunks() -> list[chunked.Chunk]:
                 summary=parent_job.summary,
                 sentences=[copy.deepcopy(sentence_by_sid[sid]) for sid in sids],
                 triples=triples,
-                selections=[
-                    copy.deepcopy(selection_by_sid[sid]) for sid in sids
-                ],
+                selections=[copy.deepcopy(selection_by_sid[sid]) for sid in sids],
             )
             values.append(
                 chunked.Chunk(
@@ -114,10 +106,7 @@ def submit() -> dict[str, Any]:
     else:
         batch = client.batches.create(
             model=full.MODEL,
-            src=[
-                chunked.build_request(value, cache_name, template, schema)
-                for value in values
-            ],
+            src=[chunked.build_request(value, cache_name, template, schema) for value in values],
             config=types.CreateBatchJobConfig(
                 display_name=f"konbaung_axial_chunk_repair_{full.utc_stamp()}"
             ),
@@ -147,9 +136,7 @@ def status() -> dict[str, Any]:
         "checked_at": full.utc_now(),
         "name": batch.name,
         "state": full.enum_name(batch.state),
-        "completion_stats": full.json_safe(
-            getattr(batch, "completion_stats", None)
-        ),
+        "completion_stats": full.json_safe(getattr(batch, "completion_stats", None)),
     }
     full.write_json(REPAIR_ROOT / "batch_latest.json", full.json_safe(batch))
     full.write_json(REPAIR_ROOT / "status.json", record)
@@ -187,13 +174,9 @@ def replace_parent_attempts(
             shutil.copy2(target, backup)
         usage: Counter[str] = Counter()
         for child in children:
-            attempt = full.read_json(
-                REPAIR_ROOT / "attempts" / f"{child.job.key}.json"
-            )
+            attempt = full.read_json(REPAIR_ROOT / "attempts" / f"{child.job.key}.json")
             for usage_key in full.USAGE_KEYS:
-                usage[usage_key] += int(
-                    attempt.get("usage", {}).get(usage_key, 0)
-                )
+                usage[usage_key] += int(attempt.get("usage", {}).get(usage_key, 0))
         full.write_json(
             target,
             {
@@ -227,9 +210,7 @@ def combined_chunk_summary(
 ) -> dict[str, Any]:
     original = full.read_json(chunked.RETRY_ROOT / "batch_result.json")
     combined = copy.deepcopy(original)
-    replacement_by_key = {
-        row["key"]: row for row in replacement_record["replacements"]
-    }
+    replacement_by_key = {row["key"]: row for row in replacement_record["replacements"]}
     for row in combined["results"]:
         replacement = replacement_by_key.get(row["key"])
         if replacement is None:
@@ -239,17 +220,15 @@ def combined_chunk_summary(
         if replacement.get("usage"):
             row["usage"] = replacement["usage"]
         row["repair_batch_name"] = repair_summary["batch_name"]
-    combined["batch_name"] = (
-        f"{original['batch_name']} + {repair_summary['batch_name']}"
-    )
+    combined["batch_name"] = f"{original['batch_name']} + {repair_summary['batch_name']}"
     combined["totals"]["accepted"] = sum(
         row["category"] == "accepted" for row in combined["results"]
     )
     combined["totals"].pop("validation_invalid", None)
     for usage_key in full.USAGE_KEYS:
-        combined["totals"][usage_key] = int(
-            original["totals"].get(usage_key, 0)
-        ) + int(repair_summary["totals"].get(usage_key, 0))
+        combined["totals"][usage_key] = int(original["totals"].get(usage_key, 0)) + int(
+            repair_summary["totals"].get(usage_key, 0)
+        )
     full.write_json(REPAIR_ROOT / "combined_chunk_result.json", combined)
     return combined
 
@@ -276,10 +255,7 @@ def collect() -> dict[str, Any]:
         full.write_json(summary_path, repair_summary)
     replacement_record = replace_parent_attempts(repair_summary, values)
     full.write_json(REPAIR_ROOT / "replacement_record.json", replacement_record)
-    if any(
-        row["category"] != "accepted"
-        for row in replacement_record["replacements"]
-    ):
+    if any(row["category"] != "accepted" for row in replacement_record["replacements"]):
         return {
             "status": "repair_incomplete",
             "summary": repair_summary,
@@ -297,10 +273,7 @@ def collect() -> dict[str, Any]:
         "repair_chunk_size": REPAIR_CHUNK_SIZE,
         "repair_chunks": len(values),
         "repair_triples": sum(len(value.job.triples) for value in values),
-        "usage": {
-            key: repair_summary["totals"].get(key, 0)
-            for key in full.USAGE_KEYS
-        },
+        "usage": {key: repair_summary["totals"].get(key, 0) for key in full.USAGE_KEYS},
     }
     full.write_json(chunked.FULL_ROOT / "final_report.json", report)
     run_summary = full.read_json(chunked.FULL_ROOT / "run_summary.json")

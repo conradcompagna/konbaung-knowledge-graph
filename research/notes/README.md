@@ -10,4 +10,4 @@ validation records supporting a particular claim.
 | [Methodology](METHODOLOGY.md) | Corpus preparation, triples, analytical categories, embeddings, and validation |
 | [Analysis guide](ANALYSIS_READ_ME_FIRST.md) | Reading and reproducing the September 2026 test battery |
 | [Evaluation record](AUDIT_OF_EXISTING_TESTS.md) | Coverage and development of the research argument across 26 method families |
-| [Predicate-clustering design](PREDICATE_CLUSTERING_PLAN.md) | A development plan for canonicalizing the relation inventory |
+| [Entity resolution](ENTITY_RESOLUTION.md) | Candidate retrieval, learned ranking, and human review, with recorded evaluation results |

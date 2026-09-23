@@ -100,9 +100,7 @@ def load_state() -> dict[str, Any]:
     return initial_state()
 
 
-def next_parent(
-    index_rows: list[dict[str, str]], state: dict[str, Any]
-) -> dict[str, str]:
+def next_parent(index_rows: list[dict[str, str]], state: dict[str, Any]) -> dict[str, str]:
     """Skip parents absorbed by earlier passes and return the next unresolved page."""
     while int(state["cursor"]) < len(index_rows):
         position = int(state["cursor"])
@@ -151,9 +149,7 @@ def active_candidates(
 
 def build_prompt(parent: str, candidates: list[dict[str, str]]) -> str:
     """Ask only whether each active neighbor is exactly the same referent as its parent."""
-    candidate_lines = [
-        f"{row['entity']}\t{row['emb']}\t{row['char']}" for row in candidates
-    ]
+    candidate_lines = [f"{row['entity']}\t{row['emb']}\t{row['char']}" for row in candidates]
     return f"""Decide which candidate tags denote exactly the same underlying entity as PARENT.
 
 Identity must be strict. Merge spelling, transliteration, capitalization, separator,
@@ -175,9 +171,7 @@ CANDIDATES\tentity,emb,char
 """
 
 
-def validate_decision(
-    decision: Decision, parent: str, candidates: list[dict[str, str]]
-) -> None:
+def validate_decision(decision: Decision, parent: str, candidates: list[dict[str, str]]) -> None:
     """Reject invented, repeated, overlapping, or parent-valued output strings."""
     allowed = {row["entity"] for row in candidates}
     same = decision.s
@@ -201,14 +195,10 @@ def submit_page(
     excluded: list[dict[str, Any]],
 ) -> tuple[Decision, dict[str, Any], Path]:
     """Submit one compact page and preserve its exact request, response, and usage."""
-    directory = OUTPUT / (
-        f"pass_{pass_number:02d}_{parent['id']}_{safe_name(parent['entity'])}"
-    )
+    directory = OUTPUT / (f"pass_{pass_number:02d}_{parent['id']}_{safe_name(parent['entity'])}")
     directory.mkdir(parents=True, exist_ok=True)
     prompt = build_prompt(parent["entity"], candidates)
-    (directory / "prompt_sent.txt").write_text(
-        prompt, encoding="utf-8", newline="\n"
-    )
+    (directory / "prompt_sent.txt").write_text(prompt, encoding="utf-8", newline="\n")
     response = client.models.generate_content(
         model=MODEL,
         contents=prompt,
@@ -303,18 +293,14 @@ def apply_decision(
 def write_exports(index_rows: list[dict[str, str]], state: dict[str, Any]) -> None:
     """Export the shrunken roster, assignments, skips, clusters, and a review summary."""
     assignments = state["assignments"]
-    with (OUTPUT / "remaining_roster.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "remaining_roster.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(("id", "entity", "file"))
         for row in index_rows:
             if row["id"] not in assignments:
                 writer.writerow((row["id"], row["entity"], row["file"]))
 
-    with (OUTPUT / "resolved_entities.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "resolved_entities.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(("id", "entity", "parent_id", "parent_entity", "pass"))
         for row in index_rows:
@@ -330,9 +316,7 @@ def write_exports(index_rows: list[dict[str, str]], state: dict[str, Any]) -> No
                     )
                 )
 
-    with (OUTPUT / "skipped_parent_pages.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (OUTPUT / "skipped_parent_pages.csv").open("w", encoding="utf-8", newline="") as handle:
         fields = [
             "id",
             "entity",
@@ -345,20 +329,14 @@ def write_exports(index_rows: list[dict[str, str]], state: dict[str, Any]) -> No
         writer.writerows(state["skippedParentPages"])
 
     write_json(OUTPUT / "resolved_clusters.json", state["clusters"])
-    prompt_tokens = sum(
-        int(row["usage"].get("prompt_token_count") or 0) for row in state["passes"]
-    )
+    prompt_tokens = sum(int(row["usage"].get("prompt_token_count") or 0) for row in state["passes"])
     answer_tokens = sum(
-        int(row["usage"].get("candidates_token_count") or 0)
-        for row in state["passes"]
+        int(row["usage"].get("candidates_token_count") or 0) for row in state["passes"]
     )
     thought_tokens = sum(
-        int(row["usage"].get("thoughts_token_count") or 0)
-        for row in state["passes"]
+        int(row["usage"].get("thoughts_token_count") or 0) for row in state["passes"]
     )
-    total_tokens = sum(
-        int(row["usage"].get("total_token_count") or 0) for row in state["passes"]
-    )
+    total_tokens = sum(int(row["usage"].get("total_token_count") or 0) for row in state["passes"])
     write_json(
         OUTPUT / "run_manifest.json",
         {
@@ -410,9 +388,7 @@ def write_exports(index_rows: list[dict[str, str]], state: dict[str, Any]) -> No
                 "",
             ]
         )
-    (OUTPUT / "REVIEW.md").write_text(
-        "\n".join(lines), encoding="utf-8", newline="\n"
-    )
+    (OUTPUT / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
 
 def main() -> None:
@@ -428,12 +404,8 @@ def main() -> None:
     while int(state["submittedPasses"]) < TARGET_SUBMISSIONS:
         pass_number = int(state["submittedPasses"]) + 1
         parent = next_parent(index_rows, state)
-        candidates, excluded = active_candidates(
-            parent, index_by_entity, state
-        )
-        decision, usage, directory = submit_page(
-            client, pass_number, parent, candidates, excluded
-        )
+        candidates, excluded = active_candidates(parent, index_by_entity, state)
+        decision, usage, directory = submit_page(client, pass_number, parent, candidates, excluded)
         apply_decision(
             state,
             pass_number,

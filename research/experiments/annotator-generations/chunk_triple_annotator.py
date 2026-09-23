@@ -43,7 +43,9 @@ DEFAULT_MAX_OUTPUT_TOKENS = 8000
 class EvidenceChunk(BaseModel):
     ln: int = Field(description="1-based line number in <page_text>.")
     tx: str = Field(description="Exact original Burmese evidence chunk.")
-    i: int = Field(default=1, description="1-based occurrence of tx on this line; use >1 only when duplicated.")
+    i: int = Field(
+        default=1, description="1-based occurrence of tx on this line; use >1 only when duplicated."
+    )
 
 
 class TripleOut(BaseModel):
@@ -153,7 +155,9 @@ def normalize_ws(text: str) -> str:
     return " ".join(text.split())
 
 
-def normalized_page_window(lines: list[str], start_ln: int) -> tuple[str, list[Optional[tuple[int, int]]]]:
+def normalized_page_window(
+    lines: list[str], start_ln: int
+) -> tuple[str, list[Optional[tuple[int, int]]]]:
     chars: list[str] = []
     positions: list[Optional[tuple[int, int]]] = []
     previous_space = True
@@ -207,7 +211,9 @@ def spans_from_match(
     return spans
 
 
-def without_line_wrap_spaces(text: str, positions: list[Optional[tuple[int, int]]]) -> tuple[str, list[Optional[tuple[int, int]]]]:
+def without_line_wrap_spaces(
+    text: str, positions: list[Optional[tuple[int, int]]]
+) -> tuple[str, list[Optional[tuple[int, int]]]]:
     chars: list[str] = []
     kept_positions: list[Optional[tuple[int, int]]] = []
     for char, position in zip(text, positions):
@@ -218,7 +224,9 @@ def without_line_wrap_spaces(text: str, positions: list[Optional[tuple[int, int]
     return "".join(chars), kept_positions
 
 
-def resolve_mention(lines: list[str], mention: EvidenceChunk) -> tuple[Optional[dict[str, Any]], Optional[str]]:
+def resolve_mention(
+    lines: list[str], mention: EvidenceChunk
+) -> tuple[Optional[dict[str, Any]], Optional[str]]:
     if mention.ln < 1 or mention.ln > len(lines):
         return None, f"line {mention.ln} is outside page line range"
     if mention.i < 1:
@@ -242,7 +250,9 @@ def resolve_mention(lines: list[str], mention: EvidenceChunk) -> tuple[Optional[
             "i": mention.i,
             "s": start,
             "e": start + len(mention.tx),
-            "spans": [{"ln": mention.ln, "s": start, "e": start + len(mention.tx), "tx": mention.tx}],
+            "spans": [
+                {"ln": mention.ln, "s": start, "e": start + len(mention.tx), "tx": mention.tx}
+            ],
         }, None
 
     needle = normalize_ws(mention.tx)
@@ -266,7 +276,10 @@ def resolve_mention(lines: list[str], mention: EvidenceChunk) -> tuple[Optional[
         for _ in range(mention.i):
             start = match_text.find(needle, search_from)
             if start == -1:
-                return None, f"mention text not found from line {mention.ln} after whitespace normalization: {mention.tx!r}"
+                return (
+                    None,
+                    f"mention text not found from line {mention.ln} after whitespace normalization: {mention.tx!r}",
+                )
             search_from = start + len(needle)
 
     spans = spans_from_match(lines, match_positions, start, start + len(needle))
@@ -291,7 +304,9 @@ def text_in_evidence(text: str, evidence: dict[str, Any]) -> bool:
     return needle in haystack or needle.replace(" ", "") in haystack.replace(" ", "")
 
 
-def resolve_annotation(job: PageJob, annotation: TripleAnnotation) -> tuple[dict[str, Any], list[str]]:
+def resolve_annotation(
+    job: PageJob, annotation: TripleAnnotation
+) -> tuple[dict[str, Any], list[str]]:
     errors: list[str] = []
     lines = page_lines(job.raw_text)
     resolved: dict[str, Any] = {"T": []}
@@ -346,7 +361,9 @@ def triple_tag_line(triple: dict[str, Any]) -> str:
     return f"{subject_labels} --{triple.get('p', '')}--> {object_labels} | {triple.get('en', '')}"
 
 
-def build_marked_page_text(job: PageJob, annotation: dict[str, Any], validation_errors: list[str]) -> str:
+def build_marked_page_text(
+    job: PageJob, annotation: dict[str, Any], validation_errors: list[str]
+) -> str:
     lines = page_lines(job.raw_text)
     line_annotations: dict[int, list[dict[str, Any]]] = {}
 
@@ -379,13 +396,19 @@ def build_marked_page_text(job: PageJob, annotation: dict[str, Any], validation_
                     "close_bracket": valid_idx == len(valid_spans),
                     "emit_annotation": valid_idx == len(valid_spans),
                 }
-                )
+            )
 
     output: list[str] = []
     for ln, line in enumerate(lines, start=1):
         annotations = sorted(
             line_annotations.get(ln, []),
-            key=lambda item: (item["start"], item["end"], item["triple_idx"], item["mention_idx"], item["span_idx"]),
+            key=lambda item: (
+                item["start"],
+                item["end"],
+                item["triple_idx"],
+                item["mention_idx"],
+                item["span_idx"],
+            ),
         )
         cursor = 0
         if not annotations:
@@ -478,7 +501,9 @@ def prepare_outputs(args: argparse.Namespace, jobs: list[PageJob]) -> None:
         "jobs_prepared": len(jobs),
         "jobs_by_volume": by_volume,
         "will_call_api": bool(args.run),
-        "api_key_source": "not_resolved_in_prepare_mode" if not args.run else "resolved_at_run_time",
+        "api_key_source": "not_resolved_in_prepare_mode"
+        if not args.run
+        else "resolved_at_run_time",
     }
     write_json(out_dir / "run_summary.json", summary)
 
@@ -496,7 +521,9 @@ def prepare_outputs(args: argparse.Namespace, jobs: list[PageJob]) -> None:
 def run_annotation(args: argparse.Namespace, jobs: list[PageJob]) -> None:
     api_key = resolve_api_key(args)
     if not api_key:
-        raise RuntimeError("No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file.")
+        raise RuntimeError(
+            "No Gemini API key found. Set GEMINI_API_KEY, pass --api-key, or use --env-file."
+        )
 
     out_dir = Path(args.out_dir)
     done = load_done_page_job_ids(out_dir) if args.resume else set()
@@ -540,14 +567,18 @@ def run_annotation(args: argparse.Namespace, jobs: list[PageJob]) -> None:
                 raw_record["validation_errors"] = validation_errors
                 postprocessed_record["validation_errors"] = validation_errors
                 write_json(page_output_path(out_dir, "raw/invalid", job), raw_record)
-                write_json(page_output_path(out_dir, "postprocessed/invalid", job), postprocessed_record)
+                write_json(
+                    page_output_path(out_dir, "postprocessed/invalid", job), postprocessed_record
+                )
                 write_text(
                     marked_page_output_path(out_dir, "marked/invalid", job),
                     build_marked_page_text(job, resolved_annotation, validation_errors),
                 )
             else:
                 write_json(page_output_path(out_dir, "raw/valid", job), raw_record)
-                write_json(page_output_path(out_dir, "postprocessed/valid", job), postprocessed_record)
+                write_json(
+                    page_output_path(out_dir, "postprocessed/valid", job), postprocessed_record
+                )
                 write_text(
                     marked_page_output_path(out_dir, "marked/valid", job),
                     build_marked_page_text(job, resolved_annotation, validation_errors),
@@ -570,18 +601,49 @@ def run_annotation(args: argparse.Namespace, jobs: list[PageJob]) -> None:
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Prepare or run Gemini chunk-first triple annotation over Konbaung pages.")
-    parser.add_argument("--source-root", default=str(DEFAULT_SOURCE_ROOT), help="Root containing konbaung_vol*/pages/page_*.txt.")
-    parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR), help="Output directory for chunk-first triple annotations.")
+    parser = argparse.ArgumentParser(
+        description="Prepare or run Gemini chunk-first triple annotation over Konbaung pages."
+    )
+    parser.add_argument(
+        "--source-root",
+        default=str(DEFAULT_SOURCE_ROOT),
+        help="Root containing konbaung_vol*/pages/page_*.txt.",
+    )
+    parser.add_argument(
+        "--out-dir",
+        default=str(DEFAULT_OUT_DIR),
+        help="Output directory for chunk-first triple annotations.",
+    )
     parser.add_argument("--model", default="gemini-2.5-flash-lite")
-    parser.add_argument("--env-file", default=str(DEFAULT_ENV_FILE), help="Optional .env file containing GEMINI_API_KEY.")
-    parser.add_argument("--api-key", default=None, help="Optional Gemini API key. Prefer env var or --env-file.")
-    parser.add_argument("--run", action="store_true", help="Actually call Gemini. Omit for prepare-only.")
-    parser.add_argument("--volume-id", default=None, help="Optional single volume filter, e.g. konbaung_vol1.")
-    parser.add_argument("--page-num", type=int, default=None, help="Optional single page-number filter.")
+    parser.add_argument(
+        "--env-file",
+        default=str(DEFAULT_ENV_FILE),
+        help="Optional .env file containing GEMINI_API_KEY.",
+    )
+    parser.add_argument(
+        "--api-key", default=None, help="Optional Gemini API key. Prefer env var or --env-file."
+    )
+    parser.add_argument(
+        "--run", action="store_true", help="Actually call Gemini. Omit for prepare-only."
+    )
+    parser.add_argument(
+        "--volume-id", default=None, help="Optional single volume filter, e.g. konbaung_vol1."
+    )
+    parser.add_argument(
+        "--page-num", type=int, default=None, help="Optional single page-number filter."
+    )
     parser.add_argument("--limit", type=int, default=None, help="Limit jobs during API run.")
-    parser.add_argument("--save-prompts", action="store_true", help="Write debug prompt files without calling Gemini.")
-    parser.add_argument("--prompt-limit", type=int, default=25, help="Max prompts to save when --save-prompts is used. Use 0 for all.")
+    parser.add_argument(
+        "--save-prompts",
+        action="store_true",
+        help="Write debug prompt files without calling Gemini.",
+    )
+    parser.add_argument(
+        "--prompt-limit",
+        type=int,
+        default=25,
+        help="Max prompts to save when --save-prompts is used. Use 0 for all.",
+    )
     parser.add_argument("--max-output-tokens", type=int, default=DEFAULT_MAX_OUTPUT_TOKENS)
     parser.add_argument("--max-retries", type=int, default=3)
     parser.add_argument("--retry-sleep", type=float, default=3.0)

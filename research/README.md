@@ -29,6 +29,12 @@ produced the graph and the historical questions the graph makes possible to expl
 | [datasets/](datasets/) | Label-inventory distributions and frequency summaries |
 | [experiments/](experiments/) | The development of extraction schemas and repair strategies |
 
+## Entity resolution case study
+
+[From similar names to a review queue](notes/ENTITY_RESOLUTION.md) connects candidate
+retrieval, supervised ranking, error analysis, and source-based review to saved
+evaluation records. It shows how similarity search became a practical curation tool.
+
 ## Publication scope
 
 The public package includes selected research outputs and the implementation that

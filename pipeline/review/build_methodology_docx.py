@@ -38,7 +38,9 @@ def set_cell_shading(cell, fill: str) -> None:
     shd.set(qn("w:fill"), fill)
 
 
-def set_cell_margins(cell, top: int = 80, start: int = 120, bottom: int = 80, end: int = 120) -> None:
+def set_cell_margins(
+    cell, top: int = 80, start: int = 120, bottom: int = 80, end: int = 120
+) -> None:
     """Set compact, readable table-cell margins in twentieths of a point."""
     tc_pr = cell._tc.get_or_add_tcPr()
     tc_mar = tc_pr.first_child_found_in("w:tcMar")
@@ -107,7 +109,9 @@ def add_page_number(paragraph) -> None:
         run._r.append(node)
 
 
-def set_font(run, name: str = "Calibri", size: float | None = None, color: str | None = None) -> None:
+def set_font(
+    run, name: str = "Calibri", size: float | None = None, color: str | None = None
+) -> None:
     """Apply Latin and Myanmar-capable font declarations to a run."""
     run.font.name = name
     r_pr = run._element.get_or_add_rPr()
@@ -387,7 +391,11 @@ def render_markdown(document: Document, markdown: str) -> None:
             index += 1
             continue
 
-        if stripped.startswith("|") and index + 1 < len(lines) and lines[index + 1].strip().startswith("|"):
+        if (
+            stripped.startswith("|")
+            and index + 1 < len(lines)
+            and lines[index + 1].strip().startswith("|")
+        ):
             rows, index = parse_table(lines, index)
             add_markdown_table(document, rows)
             continue
@@ -470,9 +478,8 @@ def render_markdown(document: Document, markdown: str) -> None:
             if not candidate:
                 index += 1
                 break
-            if (
-                candidate.startswith(("## ", "### ", "- ", "```", "|", "\\["))
-                or re.match(r"^\d+\.\s+", candidate)
+            if candidate.startswith(("## ", "### ", "- ", "```", "|", "\\[")) or re.match(
+                r"^\d+\.\s+", candidate
             ):
                 break
             paragraph_lines.append(candidate)
@@ -508,4 +515,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

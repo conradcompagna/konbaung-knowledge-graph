@@ -25,7 +25,12 @@ OUTPUT = ROOT / "konbaung_predicate_gloss_repair_full_batch_20260718"
 RETRY = OUTPUT / "retry_01"
 MODEL = "gemini-3.1-flash-lite"
 SENTENCES_PER_REQUEST = 20
-TERMINAL_STATES = {"JOB_STATE_SUCCEEDED", "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_EXPIRED"}
+TERMINAL_STATES = {
+    "JOB_STATE_SUCCEEDED",
+    "JOB_STATE_FAILED",
+    "JOB_STATE_CANCELLED",
+    "JOB_STATE_EXPIRED",
+}
 
 INSTRUCTION = """Translate each exact Burmese predicate span (`my`) as it functions in its sentence. Return a short, natural English verb or relational phrase. Translate the span itself, not the broader historical relation, subject, object, motive, consequence, or analytical interpretation. Never output a database tag, an ALL_CAPS label, or underscores. Use the sentence and translation only for context. Return every ID exactly once in order. Return only schema-valid JSON."""
 
@@ -141,7 +146,14 @@ def build_jobs() -> tuple[list[Job], dict[str, dict[str, str]], dict[str, str]]:
         for offset in range(0, len(subset), SENTENCES_PER_REQUEST):
             chunk = subset[offset : offset + SENTENCES_PER_REQUEST]
             expected = [item["id"] for sentence in chunk for item in sentence["I"]]
-            jobs.append(Job(f"vol{volume}-g{offset // SENTENCES_PER_REQUEST + 1:04d}", volume, chunk, expected))
+            jobs.append(
+                Job(
+                    f"vol{volume}-g{offset // SENTENCES_PER_REQUEST + 1:04d}",
+                    volume,
+                    chunk,
+                    expected,
+                )
+            )
     return jobs, source, seed
 
 
@@ -149,7 +161,14 @@ def existing_corrections() -> dict[str, str]:
     path = OUTPUT / "predicate_gloss_corrections.jsonl"
     if not path.exists():
         return {}
-    return {item["id"]: item["en"] for item in (json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip())}
+    return {
+        item["id"]: item["en"]
+        for item in (
+            json.loads(line)
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        )
+    }
 
 
 def build_retry_jobs() -> tuple[list[Job], dict[str, dict[str, str]], dict[str, str]]:
@@ -171,8 +190,16 @@ def build_retry_jobs() -> tuple[list[Job], dict[str, dict[str, str]], dict[str, 
 
 
 def prompt(job: Job) -> str:
-    lean = [{"sid": item["sid"], "my": item["my"], "en": item["en"], "I": item["I"]} for item in job.sentences]
-    return INSTRUCTION + "\n<INPUT>" + json.dumps({"S": lean}, ensure_ascii=False, separators=(",", ":")) + "</INPUT>"
+    lean = [
+        {"sid": item["sid"], "my": item["my"], "en": item["en"], "I": item["I"]}
+        for item in job.sentences
+    ]
+    return (
+        INSTRUCTION
+        + "\n<INPUT>"
+        + json.dumps({"S": lean}, ensure_ascii=False, separators=(",", ":"))
+        + "</INPUT>"
+    )
 
 
 def request(job: Job) -> types.InlinedRequest:
@@ -219,14 +246,21 @@ def validate(job: Job, result: Result) -> list[str]:
 
 def salvage_complete_items(raw: str, expected: set[str]) -> dict[str, str]:
     salvaged: dict[str, str] = {}
-    pattern = re.compile(r'\{\s*"id"\s*:\s*"((?:[^"\\]|\\.)*)"\s*,\s*"en"\s*:\s*"((?:[^"\\]|\\.)*)"\s*\}')
+    pattern = re.compile(
+        r'\{\s*"id"\s*:\s*"((?:[^"\\]|\\.)*)"\s*,\s*"en"\s*:\s*"((?:[^"\\]|\\.)*)"\s*\}'
+    )
     for match in pattern.finditer(raw):
         try:
             item_id = json.loads('"' + match.group(1) + '"')
             gloss = json.loads('"' + match.group(2) + '"')
         except json.JSONDecodeError:
             continue
-        if item_id not in expected or not gloss.strip() or "_" in gloss or re.fullmatch(r"[A-Z0-9 ]+", gloss.strip()):
+        if (
+            item_id not in expected
+            or not gloss.strip()
+            or "_" in gloss
+            or re.fullmatch(r"[A-Z0-9 ]+", gloss.strip())
+        ):
             continue
         salvaged[item_id] = gloss
     return salvaged
@@ -308,7 +342,9 @@ def collect() -> dict[str, Any]:
             response = getattr(inlined, "response", None)
             raw = response_text(response)
             if job is None or getattr(inlined, "error", None) is not None:
-                rows.append({"key": key, "error": json_safe(getattr(inlined, "error", "unknown key"))})
+                rows.append(
+                    {"key": key, "error": json_safe(getattr(inlined, "error", "unknown key"))}
+                )
                 continue
             usage = json_safe(getattr(response, "usage_metadata", None)) or {}
             for field in usage_totals:
@@ -319,21 +355,54 @@ def collect() -> dict[str, Any]:
             except Exception as error:
                 salvaged = salvage_complete_items(raw, set(job.expected))
                 corrections.update(salvaged)
-                rows.append({"key": key, "error": str(error), "raw": raw, "salvaged_items": len(salvaged), "usage": usage})
+                rows.append(
+                    {
+                        "key": key,
+                        "error": str(error),
+                        "raw": raw,
+                        "salvaged_items": len(salvaged),
+                        "usage": usage,
+                    }
+                )
                 continue
             if not errors:
                 corrections.update({item.id: item.en for item in parsed.R})
-            rows.append({"key": key, "accepted": not errors, "errors": errors, "usage": usage, "response": parsed.model_dump(mode="json")})
-        write_json(OUTPUT / "batch_results" / f"vol{volume}.json", {"state": state, "results": rows})
+            rows.append(
+                {
+                    "key": key,
+                    "accepted": not errors,
+                    "errors": errors,
+                    "usage": usage,
+                    "response": parsed.model_dump(mode="json"),
+                }
+            )
+        write_json(
+            OUTPUT / "batch_results" / f"vol{volume}.json", {"state": state, "results": rows}
+        )
     ordered_ids = sorted(source)
     (OUTPUT / "predicate_gloss_corrections.jsonl").write_text(
-        "".join(json.dumps({"id": item_id, "en": corrections[item_id]}, ensure_ascii=False, separators=(",", ":")) + "\n" for item_id in ordered_ids if item_id in corrections),
+        "".join(
+            json.dumps(
+                {"id": item_id, "en": corrections[item_id]},
+                ensure_ascii=False,
+                separators=(",", ":"),
+            )
+            + "\n"
+            for item_id in ordered_ids
+            if item_id in corrections
+        ),
         encoding="utf-8",
     )
     (OUTPUT / "audit_changes.jsonl").write_text(
         "".join(
-            json.dumps({"id": item_id, **source[item_id], "new_en": corrections[item_id]}, ensure_ascii=False, separators=(",", ":")) + "\n"
-            for item_id in ordered_ids if item_id in corrections
+            json.dumps(
+                {"id": item_id, **source[item_id], "new_en": corrections[item_id]},
+                ensure_ascii=False,
+                separators=(",", ":"),
+            )
+            + "\n"
+            for item_id in ordered_ids
+            if item_id in corrections
         ),
         encoding="utf-8",
     )
@@ -418,7 +487,13 @@ def collect_retry() -> dict[str, Any]:
             for field in retry_usage:
                 retry_usage[field] += int(usage.get(field) or 0)
             if job is None or getattr(inlined, "error", None) is not None:
-                rows.append({"key": key, "error": json_safe(getattr(inlined, "error", "unknown key")), "usage": usage})
+                rows.append(
+                    {
+                        "key": key,
+                        "error": json_safe(getattr(inlined, "error", "unknown key")),
+                        "usage": usage,
+                    }
+                )
                 continue
             try:
                 parsed = Result.model_validate_json(raw)
@@ -426,23 +501,61 @@ def collect_retry() -> dict[str, Any]:
             except Exception as error:
                 salvaged = salvage_complete_items(raw, set(job.expected))
                 corrections.update(salvaged)
-                rows.append({"key": key, "error": str(error), "salvaged_items": len(salvaged), "usage": usage, "raw": raw})
+                rows.append(
+                    {
+                        "key": key,
+                        "error": str(error),
+                        "salvaged_items": len(salvaged),
+                        "usage": usage,
+                        "raw": raw,
+                    }
+                )
                 continue
             if not errors:
                 corrections.update({item.id: item.en for item in parsed.R})
-            rows.append({"key": key, "accepted": not errors, "errors": errors, "usage": usage, "response": parsed.model_dump(mode="json")})
-        write_json(RETRY / "batch_results" / f"vol{plan['volume']}.json", {"state": state, "results": rows})
+            rows.append(
+                {
+                    "key": key,
+                    "accepted": not errors,
+                    "errors": errors,
+                    "usage": usage,
+                    "response": parsed.model_dump(mode="json"),
+                }
+            )
+        write_json(
+            RETRY / "batch_results" / f"vol{plan['volume']}.json", {"state": state, "results": rows}
+        )
     ordered_ids = sorted(source)
     (OUTPUT / "predicate_gloss_corrections.jsonl").write_text(
-        "".join(json.dumps({"id": item_id, "en": corrections[item_id]}, ensure_ascii=False, separators=(",", ":")) + "\n" for item_id in ordered_ids if item_id in corrections),
+        "".join(
+            json.dumps(
+                {"id": item_id, "en": corrections[item_id]},
+                ensure_ascii=False,
+                separators=(",", ":"),
+            )
+            + "\n"
+            for item_id in ordered_ids
+            if item_id in corrections
+        ),
         encoding="utf-8",
     )
     (OUTPUT / "audit_changes.jsonl").write_text(
-        "".join(json.dumps({"id": item_id, **source[item_id], "new_en": corrections[item_id]}, ensure_ascii=False, separators=(",", ":")) + "\n" for item_id in ordered_ids if item_id in corrections),
+        "".join(
+            json.dumps(
+                {"id": item_id, **source[item_id], "new_en": corrections[item_id]},
+                ensure_ascii=False,
+                separators=(",", ":"),
+            )
+            + "\n"
+            for item_id in ordered_ids
+            if item_id in corrections
+        ),
         encoding="utf-8",
     )
     first_usage = read_json(OUTPUT / "status.json").get("usage", {})
-    total_usage = {field: int(first_usage.get(field) or 0) + retry_usage[field] for field in retry_usage}
+    total_usage = {
+        field: int(first_usage.get(field) or 0) + retry_usage[field] for field in retry_usage
+    }
     status = {
         "expected_items": len(source),
         "corrected_items": sum(item_id in corrections for item_id in source),
@@ -465,7 +578,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("submit", "collect", "retry-submit", "retry-collect"))
     args = parser.parse_args()
-    actions = {"submit": submit, "collect": collect, "retry-submit": submit_retry, "retry-collect": collect_retry}
+    actions = {
+        "submit": submit,
+        "collect": collect,
+        "retry-submit": submit_retry,
+        "retry-collect": collect_retry,
+    }
     print(json.dumps(actions[args.command](), ensure_ascii=False, indent=2))
 
 

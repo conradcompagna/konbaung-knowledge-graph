@@ -136,7 +136,9 @@ def main() -> None:
     review_pairs = json.loads(REVIEW_IN.read_text(encoding="utf-8"))
 
     if len(clusters) != EXPECTED_INPUT_CLUSTERS:
-        raise RuntimeError(f"Expected {EXPECTED_INPUT_CLUSTERS} input clusters, found {len(clusters)}")
+        raise RuntimeError(
+            f"Expected {EXPECTED_INPUT_CLUSTERS} input clusters, found {len(clusters)}"
+        )
     if len(assignments) != EXPECTED_INPUT_TAGS:
         raise RuntimeError(f"Expected {EXPECTED_INPUT_TAGS} assignments, found {len(assignments)}")
     if len(review_pairs) != 100:
@@ -159,7 +161,9 @@ def main() -> None:
 
     for survivor, retired, _ in ACCEPTED:
         if survivor not in clusters_by_id or retired not in clusters_by_id:
-            raise RuntimeError(f"Accepted merge references a missing cluster: {survivor}, {retired}")
+            raise RuntimeError(
+                f"Accepted merge references a missing cluster: {survivor}, {retired}"
+            )
         if survivor == retired:
             raise RuntimeError(f"Self-merge is invalid: {survivor}")
 
@@ -185,7 +189,9 @@ def main() -> None:
         for component in component_clusters:
             member_pairs.extend(zip(component["memberIndices"], component["memberTags"]))
             source_cluster_ids.update(component.get("sourceClusterIds", [component["clusterId"]]))
-            documented_merge = documented_merge or bool(component.get("documentedFrozenMerge", False))
+            documented_merge = documented_merge or bool(
+                component.get("documentedFrozenMerge", False)
+            )
 
         member_pairs.sort(key=lambda item: item[0])
         member_indices = [index for index, _ in member_pairs]
@@ -199,7 +205,9 @@ def main() -> None:
                 "clusterId": cluster_id,
                 "canonicalLabel": cluster["canonicalLabel"],
                 "tagCount": len(member_indices),
-                "totalFrequency": sum(int(assignments[index]["frequency"]) for index in member_indices),
+                "totalFrequency": sum(
+                    int(assignments[index]["frequency"]) for index in member_indices
+                ),
                 "memberIndices": member_indices,
                 "memberTags": member_tags,
                 "sourceClusterIds": sorted(source_cluster_ids),
@@ -304,7 +312,9 @@ def main() -> None:
             "source_cluster_ids_json": json.dumps(cluster["sourceClusterIds"], ensure_ascii=False),
             "documented_frozen_merge": cluster["documentedFrozenMerge"],
             "accepted_statistical_merge": cluster["acceptedStatisticalMerge"],
-            "retired_cluster_ids_json": json.dumps(cluster["retiredClusterIds"], ensure_ascii=False),
+            "retired_cluster_ids_json": json.dumps(
+                cluster["retiredClusterIds"], ensure_ascii=False
+            ),
             "accepted_proposal_numbers_json": json.dumps(cluster["acceptedProposalNumbers"]),
         }
         for cluster in merged_clusters
@@ -386,9 +396,7 @@ def main() -> None:
             ]
         )
         for member_index, tag in zip(cluster["memberIndices"], cluster["memberTags"]):
-            cluster_lines.append(
-                f"- {tag} — {int(assignments[member_index]['frequency']):,}"
-            )
+            cluster_lines.append(f"- {tag} — {int(assignments[member_index]['frequency']):,}")
         cluster_lines.append("")
     FINAL_CLUSTERS_MD.write_text("\n".join(cluster_lines), encoding="utf-8")
 

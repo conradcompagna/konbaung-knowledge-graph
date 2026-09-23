@@ -92,15 +92,19 @@ def scan_vectors(
         if tokens
         else np.empty((0, dimensions), dtype=np.float32)
     )
-    return tokens, matrix, {
-        "archive": str(archive),
-        "headerCount": header_count,
-        "linesRead": lines,
-        "dimensions": dimensions,
-        "wantedTokens": len(wanted),
-        "foundTokens": len(tokens),
-        "coverage": len(tokens) / len(wanted) if wanted else 1.0,
-    }
+    return (
+        tokens,
+        matrix,
+        {
+            "archive": str(archive),
+            "headerCount": header_count,
+            "linesRead": lines,
+            "dimensions": dimensions,
+            "wantedTokens": len(wanted),
+            "foundTokens": len(tokens),
+            "coverage": len(tokens) / len(wanted) if wanted else 1.0,
+        },
+    )
 
 
 def main() -> None:
@@ -134,9 +138,7 @@ def main() -> None:
             continue
         tokens, vectors, report = scan_vectors(archive, requested[language])
         np.save(TOKEN_ROOT / f"{language}_token_vectors.npy", vectors)
-        with (TOKEN_ROOT / f"{language}_tokens.jsonl").open(
-            "w", encoding="utf-8"
-        ) as handle:
+        with (TOKEN_ROOT / f"{language}_tokens.jsonl").open("w", encoding="utf-8") as handle:
             for index, token in enumerate(tokens):
                 handle.write(
                     json.dumps(

@@ -97,10 +97,19 @@ def remainder_blocks(page: dict[str, Any]) -> list[dict[str, Any]]:
     cursor = 0
     for start, end in merged:
         if cursor < start and text[cursor:start].strip():
-            blocks.append({"id": f"R{len(blocks) + 1}", "start": cursor, "end": start, "text": text[cursor:start]})
+            blocks.append(
+                {
+                    "id": f"R{len(blocks) + 1}",
+                    "start": cursor,
+                    "end": start,
+                    "text": text[cursor:start],
+                }
+            )
         cursor = max(cursor, end)
     if cursor < len(text) and text[cursor:].strip():
-        blocks.append({"id": f"R{len(blocks) + 1}", "start": cursor, "end": len(text), "text": text[cursor:]})
+        blocks.append(
+            {"id": f"R{len(blocks) + 1}", "start": cursor, "end": len(text), "text": text[cursor:]}
+        )
     return blocks
 
 
@@ -151,11 +160,11 @@ def build_prompt(volume: int, page_number: int) -> tuple[str, dict[str, Any], li
 {THIRD_PASS_PROMPT}
 
 <TARGET_PAGE_TEXT>
-{page['canonicalText']}
+{page["canonicalText"]}
 </TARGET_PAGE_TEXT>
 
 <EXISTING_SUMMARY_READ_ONLY>
-{page.get('summary') or ''}
+{page.get("summary") or ""}
 </EXISTING_SUMMARY_READ_ONLY>
 
 <EXISTING_TRIPLES_AND_EVIDENCE_READ_ONLY>
@@ -179,16 +188,10 @@ def validate(
     target_text: str,
 ) -> tuple[list[str], list[dict[str, Any]], dict[str, Any]]:
     warnings: list[str] = []
-    coverage = {
-        item["id"]: [False] * len(item["text"])
-        for item in blocks
-    }
+    coverage = {item["id"]: [False] * len(item["text"]) for item in blocks}
     placements: list[dict[str, Any]] = []
 
-    output_spans = [
-        ("T", index, item.e)
-        for index, item in enumerate(result.T, start=1)
-    ]
+    output_spans = [("T", index, item.e) for index, item in enumerate(result.T, start=1)]
     for kind, index, evidence in output_spans:
         candidates: list[tuple[int, str, dict[str, int]]] = []
         for block in blocks:
@@ -212,7 +215,9 @@ def validate(
             if not block_text[position].isspace()
         )
         if overlap:
-            warnings.append(f"{kind}[{index}]: evidence overlaps {overlap} already assigned characters")
+            warnings.append(
+                f"{kind}[{index}]: evidence overlaps {overlap} already assigned characters"
+            )
         for position in range(selected["start"], selected["end"]):
             if not block_text[position].isspace():
                 coverage[block_id][position] = True
@@ -230,7 +235,9 @@ def validate(
         for field in ("s", "o"):
             value = getattr(triple, field)
             if not contained(triple.e, value) and not contained(target_text, value):
-                warnings.append(f"T[{index}].{field}: endpoint is absent from evidence and target page")
+                warnings.append(
+                    f"T[{index}].{field}: endpoint is absent from evidence and target page"
+                )
         for field in ("d", "l", "q"):
             value = getattr(triple, field)
             if value and not contained(triple.e, value):
@@ -244,14 +251,13 @@ def validate(
         )
         if missing:
             missing_by_block[block["id"]] = missing
-            warnings.append(f'{block["id"]}: {missing} non-whitespace characters remain unassigned')
+            warnings.append(f"{block['id']}: {missing} non-whitespace characters remain unassigned")
     coverage_report = {
         "complete": not missing_by_block,
         "missing_by_block": missing_by_block,
         "assigned_characters": sum(sum(flags) for flags in coverage.values()),
         "required_characters": sum(
-            sum(not char.isspace() for char in block["text"])
-            for block in blocks
+            sum(not char.isspace() for char in block["text"]) for block in blocks
         ),
     }
     return warnings, placements, coverage_report
@@ -298,11 +304,7 @@ def run(volume: int, page_number: int, output_name: str) -> Path:
     (output_dir / "result.json").write_text(
         json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    triple_placements = {
-        item["index"]: item
-        for item in placements
-        if item["kind"] == "T"
-    }
+    triple_placements = {item["index"]: item for item in placements if item["kind"] == "T"}
     postprocessed = {
         "T": [
             {
