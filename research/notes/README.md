@@ -1,13 +1,13 @@
-# Notes
+# Research methods and findings
 
-| Document | Subject |
+Start with the historical interpretation or the results, then follow the methods and
+validation records supporting a particular claim.
+
+| Document | Focus |
 |---|---|
-| `METHODOLOGY.md` | how the corpus, triples and embeddings were built |
-| `ANALYSIS_READ_ME_FIRST.md` | what the analysis run covers and how to read its output |
-| `AUDIT_OF_EXISTING_TESTS.md` | an audit of what the existing tests actually establish |
-| `NEW_ANALYSES_AND_RESULTS.md` | the analyses added in the September 2026 run, and what they found |
-| `PRELIMINARY_HISTORICAL_INTERPRETATION.md` | a preliminary historical reading, explicitly marked as such |
-
-`AUDIT_OF_EXISTING_TESTS.md` is the one to read if you want to know how far the
-findings should be trusted. It was written to answer that question honestly rather
-than to support a conclusion.
+| [Historical interpretation](PRELIMINARY_HISTORICAL_INTERPRETATION.md) | The emerging account of royal authority, intermediaries, and differentiated political relationships |
+| [Analysis results](NEW_ANALYSES_AND_RESULTS.md) | Statistical findings, model comparisons, figures, and source examples |
+| [Methodology](METHODOLOGY.md) | Corpus preparation, triples, analytical categories, embeddings, and validation |
+| [Analysis guide](ANALYSIS_READ_ME_FIRST.md) | Reading and reproducing the September 2026 test battery |
+| [Evaluation record](AUDIT_OF_EXISTING_TESTS.md) | Coverage and development of the research argument across 26 method families |
+| [Entity resolution](ENTITY_RESOLUTION.md) | Candidate retrieval, learned ranking, and human review, with recorded evaluation results |

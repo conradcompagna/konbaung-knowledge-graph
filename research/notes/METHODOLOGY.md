@@ -6,7 +6,7 @@
 
 ### Scope
 
-This report documents the research database and embedding-derived tables in `DIGHUM_WEBGPT_ANALYSIS_PACKAGE_20260831_WITH_METHODOLOGY.zip`. It covers corpus preparation, sentence translation, subject–predicate–object extraction, cross-page deduplication, analytical categories, embeddings, similarity tables, clustering, and archive validation. Application software is outside scope. The dataset is model-assisted rather than a human-coded gold standard; model and prompt dependence should therefore be treated as a source of measurement uncertainty.
+This report documents the research database and embedding-derived tables in `DIGHUM_WEBGPT_ANALYSIS_PACKAGE_20260831_WITH_METHODOLOGY.zip`. It covers corpus preparation, sentence translation, subject–predicate–object extraction, cross-page deduplication, analytical categories, embeddings, similarity tables, clustering, and archive validation. The report follows each transformation from the source pages to the analytical tables, with explicit identifiers, validation rules, and recorded parameters. Application architecture is described in the repository and pipeline guides.
 
 ## 1. Dataset and textual units
 
@@ -37,9 +37,9 @@ Structured validation required exactly one nonempty translation per input ID in 
 
 The extraction prompt asked how power operated in the Konbaung dynasty as a lived social system. It covered royal and military authority, administration, service, taxation and tribute, local intermediaries, succession, kinship, Buddhist legitimacy, ritual, punishment, rebellion, diplomacy, war, tributary relations, and colonial displacement.
 
-Each sentence received either `annotate` with one or more triples or `skip` with no triples and a short justification. Every triple contained an English analytical `subject`, `predicate`, and `object`. Labels were intended to be slightly more abstract than literal glosses but close to the evidence. The pass was deliberately ungrounded: no evidence spans, offsets, or confidence scores were returned.
+Each sentence received either `annotate` with one or more triples or `skip` with no triples and a short justification. Every triple contained an English analytical `subject`, `predicate`, and `object`. Labels were intended to be slightly more abstract than literal glosses but close to the evidence. This generation links triples to their source sentence IDs. Its output schema contains semantic triples rather than token-level evidence spans, offsets, or confidence scores.
 
-Extraction used `gemini-3.1-flash-lite`, temperature 0, one candidate, a 16,000-token output limit, and a structured schema. Pages were attempted at high thinking; truncations were retried at medium and then minimal thinking. Structural validation required every supplied sentence ID exactly once, preserved order, valid decisions, and complete triple fields. Of 1,215 pages, 1,213 were accepted. Two unresolved pages (`vol2-p0132` and `vol3-p0511`) account for 60 sentences retained with translations but no invented triples.
+Extraction used `gemini-3.1-flash-lite`, temperature 0, one candidate, a 16,000-token output limit, and a structured schema. Pages were attempted at high thinking; truncations were retried at medium and then minimal thinking. Structural validation required every supplied sentence ID exactly once, preserved order, valid decisions, and complete triple fields. Of 1,215 pages, 1,213 were accepted. The two pages outside the accepted extraction set (`vol2-p0132` and `vol3-p0511`) account for 60 sentences; their text and translations remain in the corpus with annotation coverage recorded explicitly.
 
 Cross-page sentences sometimes received annotations in more than one page context. Canonicalization grouped results by stable sentence ID and selected one result using this ordered rule:
 
@@ -96,9 +96,10 @@ The archive also contains tag records, base/context/fused matrices, neighbor JSO
 
 Every staged file was hashed in `CHECKSUMS.sha256`. The ZIP used ZIP64 and DEFLATE level 6, passed CRC testing, and was compared with the staged member inventory before atomic installation. A sidecar SHA-256 verifies the complete archive.
 
-## 8. Statistical cautions
+## 8. Analysis units and validation scope
 
 Use 11,282 as the full sentence denominator, 11,222 for V3-available sentences, 10,498 for triple-bearing sentences, and 27,129 for claim-level analysis. Entity positions total 54,258; relation positions total 27,129. Use `owner_page` for unique page allocation and do not expand cross-page provenance as independent observations. Multiple triples within a sentence and sentences within a page are dependent; inferential models should use clustered or hierarchical errors where appropriate.
 
-Translations, open triples, axial assignments, and cluster labels are model-assisted and have no independent inter-annotator reliability estimate. V3 triples lack evidence spans. Context embeddings incorporate both Burmese text and model-produced English. Raw tag types may be polysemous, and subject/object role is pooled. Neighbor recall is limited by approximate candidate retrieval, while Louvain assignments depend on graph thresholds, resolution, and seed. These limitations should accompany substantive statistical claims.
+Validation combines exact source reconstruction, schema and coverage checks, documented corrections, and parameter-based sensitivity analysis. These checks establish computational integrity and make the transformations inspectable. Translations, triples, categories, and cluster labels are model-assisted; independent inter-annotator reliability has not been measured.
 
+The analytical choices are recorded explicitly: V3 traceability is at sentence level; contextual embeddings combine Burmese text with model-generated English; raw labels can have multiple senses, with subject/object occurrences pooled for entity vectors. Nearest-neighbor retrieval uses approximate candidates with exact rescoring. Louvain communities depend on graph thresholds, resolution, and seed, so comparisons should use the recorded settings and stability analyses. These details define the scope within which the tables support historical interpretation.

@@ -1,56 +1,44 @@
-# Research record
+# Research: building and analyzing a historical knowledge graph
 
-This directory is the record of how the knowledge graph was produced and what the
-analysis of it found. It is not the dataset. The extracted triples, the RDF store, the
-embedding matrices and the source scans are not published; see
-[../docs/PUBLICATION.md](../docs/PUBLICATION.md).
+This package connects a Burmese primary source to structured extraction, embeddings,
+entity resolution, and statistical analysis. It records both the engineering that
+produced the graph and the historical questions the graph makes possible to explore.
 
-The question this directory is meant to answer is whether someone could follow the
-method — not whether they could download the result.
+## A route through the work
 
-## Layout
+1. **The historical question and findings:** [interpretation](notes/PRELIMINARY_HISTORICAL_INTERPRETATION.md)
+   and [analysis results](notes/NEW_ANALYSES_AND_RESULTS.md) examine differentiated
+   forms of power and the relationships among royal allocation, administration,
+   military action, information flows, and religious patronage.
+2. **Building the research data:** [methodology](notes/METHODOLOGY.md) and the
+   [pipeline guide](../pipeline/README.md) explain corpus reconstruction,
+   sentence-linked extraction, analytical categories, embeddings, and validation.
+3. **Making the work inspectable:** the [reproduction record](reproduce/README.md)
+   provides stage logs, environment details, input provenance, and output checksums;
+   the [analysis guide](notes/ANALYSIS_READ_ME_FIRST.md) introduces the test battery.
+
+## Supporting material
 
 | Directory | Contents |
 |---|---|
-| [`analysis/`](analysis/) | The statistical and network analysis source: contingency analysis, graph layers, tensor semantics, path/rule motifs, degree-based null models, network models, robustness, brokerage and hierarchy, predictive checks, sensitivity, validation, figures, and the audit catalogue. |
-| [`findings/`](findings/) | What the analysis produced: model selection tables, fit statistics, scope declarations, stability and sensitivity intervals, validation output. Summary statistics only. |
-| [`figures/`](figures/) | The four figures, in PNG and SVG. |
-| [`reproduce/`](reproduce/) | The runner, per-stage logs, output checksums, input provenance, and the data-validation record. |
-| [`notes/`](notes/) | Methodology, the audit of existing tests, the new-analyses write-up, and a preliminary historical interpretation. |
-| [`datasets/`](datasets/) | Label inventory distributions and the most frequent labels. |
-| [`experiments/`](experiments/) | Extraction approaches that were superseded, with an `OUTCOME.md` each. |
+| [analysis/](analysis/) | Statistical and network-analysis source, from contingency models and graph layers to tensor decomposition, null models, prediction, and sensitivity checks |
+| [findings/](findings/) | Selected model comparisons, fit statistics, network summaries, stability intervals, and validation records |
+| [figures/](figures/) | Four research figures in PNG and SVG |
+| [reproduce/](reproduce/) | Runner, logs, checksums, provenance, and environment records |
+| [notes/](notes/) | Methodology, findings, historical interpretation, and detailed evaluation coverage |
+| [datasets/](datasets/) | Label-inventory distributions and frequency summaries |
+| [experiments/](experiments/) | The development of extraction schemas and repair strategies |
 
-`inputs/`, `recovered_source/` and `results/` remain untracked: those are the local
-directories holding the source data and the full analysis output.
-`findings/` is the published subset.
+## Entity resolution case study
 
-## Where to start
+[From similar names to a review queue](notes/ENTITY_RESOLUTION.md) connects candidate
+retrieval, supervised ranking, error analysis, and source-based review to saved
+evaluation records. It shows how similarity search became a practical curation tool.
 
-For a concrete model-development example, read
-[Entity resolution: from similar names to a review queue](notes/ENTITY_RESOLUTION.md),
-which connects candidate retrieval, supervised ranking, and source-based review to
-the saved evaluation records.
+## Publication scope
 
-1. [`notes/METHODOLOGY.md`](notes/METHODOLOGY.md) — how the data was built and embedded.
-2. [`notes/ANALYSIS_READ_ME_FIRST.md`](notes/ANALYSIS_READ_ME_FIRST.md) — what the
-   analysis run was for and how to read its output.
-3. [`reproduce/`](reproduce/) — the eleven-stage run, in order, with its logs.
-4. [`notes/NEW_ANALYSES_AND_RESULTS.md`](notes/NEW_ANALYSES_AND_RESULTS.md) — what the
-   analysis found.
-5. [`notes/PRELIMINARY_HISTORICAL_INTERPRETATION.md`](notes/PRELIMINARY_HISTORICAL_INTERPRETATION.md)
-   — what it might mean, stated as preliminary.
-
-## What is in `findings/`, and what is not
-
-Published: model selection and fit statistics, community and topology summaries, QAP
-results, bootstrap intervals, component stability, brokerage and hierarchy summaries,
-link-prediction scores, null-model diagnostics, the method-family audit, the
-environment record, and the validation output.
-
-Not published: the full contingency cells, all layer pairs, tensor loadings,
-per-entity centralities, null-draw matrices, the trained link-prediction parameters,
-and the three `*_anchors.csv` tables. The anchors quote triples verbatim — subject,
-predicate, object and source sentence — and are the dataset rather than a finding.
-
-The boundary is deliberate: every statistic needed to judge whether the analysis was
-done properly is here; the material needed to reconstruct the corpus is not.
+The public package includes selected research outputs and the implementation that
+produced them. The full source scans, extracted corpus, RDF store, embedding matrices,
+and per-entity/source-quotation tables are maintained separately. Local `inputs/`,
+`recovered_source/`, and `results/` directories hold those resources; `findings/`
+contains the published subset. See [publication contents](../docs/PUBLICATION.md).

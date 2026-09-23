@@ -1,8 +1,8 @@
 # v4 repair strategies
 
-When an extraction pass produces output that is mostly right and partly wrong, there
-are several ways to fix it, and they differ in cost and in how much correct output they
-put at risk.
+Targeted repair preserves accepted extraction records while correcting specific
+defect classes. This comparison explored the cost and preservation tradeoffs
+between record-level corrections and full-page regeneration.
 
 Four were tried against the v4 pass:
 
@@ -13,7 +13,8 @@ Four were tried against the v4 pass:
 | full rewrite | discard and regenerate the page |
 | diagnostic | classify the failures first, then choose |
 
-Delta repair is cheapest and safest and became the pattern the pipeline uses:
+The pipeline adopted delta repair to focus requests on identified defects and
+preserve accepted records:
 `pipeline/extraction/predicate_gloss_repair_batch.py`,
 `relation_predicate_grounding_batch.py`, `cross_page_repair.py` and
 `page_grounding_repair.py` are all delta repairs over specific defect classes,

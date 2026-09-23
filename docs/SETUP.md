@@ -1,6 +1,9 @@
 # Setup and external resources
 
-A fresh clone contains neither the proprietary corpus nor a graph database, and therefore does not provide a working corpus-backed reader by itself.
+The source release supports frontend builds and model-free checks directly. To run
+the corpus-backed reader, provision the graph and language resources described below;
+the [live reader](https://burmeseneuralreader.com/chronicles/vol1/47) demonstrates the
+configured application.
 
 ## Reader application
 

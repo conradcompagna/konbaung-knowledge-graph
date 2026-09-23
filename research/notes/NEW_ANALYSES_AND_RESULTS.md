@@ -1,17 +1,15 @@
 # New analyses of power relations in the Konbaung triples
 
-> Moved here from the September 2026 analysis run directory. Relative references
-> below have been repointed at the published copies in `../findings/`,
-> `../figures/` and `../reproduce/`. References marked *not published* are to
-> full analysis outputs that stay local; see [../README.md](../README.md) for what
-> is published and why.
+> September 2026 research results. Links connect the analysis to published findings,
+> figures, and run records. The [research guide](../README.md) describes the accompanying
+> source package and publication scope.
 
 
-The new analyses support **differentiated but connected forms of power in the chronicle**. Royal allocation, status-bearing, military operations, upward information/resource flows and religious patronage have distinguishable structures. Important layer associations remain after removing the sovereign category. The stronger claim that these form recurrent causal chains is not supported by the stricter motif nulls or the sparse held-out rule results.
+The new analyses support **differentiated but connected forms of power in the chronicle**. Royal allocation, status-bearing, military operations, upward information/resource flows and religious patronage have distinguishable structures. Important layer associations remain after removing the sovereign category. Controlled motif tests and held-out rule evaluation distinguish these structural associations from causal or sequential interpretations, as detailed below.
 
 ## Data and units
 
-The verified source has **27,129 canonical triple occurrences**, **11,282 sentence/translation records**, **10,498 triple-bearing sentences**, **23,890 distinct entity strings**, **11,886 predicate strings**, **52 entity categories** and **81 relation categories**. There are 1,215 annotation pages and 1,206 owner pages with triples. Sixty sentences lack canonical V3 annotation and have not been filled with invented claims.
+The verified source has **27,129 canonical triple occurrences**, **11,282 sentence/translation records**, **10,498 triple-bearing sentences**, **23,890 distinct entity strings**, **11,886 predicate strings**, **52 entity categories** and **81 relation categories**. There are 1,215 annotation pages and 1,206 owner pages with triples. The corpus retains 60 translated sentences outside canonical V3 annotation, with coverage tracked separately.
 
 Three objects are kept distinct: directed graphs of **analytical categories**, the earlier conservative **named-person undirected graph**, and **exact-tag graphs scoped within an owner page**. The 52/81 axial categories are supervised analytical codes assigned by a model; the embedding-derived semantic communities are separate exploratory products. A category such as Sovereign is not one person; an identical title string is not necessarily one person. Subject/object direction is the extractor's grammatical/semantic encoding, and has not been globally converted into grantor-to-recipient direction. Foreign and rival polities mentioned by the chronicle are included. Thus the broad patterns concern the recorded political world, not exclusively Konbaung officeholders.
 
@@ -72,7 +70,7 @@ All 81 layers were measured on the same 52 categories. The 3,240 pairwise descri
 | R72 | R73 | 0.08422 | 0.06 | 0.1036 | 0.09429 |
 | R23 | R76 | 0.3046 | 0.0015 | 0.2981 | 0.001667 |
 
-Appointment–officeholding and command–implementation remain strongly associated after E01 is removed. Reporting–removal, ritual–titling and tax–tribute do not retain the same corrected support after that removal. This distinction is more informative than a blanket assertion that everything forms one royal power network. Association surviving exclusion does not imply actor autonomy or successful command transmission.
+Appointment–officeholding and command–implementation remain strongly associated after E01 is removed. Reporting–removal, ritual–titling and tax–tribute do not retain the same corrected support after that removal. The comparison distinguishes relationships that persist across the broader category network from those most closely tied to the sovereign. It measures association across recorded relations; actor autonomy and command effectiveness require source-based interpretation.
 
 ![Relation layers and sovereign exclusion](../figures/01_layer_coupling.png)
 
@@ -80,21 +78,21 @@ The page-bootstrap bars are percentile ranges of 999 within-volume page resample
 
 ## 3 Joint factors distinguish recurring repertoires
 
-Nonnegative CP was fitted to square-root counts, with ranks 3, 5 and 7 and two starting seeds compared on withheld pages. Rank 7 gave the lowest selection-set negative log likelihood, about **9.596 per claim**, versus **9.914** for a marginal-independence baseline. Because that holdout selected the rank, it is a selection diagnostic rather than an unbiased final test score. The full-data relative reconstruction error is **0.681**, so considerable structure remains unexplained. A Tucker 8 × 8 × 8 fit is also supplied.
+Nonnegative CP was fitted to square-root counts, with ranks 3, 5 and 7 and two starting seeds compared on withheld pages. Rank 7 gave the lowest selection-set negative log likelihood, about **9.596 per claim**, versus **9.914** for a marginal-independence baseline. Because that holdout selected the rank, it is a selection diagnostic rather than an unbiased final test score. The full-data relative reconstruction error is **0.681**, reported alongside the selection scores to show the fit of this compact representation. A Tucker 8 × 8 × 8 fit is also supplied.
 
 The seven fitted components were interpreted as military action, status-bearing, court performance, upward flows, royal allocation, religious patronage and governing operations. Their factor loadings, not these labels, are the primary outputs.
 
 ![Joint subject relation object factors](../figures/02_tensor_roles.png)
 
-The military, upward-flow, royal-allocation and governing components recur strongly in the alternate-seed and register-exclusion fits. The court-performance component **does not**: its cross-fit similarity is only about 0.14 by seed and 0.11 after register exclusion. Its boundaries should not be treated as established. Religious patronage is moderately stable. Excluding R12 and R64 still leaves recognizable military, upward-flow, allocation and patronage components. The status-bearing/royal-allocation distinction partly reflects receive versus bestow encoding; it is not itself evidence that the model discovered a new institutional duality.
+Stability checks distinguish the military, upward-flow, royal-allocation, and governing components, which recur strongly across alternate seeds and register exclusion, from the more variable court-performance component (cross-fit similarity about 0.14 by seed and 0.11 after register exclusion). Interpretation therefore emphasizes the recurring components. Religious patronage is moderately stable. Excluding R12 and R64 still leaves recognizable military, upward-flow, allocation and patronage components. The status-bearing/royal-allocation distinction partly reflects receive versus bestow encoding; it is not itself evidence that the model discovered a new institutional duality.
 
 The four-mode fit adds the 12 reign/crisis segments, scaling each segment to occurrences per 1,000 claims. It is an exploratory map of changing textual composition. It does not reconstruct event hazards, reign durations, or continuous political evolution.
 
-## 4 Labelled paths are real configurations but not established mechanisms
+## 4 Labelled paths and controlled motif tests
 
 Within owner pages, the raw exact-tag graph has **26,550 unique non-self labelled edges**, **18,228 two-edge paths**, **526 transitive edge configurations** and **108 oriented cyclic configurations**. Predicate families were specified as authorization, execution, information, coercion, resistance, allegiance and other.
 
-Weak nulls shuffling labels within pages make several paths look strongly enriched. But preserving the ordered subject/object category pair within each page removes the corrected support for the focal patterns:
+The analysis compares two levels of control: within-page label shuffles and a stricter null that also preserves ordered endpoint categories. Under the latter, the focal patterns are explained by their endpoint composition:
 
 | pattern | observed | null_mean | p_greater | q_greater |
 |---|---|---|---|---|
@@ -105,11 +103,11 @@ Weak nulls shuffling labels within pages make several paths look strongly enrich
 
 ![Effect of stronger motif controls](../figures/03_motif_null_sensitivity.png)
 
-These results show that the apparent paths can largely follow from who tends to send and receive each type of relation. Of information-to-authorization paths, **89.3%** have the sovereign category as intermediate; for allegiance-to-authorization it is **96.5%**. Counting each supporting page once yields the same negative conclusion under the stronger null. The paths are spatial configurations within text pages, not time-respecting event sequences.
+These results show that the apparent paths can largely follow from who tends to send and receive each type of relation. Of information-to-authorization paths, **89.3%** have the sovereign category as intermediate; for allegiance-to-authorization it is **96.5%**. Counting each supporting page once gives the same conclusion under the stronger null. The paths are spatial configurations within text pages, not time-respecting event sequences.
 
 The separate unlabelled category triad test uses 1,000 saved draws in two directed-degree-preserving MCMC chains, with symmetric edge-switch proposals, triangle reversals and rejection self-loops. Degree invariants and triad totals pass. Several triads differ from that null, but these are category-graph structure diagnostics. The saved chain means and autocorrelations should accompany any use of their significance profiles; sampling is approximate and complete mixing is not guaranteed.
 
-## 5 Rule mining supplies few generalizable rules
+## 5 Rule mining with held-out evaluation
 
 One-edge implications and length-two Horn rules were enumerated with page-scoped entities. Supports count distinct page/subject/object bindings. Standard confidence, head coverage and PCA confidence are explicit. A training support of at least three bindings leaves only six length-two candidates:
 
@@ -122,7 +120,7 @@ One-edge implications and length-two Horn rules were enumerated with page-scoped
 | R11 | R46 | R44 | 3 | 3 | 0.1071 | 4 | 1 | 0.25 |
 | R49 | R46 | R46 | 3 | 3 | 0.08108 | 2 | 0 | 0 |
 
-Most are concentrated on one training page; held-out support is usually zero. For the assignment–fortification–deployment rule (R11/R46/R44), there are three training supporting bindings across three pages and one supporting test binding among four test body pairs. That is a source-reading lead, not a general historical law. A high PCA confidence based on a tiny denominator does not override this limitation. Every rule and its candidate passages remain available, including failures.
+Most are concentrated on one training page; held-out support is usually zero. For the assignment–fortification–deployment rule (R11/R46/R44), there are three training supporting bindings across three pages and one supporting test binding among four test body pairs. The rule therefore serves as a lead for close reading. Support counts accompany confidence measures so that sparse patterns can be assessed directly; the retained output includes every evaluated rule and its candidate passages.
 
 ## 6 Graph position and statistical network models
 
@@ -132,7 +130,7 @@ Category-level analyses add Burt constraint/effective size, Gould–Fernandez br
 
 For 30 actor/organization categories, the regularized p1 model estimates recorded directed adjacency with sender, receiver and reciprocity terms. Held-out dyad negative log likelihood falls from **1.384** for density alone to **0.876** for sender/receiver effects and **0.850** after reciprocity. The fitted reciprocity multiplier is about **3.63**, conditional on this category model. This is not a causal ERGM of historical people. A coordinate-ascent Bernoulli SBM selects three blocks under its explicit description-score penalty; sparse categories group together partly because of observability. Model adequacy simulations and all candidate partitions are supplied.
 
-## 7 Semantics agree with structure but learned completion adds no advantage
+## 7 Semantic-structural agreement and predictive model selection
 
 The relation base/context/fused centroids correlate with endpoint-structure similarity by **0.371 / 0.476 / 0.414**. QAP remains positive within broad relation domains and in a Freedman–Lane residual QAP controlling frequency difference and shared raw predicates. The nine tests have corrected q = 0.001 at the current permutation resolution. This is internal agreement between model-assisted descriptions of the same corpus, not independent historical validation; contextual embeddings contain the source sentences from which the triples were extracted.
 
@@ -149,7 +147,7 @@ On a separate split of 6,050 distinct category facts, the 1,210 test facts are d
 
 ![Semantic consistency and predictive checks](../figures/04_semantics_and_prediction.png)
 
-No predicted fact has been added to the database. This diagnostic does not support deploying more elaborate link prediction to fill gaps in the historical record.
+The frequency baseline provided the strongest held-out performance in this comparison. The result supports retaining source-extracted facts as the database's content and using prediction as an evaluation tool, with no model-generated completion facts added.
 
 ## 8 Reign comparisons are about recorded composition
 
@@ -175,4 +173,4 @@ These contrasts do not distinguish political change from narrative selection, co
 
 The script order is recorded in [RUN_ANALYSES.ps1](../reproduce/RUN_ANALYSES.ps1). The exact source archive and input hashes are in [original_source_verification.json](../reproduce/original_source_verification.json), [input_provenance.json](../reproduce/input_provenance.json), and the original source manifest. The environment, seeds and **126 passing invariants** are recorded in [11_validation.json](../findings/11_validation.json) and [11_environment.json](../findings/11_environment.json). Four figures are supplied as PNG and SVG. The selected source passages (`results/09_selected_source_passages.csv`, not published) retain Burmese and English; the HTML source reader links them to sentence IDs.
 
-The code uses [TensorLy's documented decomposition routines](https://tensorly.org/dev/modules/api.html) and [NetworkX graph definitions](https://networkx.org/documentation/stable/reference/algorithms/index.html). The rule measures follow the support/standard/PCA-confidence distinctions in the supplied [AMIE reference](https://suchanek.name/work/publications/vldbj2015.pdf). The implementation is bounded custom rule enumeration, not AMIE software. The custom degree null, conditioning schemes, transformations and all departures from full historical-process models are stated in the scripts and scope JSONs.
+The code uses [TensorLy's documented decomposition routines](https://tensorly.org/dev/modules/api.html) and [NetworkX graph definitions](https://networkx.org/documentation/stable/reference/algorithms/index.html). The rule measures follow the support/standard/PCA-confidence distinctions in the supplied [AMIE reference](https://suchanek.name/work/publications/vldbj2015.pdf). The implementation is bounded custom rule enumeration, not AMIE software. The custom degree null, conditioning schemes, transformations and analysis scope are documented in the scripts and scope JSONs.
