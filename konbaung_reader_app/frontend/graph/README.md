@@ -1,0 +1,41 @@
+# Graph interface modules
+
+[`../graph.ts`](../graph.ts) binds page controls and publishes `window.ChronicleGraph`.
+The bundle still builds to `static/build/graph.js`, with the same reader API and
+worker URLs managed by Vite.
+
+| Responsibility | Modules |
+|---|---|
+| Shared state and composition | `controller.ts`, `types.ts`, `navigation_state.ts` |
+| Page controls and workspace lifecycle | `dom.ts`, `page_navigation.ts`, `workspace.ts` |
+| Graph construction and rendering | `graph_layout.ts`, `renderer_lifecycle.ts`, `camera.ts` |
+| Thematic graph | `thematic_model.ts`, `thematic_rendering.ts`, `thematic_navigation.ts`, `thematic_evidence.ts` |
+| Corpus and atlas views | `corpus_radial_model.ts`, `corpus_radial_view.ts`, `atlas_view.ts` |
+| Filters, inspection, and similarity | `category_filters.ts`, `filtered_tags.ts`, `selection_inspector.ts`, `similar_patterns.ts` |
+| Shared calculations and requests | `utilities.ts` |
+
+`GraphController` is an internal composition host. Feature methods declare an
+explicit typed `this` parameter and share one controller instance, graph, renderer,
+and navigation record. Methods are installed on its prototype with ordinary class
+descriptors; duplicate names fail at initialization. Type-only imports keep feature
+modules from creating runtime cycles. The reader uses the small `ChronicleGraph`
+interface rather than the internal state.
+
+To add behavior, edit the responsible feature and preserve the shared navigation
+record instead of duplicating selection state across panels. All maintained source
+files have a 2,000-line ceiling, enforced in CI.
+
+From `konbaung_reader_app/`:
+
+```sh
+npm ci
+npm run check:types
+npm run test:graph
+npm run build:frontend
+```
+
+The graph-state fixtures exercise real feature methods with synthetic DOM elements
+and explicit worker responses. They cover state isolation, navigation snapshots,
+page ranges, direction/frequency filters, query construction, pan-click suppression,
+and cancellation of superseded layouts. Full rendering and corpus-backed browser
+checks use the configured reader described in [setup](../../../docs/SETUP.md).
