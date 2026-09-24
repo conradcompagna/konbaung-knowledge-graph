@@ -23,9 +23,5 @@ interface rather than the internal state.
 Feature modules share one navigation record across panels. Source-size checks
 keep maintained modules within the 2,000-line ceiling.
 
-The graph-state fixtures exercise real feature methods with synthetic DOM elements
-and explicit worker responses. They cover state isolation, navigation snapshots,
-page ranges, direction/frequency filters, query construction, pan-click suppression,
-and cancellation of superseded layouts. These assertions concern interface state
-and calculations; graph-content evidence is recorded in the
-[construction guide](../../../docs/BUILD_PROCESS.md).
+The [construction guide](../../../docs/BUILD_PROCESS.md) connects the interface
+to its source-linked claims, embeddings, categories and graph snapshots.

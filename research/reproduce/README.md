@@ -1,4 +1,4 @@
-# Reproduction record
+# Analysis run record
 
 The analysis ran as eleven numbered stages plus figures, finalisation and an audit
 catalogue. This directory holds the evidence that it ran, in what environment, over
@@ -31,6 +31,6 @@ Stage order, from the runner:
 06 robustness comparison  13 write reports · 14 finalise
 ```
 
-The checksum file is the useful artefact here: it fixes exactly which output each
-stage produced, so a re-run on the same inputs can be compared against it rather than
-inspected by eye.
+The checksums identify the exact outputs of the recorded run. Together with the
+input provenance and stage logs, they connect each finding to its source data and
+analysis step.

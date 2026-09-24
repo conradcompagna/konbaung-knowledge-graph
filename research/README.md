@@ -16,7 +16,7 @@ produced the graph and the historical questions the graph makes possible to expl
 2. **Building the research data:** [methodology](notes/METHODOLOGY.md) and the
    [pipeline guide](../pipeline/README.md) explain corpus reconstruction,
    sentence-linked extraction, analytical categories, embeddings, and validation.
-3. **Making the work inspectable:** the [reproduction record](reproduce/README.md)
+3. **Making the work inspectable:** the [analysis run record](reproduce/README.md)
    provides stage logs, environment details, input provenance, and output checksums;
    the [analysis guide](notes/ANALYSIS_READ_ME_FIRST.md) introduces the test battery.
 

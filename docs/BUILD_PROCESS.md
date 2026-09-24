@@ -17,10 +17,10 @@ then assembles sentences, handles cross-page continuations, repairs text and
 integrates restoration annotations. Stable sentence and page IDs connect these
 transformations to the reader.
 
-The [source-alignment tests](../tests/unit/) exercise Unicode/UTF-16 offsets,
-cross-page routing and source projection with synthetic examples. Earlier extraction
-generations also use token/evidence spans; the selected V3 claims use the canonical
-sentence as their evidence unit, connected to its source-page appearances.
+The reader aligns Unicode text and browser UTF-16 offsets for source projection
+and cross-page routing. Earlier extraction generations use token/evidence spans;
+the selected V3 claims use the canonical sentence as their evidence unit, connected
+to its source-page appearances.
 
 ## 2. Extract and select the V3 claim corpus
 

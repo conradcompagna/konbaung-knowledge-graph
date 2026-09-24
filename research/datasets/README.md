@@ -18,5 +18,6 @@ is what an open-vocabulary extraction produces, and it is the reason the pipelin
 canonicalisation stage at all: `pipeline/resolution/` and `pipeline/embeddings/` exist
 to collapse that tail.
 
-The full inventories are not published. A complete list of every entity and relation
-label is substantially the extracted data.
+These distributions describe the earlier research snapshot used in the resolution
+work. The [construction guide](../../docs/BUILD_PROCESS.md) identifies the served V3
+snapshot and its corresponding counts.
