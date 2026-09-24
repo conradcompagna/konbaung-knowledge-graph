@@ -375,7 +375,7 @@ def build() -> dict[str, object]:
                     quad(
                         resource,
                         node(KG + "embeddingModel"),
-                        Literal("gemini-embedding-001"),
+                        Literal("gemini-embedding-2"),
                         EMBEDDINGS,
                     ),
                     quad(
@@ -492,7 +492,7 @@ def build() -> dict[str, object]:
             "counts": dict(sorted(counts.items())),
             "statements": len(store),
             "embeddingSort": {
-                "model": "gemini-embedding-001",
+                "model": "gemini-embedding-2",
                 "view": "raw tag",
                 "dimensions": 768,
                 "nodeMatrix": str(EMBEDDING_ROOT / "node_base_vectors.npy"),

@@ -26,7 +26,12 @@ Before `python app.py`, provision the corpus, graph store, and embeddings expect
 - `konbaung_reader_app/static/data/konbaung/`: canonical page material.
 - `konbaung_reader_app/data/konbaung_historiography_v3_canonical_20260724/`: canonical V3 annotations.
 - `konbaung_reader_app/data/konbaung_knowledge_graph_v3/`: generated Oxigraph database, graph export, and overview artifacts.
+- `konbaung_reader_app/data/konbaung_axial_categories_v2/`: final category assignments.
 - The root embedding and occurrence directories referenced by `graph_schema.py`.
+
+The [construction checklist](BUILD_PROCESS.md#reconstruction-checklist) and
+[selected artifact record](../research/reproduce/served_artifacts.json) identify
+the snapshots, models, counts and hashes behind these inputs.
 
 The browser application listens on port 5077. The `Procfile` and `deploy/` directory preserve hosting infrastructure. Configure a separate instance and its own paths before deployment.
 

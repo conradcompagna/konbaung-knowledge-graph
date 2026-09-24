@@ -8,6 +8,37 @@ I built this project to investigate how power operated in the Konbaung dynasty t
 
 [![Checks](https://github.com/conradcompagna/konbaung-knowledge-graph/actions/workflows/checks.yml/badge.svg)](https://github.com/conradcompagna/konbaung-knowledge-graph/actions/workflows/checks.yml)
 
+## From source pages to exploration
+
+```mermaid
+flowchart TB
+    subgraph Build["Construct the research artifacts"]
+        Scans["Page images"] --> OCR["OCR, restoration and sentence reconstruction"]
+        OCR --> Extract["Translation and V3 claim extraction"]
+        Extract --> Canonical["Select one annotation per sentence"]
+        Canonical --> Embeddings["Eight-view embeddings and graph features"]
+        Canonical --> Categories["52 entity / 81 relation categories"]
+        Canonical --> Graph["Oxigraph RDF and source-linked claims"]
+        Embeddings --> Graph
+    end
+    subgraph Use["Explore the evidence"]
+        Graph --> Explorer["Graph explorer and versioned API"]
+        Categories --> Explorer
+        Explorer --> Reader["Claim, sentence and source-page reader"]
+        Burmese["Burmese dictionary segmentation"] --> Reader
+        Gloss["Optional contextual Gemini glosses"] --> Reader
+    end
+    Canonical -.-> Analysis["Research variants:<br/>resolution, review and statistics"]
+    Embeddings -.-> Analysis
+    Categories -.-> Analysis
+```
+
+Offline builds create the data used by the reader; opening the graph does not
+rerun extraction or embedding generation. Research branches record their own
+versioned input snapshots. The
+[construction and version guide](docs/BUILD_PROCESS.md) connects the served
+artifacts to their builders, hashes and research branches.
+
 ## Engineering highlights
 
 - **Complete extraction infrastructure:** page-image OCR, sentence reconstruction, translation, structured LLM annotation, schema validation, targeted repair, and corpus compilation.
@@ -45,13 +76,14 @@ It includes the methods, analysis code, selected findings, figures, and run reco
 
 | | |
 |---|---|
+| [**Construction and selected artifacts**](docs/BUILD_PROCESS.md) | The source-to-product story, served V3 snapshots, final categories and reconstruction checklist. |
 | [**Methodology**](research/notes/METHODOLOGY.md) | Corpus construction, extraction design, eight embedding views, and validation. |
 | [**Pipeline guide**](pipeline/README.md) | Every stage from page image to canonical graph, and why extraction and resolution are shaped the way they are. |
 | [**Reproduction record**](research/reproduce/) | The analysis runner, twelve per-stage logs, output checksums, input provenance, and data validation. |
 | [`research/findings/`](research/findings/) | Model comparisons, relation-layer structure, stability estimates, and validation results. |
 | [`research/figures/`](research/figures/) | The four figures, PNG and SVG. |
 | [`research/experiments/`](research/experiments/) | Schema development across seven annotator generations and targeted-repair strategies. |
-| [`research/datasets/`](research/datasets/) | Label inventory distributions: 5,667 entity labels and 13,727 relation predicates, most occurring once. |
+| [`research/datasets/`](research/datasets/) | Earlier research-snapshot label distributions; the served V3 graph counts are listed above. |
 | [`research/notes/`](research/notes/) | Historical interpretation, statistical methods, and the evaluation record. |
 
 For a short route through the findings, read the

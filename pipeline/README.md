@@ -1,14 +1,21 @@
 # Pipeline guide
 
 ```mermaid
-flowchart LR
-    OCR[OCR text and page images] --> Corpus[Canonical sentence corpus]
-    Corpus --> Extract[Translation and claim extraction]
-    Extract --> Repair[Repair, audit, compilation]
-    Repair --> Resolve[Entity resolution and canonicalisation]
-    Resolve --> Graph[RDF graph and embeddings]
-    Graph --> Reader[Reader, API, analysis]
+flowchart TB
+    OCR["OCR and reconstruction"] --> Canonical["V3 extraction and canonical sentence selection"]
+    Canonical --> Features["Embeddings and graph features"]
+    Canonical --> Categories["Final axial categories"]
+    Canonical --> Graph["Raw V3 RDF graph"]
+    Features --> Graph
+    Graph --> Reader["Reader and public API"]
+    Categories --> Reader
+    Features --> Research["Resolution, review and statistical analysis"]
 ```
+
+The [construction/version guide](../docs/BUILD_PROCESS.md) identifies the actual
+served snapshots and their [verified provenance](../research/reproduce/served_artifacts.json).
+Sentence canonicalization selects repeated annotations; entity resolution is a
+separate research branch rather than a prerequisite for the served raw V3 graph.
 
 Run modules from the repository root. For example,
 `python -m pipeline.extraction.historiography_batch --help` and
@@ -33,7 +40,7 @@ in `../prompts/gold_standards/`. The reader and graph builders are under
 
 Two stages carry most of the difficulty.
 
-**Extraction is iterative, not a single pass.** A page goes through open coding, then
+**Extraction development was iterative.** The retained multi-pass workflow applies open coding, then
 gap-filling for claims the first pass missed, then a quantitative pass, then predicate
 grounding, then metadata enrichment — with an audit between passes deciding what still
 needs work. `extraction/` and `audit/` are interleaved by design. Seven superseded
@@ -54,7 +61,7 @@ $13.73. The [sampling and cost excerpts](../research/findings/pipeline_developme
 retain the seed, category decisions, token accounting, pricing assumptions, and
 source hashes.
 
-**Resolution is a wave process.** The extraction produces an open vocabulary — 5,667
+**Resolution is a wave process.** The earlier research snapshot has an open vocabulary of 5,667
 entity labels and 13,727 relation labels, most occurring once
 ([distributions](../research/datasets/)). Canonicalising it runs in frequency-ordered
 waves: the most frequent labels first, where the evidence is richest and a wrong merge

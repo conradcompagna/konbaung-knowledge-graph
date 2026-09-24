@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-09-23",
+  "selection": {"graph": "konbaung_knowledge_graph_v3", "canonical": "konbaung_historiography_v3_canonical_20260724", "axial": "konbaung_axial_categories_v2"},
+  "graph_counts": {"claims": 27129, "directStatements": 26867, "embeddingStatements": 286208, "entities": 23890, "pages": 1215, "relations": 11886, "schemaStatements": 50, "sentences": 11222, "sourceStatements": 385585, "volumes": 3},
+  "canonical_model": "gemini-3.1-flash-lite",
+  "canonical_selection": "max_triples_then_owner_page_then_lowest_page",
+  "canonical_totals": {"baseUniqueSentences": 11282, "baseSentenceAppearances": 12097, "sourceSentenceAppearances": 12035, "sourceTriples": 30180, "canonicalSentences": 11222, "canonicalTriples": 27129, "pageAppearanceSentences": 12037, "pageAppearanceTriples": 31582, "duplicateSentenceIds": 806, "removedDuplicateAppearances": 813, "duplicatesWithDifferentTripleCounts": 539, "duplicatesWithDifferentContent": 802, "unavailableSentenceIds": 60},
+  "embedding": {"model_from_build_provenance": "gemini-embedding-2", "dimensions": 768, "unique_requests": 151275, "views": ["S", "P", "O", "SPO", "SBE", "PBE", "OBE", "SPOBE"], "historical_graph_manifest_label": "gemini-embedding-001", "model_identity_basis": "Embedding final_report.json and source_manifest.json are hash-linked to the graph feature build; the historical graph manifest retains an older model label."},
+  "axial": {"model": "gemini-3.1-flash-lite", "prompt_version": "v2.0", "totals": {"taggedTriples": 27129, "unresolvedTriples": 0, "entityCategories": 52, "relationCategories": 81, "provisionalEntityCategories": 0, "provisionalRelationCategories": 0, "sentenceStatuses": {"accepted": 10498}}, "tagged_triples_sha256": "5f41550e784f91e40beb10c9528b217148bfaf30db72f621273e0ae27c1b7d46", "prompt_sha256": "0a13f7558f7fe32fbf868f0ad0553abad821087edb0abf41cd440022506117a4"},
+  "deployed_manifest_identities": [
+    {"artifact": "data/konbaung_axial_categories_v2/manifest.json", "bytes": 1783, "sha256": "c9f6d151cf52b6d71c21b4bd183f0612341b4013b6396dfd1ded24d7fe1b32d1"},
+    {"artifact": "data/konbaung_historiography_v3_canonical_20260724/index.json", "bytes": 3997, "sha256": "461b41fc5b0075e78b174a858a71ca589cd49dddb377df52b28a3dcdf26be19c"},
+    {"artifact": "data/konbaung_knowledge_graph_v3/manifest.json", "bytes": 5097, "sha256": "162d1dfe306f16c5bc1b226404d5ae12cdf78b0df62b3fcb99e477b6a7924413"}
+  ],
+  "verified_input_links": [
+    {"stage": "graph input", "artifact": "konbaung_reader_app/data/konbaung_historiography_v3_canonical_20260724/index.json", "sha256": "461b41fc5b0075e78b174a858a71ca589cd49dddb377df52b28a3dcdf26be19c", "matched_recorded_hash": true},
+    {"stage": "graph input", "artifact": "konbaung_v3_eight_view_embeddings_20260724/occurrences.jsonl", "sha256": "e29e0dc778afe835e021a4fc1c71aad42f9e1025592f94d4f7f4ad8e188d62e9", "matched_recorded_hash": true},
+    {"stage": "graph input", "artifact": "konbaung_v3_node_edge_clustering_first_pass_20260724/node_records.jsonl", "sha256": "fcb5e0377a5730026d9b733a26ebcb787242f4869a9acb7bb4bf9e1363c808c9", "matched_recorded_hash": true},
+    {"stage": "graph input", "artifact": "konbaung_v3_node_edge_clustering_first_pass_20260724/edge_records.jsonl", "sha256": "6b16c9a09247fdaf3552843bba14d55040d156b09769b48f48fc1f3738e59530", "matched_recorded_hash": true},
+    {"stage": "graph input", "artifact": "konbaung_v3_node_edge_clustering_first_pass_20260724/node_base_vectors.npy", "sha256": "d8044e4573c71480292a6875a10021638648fefd0d165e2d707791dcd1a54275", "matched_recorded_hash": true},
+    {"stage": "graph input", "artifact": "konbaung_v3_node_edge_clustering_first_pass_20260724/edge_base_vectors.npy", "sha256": "6355abc445570e61a82cdff3b888707cadecc8ba61f69a86cc3995d31ef92007", "matched_recorded_hash": true},
+    {"stage": "embedding input", "artifact": "konbaung_reader_app/data/konbaung_historiography_v3_canonical_20260724/index.json", "sha256": "461b41fc5b0075e78b174a858a71ca589cd49dddb377df52b28a3dcdf26be19c", "matched_recorded_hash": true},
+    {"stage": "embedding input", "artifact": "konbaung_reader_app/data/konbaung_historiography_v3_canonical_20260724/sentences/vol1.json", "sha256": "d31c3a184da4f0fed78f14453a8959f5969f77412a34def16791a0a36067e89d", "matched_recorded_hash": true},
+    {"stage": "embedding input", "artifact": "konbaung_reader_app/data/konbaung_historiography_v3_canonical_20260724/sentences/vol2.json", "sha256": "7d30bc6bc7df010ee1035a114118a17cdcb691912736ba74bac30c71d33e9eb1", "matched_recorded_hash": true},
+    {"stage": "embedding input", "artifact": "konbaung_reader_app/data/konbaung_historiography_v3_canonical_20260724/sentences/vol3.json", "sha256": "1044e370b1d6ac0daea96d40eca2b8434e7d39c3710209fb8364324cf4aec3e3", "matched_recorded_hash": true},
+    {"stage": "cluster input: source manifest", "artifact": "konbaung_v3_eight_view_embeddings_20260724/source_manifest.json", "sha256": "a0b300f7005bf7c4cdf4c5c51e483ab7d1d42929244e4f4703d5fe869ff3c3e4", "matched_recorded_hash": true},
+    {"stage": "cluster input: embedding final report", "artifact": "konbaung_v3_eight_view_embeddings_20260724/final_report.json", "sha256": "d3338afd73917c14ed8db0bd517117d30b5ce7bd267362bd3b85c990c87070c1", "matched_recorded_hash": true},
+    {"stage": "canonical input", "artifact": "konbaung_historiography_ungrounded_v3_full_batch_20260723/final/all_pages.jsonl", "sha256": "a5d50c686b081a388d4aae5ddcfb4bc6ab139073ac70ce5cea61daa9e5e33bd1", "matched_recorded_hash": true},
+    {"stage": "canonical input", "artifact": "konbaung_historiography_ungrounded_v3_full_batch_20260723/final_report.json", "sha256": "5e1d8f3c8d5fccc70e972e22cb28da634ca72e0df1a40be33f8ee362b8d4dd1e", "matched_recorded_hash": true}
+  ],
+  "verification_scope": "The three deployed manifests match retained originals; fourteen retained build-input hashes were recomputed. The running database was not rebuilt or compared record by record.",
+  "availability": "Corpus records, graph database and embeddings are separately provisioned; this record contains counts and fingerprints only."
+}

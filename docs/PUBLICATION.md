@@ -1,5 +1,8 @@
 # Repository contents
 
+Start with the [construction story and reconstruction checklist](BUILD_PROCESS.md)
+for the selected artifacts and the process connecting them to the application.
+
 ## Included
 
 **Runtime.** The reader and graph application, the public API, the frontend source, and
@@ -24,7 +27,7 @@ label-inventory distributions, and the superseded extraction approaches, under
 | Embedding matrices and fastText vectors | Large binaries derived from the corpus. |
 | Full analysis output | `research/results/` stays untracked. The curated summary statistics are published in `research/findings/`. |
 | `*_anchors.csv` analysis tables | Small, but they quote triples verbatim with their source sentences. They are dataset, not finding. |
-| Full entity and relation label inventories | 5,667 and 13,727 labels respectively; the complete lists are substantially the extracted data. Distributions and the 150 most frequent of each are published in `research/datasets/`. |
+| Full entity and relation label inventories | The earlier research inventory has 5,667 and 13,727 labels; the served V3 graph has 23,890 and 11,886 respectively; the complete lists are substantially the extracted data. Distributions and the 150 most frequent of each are published in `research/datasets/`. |
 | Manuscript drafts, editorial material, evidence packages | Unpublished historical argument, not software. |
 
 No dataset licence is granted by publishing this software.

@@ -1,5 +1,8 @@
 # Research: building and analyzing a historical knowledge graph
 
+Start with the [construction story and reconstruction checklist](../docs/BUILD_PROCESS.md)
+for the selected artifacts and the process connecting them to the application.
+
 This package connects a Burmese primary source to structured extraction, embeddings,
 entity resolution, and statistical analysis. It records both the engineering that
 produced the graph and the historical questions the graph makes possible to explore.
