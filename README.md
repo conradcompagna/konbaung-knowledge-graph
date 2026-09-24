@@ -10,8 +10,8 @@ with an interactive reader and API. I developed the accompanying resolution,
 review and statistical-analysis workflows to connect computational results back
 to historical questions and source evidence.
 
-The development record follows the source-processing scripts, prompts, build
-manifests, analysis logs and saved findings that document this work.
+The source-processing scripts, prompts, build manifests, analysis logs and findings
+below document how I developed the system and used it in my research.
 
 ## From source pages to exploration
 

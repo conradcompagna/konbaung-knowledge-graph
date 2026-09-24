@@ -4,10 +4,10 @@ I built this system to make a Burmese chronicle usable as inspectable historical
 research data: reconstruct the text, extract structured claims, retain the route
 back to the source, and provide both interactive exploration and quantitative analysis.
 
-The [selected-artifact record](../research/reproduce/served_artifacts.json) anchors
-this account to the deployed graph, canonical annotations and axial-category layer
-checked on 23 September 2026. The [methodology](../research/notes/METHODOLOGY.md)
-provides the fuller research argument and parameter choices.
+I use the canonical V3 annotations and final axial categories in the deployed
+graph and reader. Their [artifact identities](../research/reproduce/served_artifacts.json)
+connect them to the build inputs; the [methodology](../research/notes/METHODOLOGY.md)
+explains my research design and parameter choices.
 
 ## 1. Recover text and stable source identities
 
