@@ -4,9 +4,14 @@
 
 I built this project to investigate how power operated in the Konbaung dynasty through kingship, office, military command, religious patronage, tribute, and kinship. It turns a large primary source into inspectable research data while connecting interpretations to their source sentences and pages.
 
-[Live reader](https://burmeseneuralreader.com/chronicles/vol1/47) · [API documentation](https://burmeseneuralreader.com/api/v1/docs) · [Setup](docs/SETUP.md) · [Portfolio](https://github.com/conradcompagna)
+The work spans OCR and source restoration, sentence reconstruction, translation,
+structured claim extraction, embedding and category construction, and an RDF graph
+with an interactive reader and API. I developed the accompanying resolution,
+review and statistical-analysis workflows to connect computational results back
+to historical questions and source evidence.
 
-[![Checks](https://github.com/conradcompagna/konbaung-knowledge-graph/actions/workflows/checks.yml/badge.svg)](https://github.com/conradcompagna/konbaung-knowledge-graph/actions/workflows/checks.yml)
+The development record follows the source-processing scripts, prompts, build
+manifests, analysis logs and saved findings that document this work.
 
 ## From source pages to exploration
 
@@ -57,7 +62,6 @@ artifacts to their builders, hashes and research branches.
 | Graph storage and API | [graph_store.py](konbaung_reader_app/graph_store.py), [public_api.py](konbaung_reader_app/public_api.py) |
 | Reader and graph interface | [app.py](konbaung_reader_app/app.py), [frontend/](konbaung_reader_app/frontend/) |
 | Statistical analysis | [research/analysis/](research/analysis/) |
-| Source alignment and integration checks | [tests/](tests/) |
 
 The [pipeline guide](pipeline/README.md) connects these stages, from model-assisted
 extraction to source inspection, entity review, and graph exploration. The
@@ -76,10 +80,10 @@ It includes the methods, analysis code, selected findings, figures, and run reco
 
 | | |
 |---|---|
-| [**Construction and selected artifacts**](docs/BUILD_PROCESS.md) | The source-to-product story, served V3 snapshots, final categories and reconstruction checklist. |
+| [**Construction and selected artifacts**](docs/BUILD_PROCESS.md) | The source-to-product story, served V3 snapshots, final categories and evidence by stage. |
 | [**Methodology**](research/notes/METHODOLOGY.md) | Corpus construction, extraction design, eight embedding views, and validation. |
 | [**Pipeline guide**](pipeline/README.md) | Every stage from page image to canonical graph, and why extraction and resolution are shaped the way they are. |
-| [**Reproduction record**](research/reproduce/) | The analysis runner, twelve per-stage logs, output checksums, input provenance, and data validation. |
+| [**Analysis run record**](research/reproduce/) | The analysis runner, twelve per-stage logs, output checksums, input provenance, and data validation. |
 | [`research/findings/`](research/findings/) | Model comparisons, relation-layer structure, stability estimates, and validation results. |
 | [`research/figures/`](research/figures/) | The four figures, PNG and SVG. |
 | [`research/experiments/`](research/experiments/) | Schema development across seven annotator generations and targeted-repair strategies. |
@@ -90,24 +94,3 @@ For a short route through the findings, read the
 [historical interpretation](research/notes/PRELIMINARY_HISTORICAL_INTERPRETATION.md)
 and the [analysis results](research/notes/NEW_ANALYSES_AND_RESULTS.md). The latter
 connects each result to its model, source context, and validation checks.
-
-## Run the lightweight checks
-
-```sh
-python -m unittest discover -s tests/unit -v
-cd konbaung_reader_app
-npm ci
-npm run check:types
-npm run test:graph
-npm run build:frontend
-```
-
-Eight Python unit tests cover source spans, UTF-16 offsets, dictionary display
-fields, and cross-page projection using synthetic text. Eight graph regressions
-cover controller state, navigation, filters, and layout-worker responses. The
-frontend build runs these graph checks, TypeScript checking, and the 2,000-line
-source limit before bundling.
-
-The source release includes software, methods, and selected research outputs. Full
-corpus and model assets are provisioned separately; see [setup](docs/SETUP.md) and
-[publication contents](docs/PUBLICATION.md).

@@ -20,21 +20,12 @@ descriptors; duplicate names fail at initialization. Type-only imports keep feat
 modules from creating runtime cycles. The reader uses the small `ChronicleGraph`
 interface rather than the internal state.
 
-To add behavior, edit the responsible feature and preserve the shared navigation
-record instead of duplicating selection state across panels. All maintained source
-files have a 2,000-line ceiling, enforced in CI.
-
-From `konbaung_reader_app/`:
-
-```sh
-npm ci
-npm run check:types
-npm run test:graph
-npm run build:frontend
-```
+Feature modules share one navigation record across panels. Source-size checks
+keep maintained modules within the 2,000-line ceiling.
 
 The graph-state fixtures exercise real feature methods with synthetic DOM elements
 and explicit worker responses. They cover state isolation, navigation snapshots,
 page ranges, direction/frequency filters, query construction, pan-click suppression,
-and cancellation of superseded layouts. Full rendering and corpus-backed browser
-checks use the configured reader described in [setup](../../../docs/SETUP.md).
+and cancellation of superseded layouts. These assertions concern interface state
+and calculations; graph-content evidence is recorded in the
+[construction guide](../../../docs/BUILD_PROCESS.md).

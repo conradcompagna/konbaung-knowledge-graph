@@ -77,7 +77,6 @@ feature build, establishing `gemini-embedding-2` for this snapshot. The original
 deployed graph manifest retained the older `gemini-embedding-001` label; the
 artifact record preserves that historical value alongside the verified build
 identity. The published graph builder now labels new exports with Embedding 2.
-No production database is modified by publishing this source correction.
 
 ## 4. Build and serve the evidence-linked graph
 
@@ -127,27 +126,19 @@ their own lineage, rather than interchangeable copies of the served raw graph.
 The older 5,667-entity/13,727-relation inventory in
 [research/datasets](../research/datasets/) belongs to that earlier research record.
 
-## Reconstruction checklist
 
-| Stage | Public implementation / record | External input → resulting artifact |
+## Evidence by stage
+
+| Stage | Engineering work | Record |
 |---|---|---|
-| OCR and restoration | OCR source and run summaries; corpus builders and alignment checks | Authorized page images → reconstructed page/sentence corpus. |
-| Translation and V3 extraction | Translation/extraction modules, schemas, prompts and selected-run hashes | Reconstructed text and API access → per-page annotations. |
-| Canonical selection | V3 reader-data builder and selection rule | Repeated sentence annotations → one selected V3 annotation per sentence. |
-| Embeddings | Eight-view builder, resume tooling, feature/clustering code and provenance hashes | Canonical claims and context → occurrence records and vector matrices. |
-| Axial categories | Full-corpus coding, repair helpers, v2 prompt and category manifest | Canonical claims → final closed-schema category assignments. |
-| Graph assembly | RDF builder, schema, store, count checks and overview builder | Canonical corpus plus node/relation records → Oxigraph, N-Quads and overview. |
-| Reader and API | [Setup](SETUP.md), frontend builds, source-alignment and graph tests | Provisioned snapshots and Burmese lexical resources → an independent application instance. |
-| Research rerun | Ordered analysis runner, environment, input provenance, logs and output checksums | The analysis package's specified snapshots → selected findings and figures. |
+| Source preparation | OCR requests, restoration, sentence assembly and stable source identities | [OCR source and run evidence](../konbaung-google-ocr/), [corpus builders](../pipeline/corpus/). |
+| Claim corpus | Structured extraction, schema evolution and canonical sentence selection | [Extraction modules](../pipeline/extraction/), [V3 reader-data builder](../pipeline/corpus/build_historiography_v3_reader_data.py), [schema-development record](../research/experiments/annotator-generations/OUTCOME.md). |
+| Semantic representation | Eight embedding views, vector features and final axial categories | [Embedding builders](../pipeline/embeddings/), [axial workflow](../pipeline/extraction/flashlite_axial_full_corpus_batch.py), [selected artifact identities](../research/reproduce/served_artifacts.json). |
+| Graph and reader | RDF assembly, evidence routing, source projection and interactive exploration | [Graph builder](../konbaung_reader_app/build_graph_database.py), [API](../konbaung_reader_app/public_api.py), [frontend](../konbaung_reader_app/frontend/graph/README.md). |
+| Research analysis | Entity resolution, review, statistical comparisons and historical interpretation | [Resolution case study](../research/notes/ENTITY_RESOLUTION.md), [findings](../research/findings/), [analysis run record](../research/reproduce/README.md). |
 
-All three served manifests match the retained originals, and fourteen recorded
-build-input hashes were recomputed successfully. The compact artifact record
-publishes these identities without corpus records or embedding arrays. The running
-database was not rebuilt as part of that verification.
-
-Start with the model-free checks in [setup](SETUP.md), then supply inputs for the
-specific stage being reconstructed. Historical batch scripts name their original
-work directories; configure those in a separate workspace before running them.
-Full corpora, trained/model assets, graph databases and embedding matrices remain
-separately provisioned, while the transformations, decisions and selected outcomes
-are documented here.
+The three served manifest identities and fourteen verified build-input hashes
+connect the construction stages to the selected graph and category snapshots.
+The [artifact record](../research/reproduce/served_artifacts.json) records the
+scope of that verification; the analysis package has its own input provenance,
+stage logs and output checksums.

@@ -17,10 +17,9 @@ served snapshots and their [verified provenance](../research/reproduce/served_ar
 Sentence canonicalization selects repeated annotations; entity resolution is a
 separate research branch rather than a prerequisite for the served raw V3 graph.
 
-Run modules from the repository root. For example,
-`python -m pipeline.extraction.historiography_batch --help` and
-`python -m pipeline.translation.sentence_translation_batch --help` describe the batch
-interfaces.
+Batch entrypoints such as `extraction/historiography_batch.py` and
+`translation/sentence_translation_batch.py` coordinate requests, intermediate
+outputs and progress records for their respective stages.
 
 | Directory | What it does | Representative entrypoints |
 |---|---|---|
@@ -71,8 +70,6 @@ and the manual adjudication path. `run_binary_resolution_production.py` is the
 production driver and imports the frequency-prioritised trial module, which is why that
 module is published here rather than treated as an experiment.
 
-Each stage declares its expected inputs and output directories. Provision the selected
-corpus and configure your own API credentials before running a stage. Extraction,
-translation, embeddings and classification commands can issue paid requests. These
-modules represent separate research stages and methods, not one command that recreates
-the proprietary dataset.
+Each stage declares its inputs, transformations and outputs. Request orchestration,
+validation and saved run records connect the extraction, translation, embedding
+and classification work to the resulting research artifacts.

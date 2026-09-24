@@ -1,6 +1,6 @@
 # Research: building and analyzing a historical knowledge graph
 
-Start with the [construction story and reconstruction checklist](../docs/BUILD_PROCESS.md)
+Start with the [construction story and supporting evidence](../docs/BUILD_PROCESS.md)
 for the selected artifacts and the process connecting them to the application.
 
 This package connects a Burmese primary source to structured extraction, embeddings,
@@ -38,10 +38,6 @@ produced the graph and the historical questions the graph makes possible to expl
 retrieval, supervised ranking, error analysis, and source-based review to saved
 evaluation records. It shows how similarity search became a practical curation tool.
 
-## Publication scope
-
-The public package includes selected research outputs and the implementation that
-produced them. The full source scans, extracted corpus, RDF store, embedding matrices,
-and per-entity/source-quotation tables are maintained separately. Local `inputs/`,
-`recovered_source/`, and `results/` directories hold those resources; `findings/`
-contains the published subset. See [publication contents](../docs/PUBLICATION.md).
+The [construction record](../docs/BUILD_PROCESS.md) connects the served graph to
+its canonical annotations, embedding model and categories; the analysis records
+identify the input snapshots behind each set of findings.
