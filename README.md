@@ -55,7 +55,7 @@ artifacts to their builders, hashes and research branches.
 
 I have released the canonical V3 claims and source sentences, three embedding
 matrices, and the entity-resolution tables used in this research:
-**[Zenodo dataset and DOI](https://doi.org/10.5281/zenodo.22949204)** ·
+**[Zenodo dataset and DOI](https://zenodo.org/records/22949204)** ·
 **[GitHub download](https://github.com/conradcompagna/konbaung-knowledge-graph/releases/tag/data-v3-2026-09-25)**.
 
 The [data guide](research/data-release/README.md) explains the 27,129 claims,
