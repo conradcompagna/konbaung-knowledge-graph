@@ -51,6 +51,18 @@ artifacts to their builders, hashes and research branches.
 - **Substantial knowledge representation:** the deployed manifest records **27,129 canonical claims across 1,215 pages and three volumes**, with 23,890 entity labels and 11,886 relation labels.
 - **Research access and analysis:** embedded Oxigraph/RDF storage, embedding-based exploration, entity-resolution workflows, a worker-based graph interface, and a versioned read-only API with OpenAPI documentation.
 
+## V3 dataset and embeddings
+
+I have released the canonical V3 claims and source sentences, three embedding
+matrices, and the entity-resolution tables used in this research:
+**[Zenodo dataset and DOI](https://doi.org/10.5281/zenodo.22949204)** ·
+**[GitHub download](https://github.com/conradcompagna/konbaung-knowledge-graph/releases/tag/data-v3-2026-09-25)**.
+
+The [data guide](research/data-release/README.md) explains the 27,129 claims,
+11,282 sentence records, vector row mappings and person-resolution variants;
+it includes file checksums, citation metadata and an example that reads a claim
+with its source sentence and embeddings.
+
 ## Explore the code
 
 | Stage | Starting point |

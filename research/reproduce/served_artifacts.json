@@ -30,5 +30,5 @@
     {"stage": "canonical input", "artifact": "konbaung_historiography_ungrounded_v3_full_batch_20260723/final_report.json", "sha256": "5e1d8f3c8d5fccc70e972e22cb28da634ca72e0df1a40be33f8ee362b8d4dd1e", "matched_recorded_hash": true}
   ],
   "verification_scope": "The three deployed manifests match retained originals; fourteen retained build-input hashes were recomputed. The running database was not rebuilt or compared record by record.",
-  "availability": "Corpus records, graph database and embeddings are separately provisioned; this record contains counts and fingerprints only."
+  "availability": "Canonical V3 claims and source sentences, entity/relation base vectors, contextual triple vectors and resolution tables are published at https://doi.org/10.5281/zenodo.22949204; see ../data-release/README.md for the release manifest. This record preserves the served-build fingerprints; the graph database and other embedding views are separate artifacts."
 }

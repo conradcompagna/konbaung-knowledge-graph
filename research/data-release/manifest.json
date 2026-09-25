@@ -1,0 +1,565 @@
+{
+  "verified_on": "2026-09-24",
+  "counts": {
+    "triples": 27129,
+    "sentences": 11282,
+    "sentences_with_triples": 10498,
+    "volumes": {
+      "vol1": 3254,
+      "vol2": 3987,
+      "vol3": 4041
+    },
+    "source_pages": 1215,
+    "entities": 23890,
+    "relations": 11886,
+    "triple_context_vectors": 27135,
+    "triple_context_links": 27129,
+    "context_link_length_distribution": {
+      "1": 27111,
+      "2": 18
+    },
+    "distinct_context_rows_referenced": 27135,
+    "entity_clusters": 17658
+  },
+  "checks": {
+    "unique_sentence_and_triple_ids": true,
+    "sentence_triple_counts_match": true,
+    "every_triple_has_a_source_sentence": true,
+    "all_subject_predicate_object_vector_joins_match": true,
+    "context_links_cover_every_triple_and_vector": true,
+    "all_vectors_finite_float32_768d": true,
+    "archive_paths_are_relative": true
+  },
+  "served_vector_identity": {
+    "entity_base_vectors.npy": {
+      "matches_served_build_input": true,
+      "sha256": "d8044e4573c71480292a6875a10021638648fefd0d165e2d707791dcd1a54275"
+    },
+    "relation_base_vectors.npy": {
+      "matches_served_build_input": true,
+      "sha256": "6355abc445570e61a82cdff3b888707cadecc8ba61f69a86cc3995d31ef92007"
+    }
+  },
+  "files": [
+    {
+      "path": "data/triples.jsonl",
+      "bytes": 29548193,
+      "sha256": "f0dd12e3c85719ab819ea22a2eb1a84f7e61e11159ed1cbd00ee1964073ba823",
+      "rows": 27129,
+      "fields": [
+        "triple_id",
+        "canonical_key",
+        "sentence_id",
+        "volume_id",
+        "ordinal",
+        "owner_page",
+        "page_numbers",
+        "subject",
+        "predicate",
+        "object",
+        "axial_categories",
+        "axial_assignment_source_page",
+        "source_record_hash"
+      ]
+    },
+    {
+      "path": "data/sentences.jsonl",
+      "bytes": 20249647,
+      "sha256": "ddb925d08a3a41ee822a91b84340e1d5f96d724c2636182bcf31c4e0c5636101",
+      "rows": 11282,
+      "fields": [
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "page_numbers",
+        "cross_page",
+        "burmese",
+        "english_translation",
+        "annotation_status",
+        "decision",
+        "justification",
+        "selection_rule",
+        "selected_from",
+        "source_appearances",
+        "triple_count"
+      ]
+    },
+    {
+      "path": "embeddings/entity_records.jsonl",
+      "bytes": 7110861,
+      "sha256": "fcb5e0377a5730026d9b733a26ebcb787242f4869a9acb7bb4bf9e1363c808c9",
+      "rows": 23890,
+      "fields": [
+        "index",
+        "tag",
+        "normalizedTag",
+        "frequency",
+        "baseKey",
+        "contextOccurrences",
+        "sampleOccurrences"
+      ]
+    },
+    {
+      "path": "embeddings/entity_base_vectors.npy",
+      "bytes": 73390208,
+      "sha256": "d8044e4573c71480292a6875a10021638648fefd0d165e2d707791dcd1a54275",
+      "shape": [
+        23890,
+        768
+      ],
+      "dtype": "float32",
+      "all_values_finite": true,
+      "nonzero_rows": 23890,
+      "norm_min": 0.9999998807907104,
+      "norm_max": 1.0000001192092896
+    },
+    {
+      "path": "embeddings/relation_records.jsonl",
+      "bytes": 3624628,
+      "sha256": "6b16c9a09247fdaf3552843bba14d55040d156b09769b48f48fc1f3738e59530",
+      "rows": 11886,
+      "fields": [
+        "index",
+        "tag",
+        "normalizedTag",
+        "frequency",
+        "baseKey",
+        "contextOccurrences",
+        "sampleOccurrences"
+      ]
+    },
+    {
+      "path": "embeddings/relation_base_vectors.npy",
+      "bytes": 36513920,
+      "sha256": "6355abc445570e61a82cdff3b888707cadecc8ba61f69a86cc3995d31ef92007",
+      "shape": [
+        11886,
+        768
+      ],
+      "dtype": "float32",
+      "all_values_finite": true,
+      "nonzero_rows": 11886,
+      "norm_min": 0.9999998807907104,
+      "norm_max": 1.0000001192092896
+    },
+    {
+      "path": "entity_resolution/cluster_tables/entity_clusters_compact.jsonl",
+      "bytes": 3486211,
+      "sha256": "a22074f3b575da8d9ad5bc2e293b41414aef6e2b0900358af36a7d4e41afa3a7",
+      "rows": 17658,
+      "fields": [
+        "cluster_id",
+        "canonical_entity",
+        "phase",
+        "wave",
+        "member_count",
+        "total_mentions",
+        "members"
+      ]
+    },
+    {
+      "path": "entity_resolution/cluster_tables/entity_cluster_members.csv",
+      "bytes": 1922720,
+      "sha256": "c4f682292e8fdbdc57d31d297f9686f7018811f2f059907ed29f9be159236ed6",
+      "fields": [
+        "cluster_id",
+        "canonical_entity",
+        "entity_id",
+        "entity",
+        "mentions",
+        "is_canonical",
+        "phase",
+        "wave",
+        "wave_order"
+      ],
+      "rows": 23890
+    },
+    {
+      "path": "entity_resolution/cluster_tables/entity_cluster_summary.csv",
+      "bytes": 989711,
+      "sha256": "ec6f3f9df28dcc96c4508c0f4235e0cd9f3dbfe5d4c04b45dbb2253776cb4c5b",
+      "fields": [
+        "cluster_id",
+        "canonical_entity",
+        "canonical_mentions",
+        "member_count",
+        "alias_count",
+        "total_mentions",
+        "phase",
+        "wave",
+        "wave_order"
+      ],
+      "rows": 17658
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/accepted_title_identity_bridges_high_confidence.csv",
+      "bytes": 70102,
+      "sha256": "0546be04d7ebda923d924335943e3612b2f9105eb812922ccf082d4ea64443f4",
+      "fields": [
+        "conferral_triple_id",
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "global_page_index",
+        "reign",
+        "recipient_cluster_id",
+        "recipient_canonical",
+        "title_string",
+        "title_cluster_id",
+        "title_cluster_canonical",
+        "same_cluster_already",
+        "resolved_recipient_count_for_exact_title",
+        "resolved_recipient_count_for_title_cluster",
+        "title_cluster_person_like_mentions",
+        "title_cluster_person_like_pages",
+        "title_cluster_person_reigns",
+        "person_mentions_before_conferral",
+        "person_mentions_same_reign_at_or_after",
+        "nearest_person_mention_after_gap",
+        "nearest_person_mention_absolute_gap",
+        "recipient_cluster_homonym_risk",
+        "title_cluster_homonym_risk",
+        "strict_automatic_bridge_candidate",
+        "automatic_bridge_tier",
+        "conferral_translation",
+        "later_actor_sentence_ids",
+        "later_actor_pages",
+        "later_actor_relations",
+        "later_actor_translations",
+        "manual_verdict",
+        "manual_confidence",
+        "manual_reason",
+        "manual_evidence_scope"
+      ],
+      "rows": 31
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/accepted_title_identity_bridges_inclusive.csv",
+      "bytes": 74447,
+      "sha256": "7c2f6af48b36d00ee74e6e3fe5d980462b32c8e3ff75eaf1bbcfc2e347dbbdcf",
+      "fields": [
+        "conferral_triple_id",
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "global_page_index",
+        "reign",
+        "recipient_cluster_id",
+        "recipient_canonical",
+        "title_string",
+        "title_cluster_id",
+        "title_cluster_canonical",
+        "same_cluster_already",
+        "resolved_recipient_count_for_exact_title",
+        "resolved_recipient_count_for_title_cluster",
+        "title_cluster_person_like_mentions",
+        "title_cluster_person_like_pages",
+        "title_cluster_person_reigns",
+        "person_mentions_before_conferral",
+        "person_mentions_same_reign_at_or_after",
+        "nearest_person_mention_after_gap",
+        "nearest_person_mention_absolute_gap",
+        "recipient_cluster_homonym_risk",
+        "title_cluster_homonym_risk",
+        "strict_automatic_bridge_candidate",
+        "automatic_bridge_tier",
+        "conferral_translation",
+        "later_actor_sentence_ids",
+        "later_actor_pages",
+        "later_actor_relations",
+        "later_actor_translations",
+        "manual_verdict",
+        "manual_confidence",
+        "manual_reason",
+        "manual_evidence_scope"
+      ],
+      "rows": 34
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/manual_title_bridge_scope_extensions.csv",
+      "bytes": 544,
+      "sha256": "7b57d26c2c8a239ef18dedb27157281abad14c192a639a088d74d1ec5c048142",
+      "fields": [
+        "bridge_person_id",
+        "extension_type",
+        "source_scope",
+        "reason"
+      ],
+      "rows": 2
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/manual_title_identity_bridge_audit.csv",
+      "bytes": 87931,
+      "sha256": "926fcb51b3546b19ebd3ae05ba65051fe2956935ca239664a0efd44b3ad8e28e",
+      "fields": [
+        "conferral_triple_id",
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "global_page_index",
+        "reign",
+        "recipient_cluster_id",
+        "recipient_canonical",
+        "title_string",
+        "title_cluster_id",
+        "title_cluster_canonical",
+        "same_cluster_already",
+        "resolved_recipient_count_for_exact_title",
+        "resolved_recipient_count_for_title_cluster",
+        "title_cluster_person_like_mentions",
+        "title_cluster_person_like_pages",
+        "title_cluster_person_reigns",
+        "person_mentions_before_conferral",
+        "person_mentions_same_reign_at_or_after",
+        "nearest_person_mention_after_gap",
+        "nearest_person_mention_absolute_gap",
+        "recipient_cluster_homonym_risk",
+        "title_cluster_homonym_risk",
+        "strict_automatic_bridge_candidate",
+        "automatic_bridge_tier",
+        "conferral_translation",
+        "later_actor_sentence_ids",
+        "later_actor_pages",
+        "later_actor_relations",
+        "later_actor_translations",
+        "manual_verdict",
+        "manual_confidence",
+        "manual_reason",
+        "manual_evidence_scope"
+      ],
+      "rows": 42
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/person_panel_collective_exclusions.csv",
+      "bytes": 1698,
+      "sha256": "5a2c0ba0f330e587aa0beaa4f87dfcb063b793150d8271f060998841ac9ca964",
+      "fields": [
+        "person_id_preferred_high",
+        "recipient_exact",
+        "source_sentence_id",
+        "manual_verdict",
+        "reason"
+      ],
+      "rows": 8
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/curated_identity_alias_to_supplied_cluster.csv",
+      "bytes": 6326,
+      "sha256": "538f9047d87bc5dc2321a118c4b2a3e9b00e4d90e5618f77ab0a6472089367fe",
+      "fields": [
+        "identity_id",
+        "identity_name",
+        "alias",
+        "allowed_reigns",
+        "present_in_cluster_file",
+        "supplied_cluster_id",
+        "supplied_cluster_canonical",
+        "cluster_marked_risky",
+        "declared_mentions"
+      ],
+      "rows": 54
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/preferred_person_component_ledger.csv",
+      "bytes": 6250,
+      "sha256": "f86194c0e88f43372e3bd7de4416d02ae5fa8f4cb391737582fb22bfcbc74c36",
+      "fields": [
+        "bridge_specification",
+        "bridge_person_id",
+        "cluster_count",
+        "cluster_ids",
+        "cluster_labels",
+        "manual_bridge_count"
+      ],
+      "rows": 65
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/revocations_person_resolution_all_specs.csv",
+      "bytes": 73517,
+      "sha256": "f9b6520253198f54c1a60220e2c606e0cfbfb7c655e2c42fee48dbca8d1b367b",
+      "fields": [
+        "triple_id",
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "ordinal",
+        "subject",
+        "subject_cat_id",
+        "subject_cat",
+        "predicate",
+        "relation_id",
+        "relation",
+        "object",
+        "object_cat_id",
+        "object_cat",
+        "volume_order",
+        "global_page_index",
+        "reign",
+        "target",
+        "target_cat_id",
+        "target_original",
+        "target_cat_id_original",
+        "actor_analysis_include",
+        "manual_target_audit",
+        "entity_id",
+        "target_cat",
+        "friendly_actor_label",
+        "membership_block",
+        "entry_capacity_category",
+        "established_elite_category",
+        "person_like_for_status_audit",
+        "target_cluster_id",
+        "target_canonical",
+        "target_name_like",
+        "person_id_raw_tag",
+        "person_id_supplied_cluster",
+        "person_id_guarded_cluster",
+        "person_id_preferred_high",
+        "person_id_preferred_inclusive"
+      ],
+      "rows": 126
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/title_receipts_person_resolution_all_specs.csv",
+      "bytes": 857893,
+      "sha256": "6a7f28666e29c918a6b166be3724f9ccc4915789ec8b756b9f71cf6a8e0908d6",
+      "fields": [
+        "triple_id",
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "global_page_index",
+        "reign",
+        "recipient",
+        "recipient_cat_id",
+        "subject",
+        "subject_cat_id",
+        "predicate",
+        "object",
+        "object_cat_id",
+        "title_layer",
+        "title_string",
+        "recipient_cluster_id",
+        "recipient_canonical",
+        "recipient_name_like",
+        "status_wave_id",
+        "person_id_raw_tag",
+        "person_id_supplied_cluster",
+        "person_id_guarded_cluster",
+        "person_id_preferred_high",
+        "person_id_preferred_inclusive"
+      ],
+      "rows": 2609
+    },
+    {
+      "path": "entity_resolution/guarded_person_tables/occurrence_level_person_resolution_all_specs.csv",
+      "bytes": 137222638,
+      "sha256": "516c85eaf725bb36b615e9404be99352a093878572283147b69da02f30274d2d",
+      "fields": [
+        "triple_id",
+        "sentence_id",
+        "volume_id",
+        "owner_page",
+        "global_page_index",
+        "reign",
+        "ordinal",
+        "predicate",
+        "relation_id",
+        "burmese",
+        "english_translation",
+        "entity",
+        "entity_cat_id",
+        "cluster_id",
+        "canonical_entity",
+        "counterpart_entity",
+        "counterpart_cat_id",
+        "counterpart_cluster_id",
+        "counterpart_canonical",
+        "role",
+        "person_id_raw_tag",
+        "person_id_supplied_cluster",
+        "person_id_guarded_cluster",
+        "person_id_preferred_high",
+        "person_id_preferred_inclusive"
+      ],
+      "rows": 54258
+    },
+    {
+      "path": "embeddings/triple_context.npy",
+      "bytes": 83358848,
+      "sha256": "db654a92559693199e2ea265336ee2c12d03ac991cbf6bf81e9d3a04ce08ad5c",
+      "shape": [
+        27135,
+        768
+      ],
+      "dtype": "float32",
+      "all_values_finite": true,
+      "nonzero_rows": 27135,
+      "norm_min": 0.9999989867210388,
+      "norm_max": 1.0000009536743164
+    },
+    {
+      "path": "embeddings/triple_context.keys.jsonl",
+      "bytes": 1535585,
+      "sha256": "8bf656c29cf83fc02bc0911af8f2687713a90d190ec556b9d2393c4021729068",
+      "rows": 27135,
+      "fields": [
+        "row",
+        "key"
+      ]
+    },
+    {
+      "path": "embeddings/triple_context_links.jsonl",
+      "bytes": 2620651,
+      "sha256": "2ded0650a9275a4ffb6bfa524b66ef75e8dd2457a61ea71021183267936e51e0",
+      "rows": 27129,
+      "fields": [
+        "triple_id",
+        "sentence_id",
+        "vector_rows"
+      ]
+    },
+    {
+      "path": "DATA_INDEX.json",
+      "bytes": 727,
+      "sha256": "440417db5408b1615d8a2721431861b5904cfe165b578412332bed7541aed551"
+    }
+  ],
+  "source_archive": {
+    "filename": "Konbaung_Raw_Triples_and_Embeddings.zip",
+    "bytes": 203789228,
+    "sha256": "443b76b062007461f602de43c64c986defe87ac417c7bb7b373cfa56b7c40095",
+    "members": 23,
+    "uncompressed_bytes": 402753256
+  },
+  "release": {
+    "title": "Konbaung Chronicle V3: Canonical Claims, Source Sentences and Embeddings",
+    "version": "3.0.0",
+    "doi": "10.5281/zenodo.22949204",
+    "date": "2026-09-25",
+    "data_payload_policy": "All 23 original payload files preserved byte for byte."
+  },
+  "canonical_comparison": {
+    "matched_canonical_claims": 27129,
+    "matched_canonical_sentences": 11222,
+    "base_only_sentences": 60,
+    "sentence_annotation_statuses": {
+      "canonical_v3": 11222,
+      "v3_unavailable": 60
+    },
+    "canonical_files": [
+      {
+        "file": "vol1.json",
+        "sha256": "d31c3a184da4f0fed78f14453a8959f5969f77412a34def16791a0a36067e89d"
+      },
+      {
+        "file": "vol2.json",
+        "sha256": "7d30bc6bc7df010ee1035a114118a17cdcb691912736ba74bac30c71d33e9eb1"
+      },
+      {
+        "file": "vol3.json",
+        "sha256": "1044e370b1d6ac0daea96d40eca2b8434e7d39c3710209fb8364324cf4aec3e3"
+      }
+    ]
+  }
+}

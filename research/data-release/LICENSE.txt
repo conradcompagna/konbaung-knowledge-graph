@@ -1,0 +1,27 @@
+Conrad Compagna Research Data Evaluation License 1.0
+
+Copyright (c) 2026 Conrad Compagna.
+
+This license applies only to the original compilation, annotations, embeddings,
+code and documentation in this release in which Conrad Compagna holds rights.
+
+You may download, copy, use and modify those materials for noncommercial research,
+education, personal experimentation and evaluation. Evaluation for recruitment or
+hiring is also permitted. Retain this notice and attribution to Conrad Compagna
+in copies and in publications describing use of the dataset. You may publish
+evaluation results and research findings, including reasonable illustrative
+excerpts with attribution.
+
+Commercial deployment, inclusion in a commercially offered product or service,
+and redistribution of the original or modified dataset or embeddings require
+separate permission from Conrad Compagna: conradcompagna@gmail.com.
+
+Third-party materials, including underlying source texts, are excluded from this
+grant and retain any applicable terms. This license does not restrict public-domain
+material, facts, statutory exceptions or permissions already granted by third-party
+rights holders. It does not claim exclusive rights over model-generated material
+where such rights do not arise.
+
+The materials are provided as is, without warranties. To the extent permitted
+by applicable law, the author is not liable for claims or damages arising from
+their use. All rights not expressly granted above are reserved.
