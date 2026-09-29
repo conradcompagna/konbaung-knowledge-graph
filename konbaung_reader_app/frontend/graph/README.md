@@ -13,15 +13,6 @@ Vite builds `static/build/graph.js` and manages the layout-worker assets.
 | Filters, inspection, and similarity | `category_filters.ts`, `filtered_tags.ts`, `selection_inspector.ts`, `similar_patterns.ts` |
 | Shared calculations and requests | `utilities.ts` |
 
-`GraphController` is an internal composition host. Feature methods declare an
-explicit typed `this` parameter and share one controller instance, graph, renderer,
-and navigation record. Methods are installed on its prototype with ordinary class
-descriptors; duplicate names fail at initialization. Type-only imports keep feature
-modules from creating runtime cycles. The reader uses the small `ChronicleGraph`
-interface rather than the internal state.
-
-Feature modules share one navigation record across panels. Source-size checks
-keep maintained modules within the 2,000-line ceiling.
-
-The [construction guide](../../../docs/BUILD_PROCESS.md) connects the interface
-to its source-linked claims, embeddings, categories and graph snapshots.
+All feature modules operate on one shared `GraphController` instance, which holds
+the graph, the renderer and the navigation state. The reader page interacts with the
+graph only through the `ChronicleGraph` interface.

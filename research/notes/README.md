@@ -1,6 +1,6 @@
-# Construction methods and evaluation
+# Notes
 
-| Document | Focus |
+| Document | Contents |
 |---|---|
-| [Methodology](METHODOLOGY.md) | Corpus preparation, triples, categories, embeddings, and validation |
-| [Entity resolution](ENTITY_RESOLUTION.md) | Candidate retrieval, learned ranking, and manual review, with recorded evaluation results |
+| [METHODOLOGY.md](METHODOLOGY.md) | Corpus preparation, triples, categories, embeddings and validation |
+| [ENTITY_RESOLUTION.md](ENTITY_RESOLUTION.md) | Entity resolution: candidate retrieval, learned ranking and manual review |

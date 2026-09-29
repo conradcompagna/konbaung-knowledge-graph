@@ -1,10 +1,9 @@
 # Experiments
 
-These development records trace the extraction schema from initial page-level
-experiments to structured, sentence-linked claims and targeted repair. Each stage
-connects a concrete source-processing problem to a design change.
+Earlier versions of the extraction pipeline. The current code is in
+[`../../pipeline/`](../../pipeline/).
 
-| Directory | Outcome |
+| Folder | Contents |
 |---|---|
-| [`annotator-generations/`](annotator-generations/) | Seven generations of the page-to-triple annotator. |
-| [`v4-rewrite-strategies/`](v4-rewrite-strategies/) | Comparing targeted correction with full-page regeneration. |
+| [annotator-generations/](annotator-generations/) | Seven generations of the page-to-triple annotator (the last two are current and live in `pipeline/extraction/`), and related trials |
+| [v4-rewrite-strategies/](v4-rewrite-strategies/) | Four strategies for repairing defective extraction output |

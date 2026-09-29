@@ -1,4 +1,6 @@
-# Pipeline guide
+# Pipeline
+
+Code for each stage from page images to the graph.
 
 ```mermaid
 flowchart TB
@@ -12,10 +14,9 @@ flowchart TB
     Features --> Resolution["Entity resolution and review"]
 ```
 
-The [construction/version guide](../docs/BUILD_PROCESS.md) identifies the actual
-served snapshots and their [verified provenance](../research/reproduce/served_artifacts.json).
-Sentence canonicalization selects repeated annotations; entity resolution is a
-separate curation workflow rather than a prerequisite for the served raw V3 graph.
+The snapshots used by the deployed graph are listed in
+[`../docs/BUILD_PROCESS.md`](../docs/BUILD_PROCESS.md). Entity resolution is a separate
+curation step; the served V3 graph uses the unresolved labels.
 
 Batch entrypoints such as `extraction/historiography_batch.py` and
 `translation/sentence_translation_batch.py` coordinate requests, intermediate
@@ -30,40 +31,30 @@ outputs and progress records for their respective stages.
 | `embeddings/` | eight-view embeddings, clustering, cluster labelling | `v3_eight_view_embeddings.py`, `v3_node_edge_clustering.py`, `extract_fasttext_tag_token_vectors.py` |
 | `resolution/` | collapses the open label inventory into canonical entities | `run_binary_resolution_production.py`, `run_frequency_prioritized_resolution.py`, `run_nonsingleton_top50_wave.py`, `run_remaining_singleton_completion.py`, `pair_classifier/` |
 | `review/` | packages candidate merges and evidence for manual adjudication | `build_master_positive_resolution_review.py`, `build_manual_review_archive.py` |
+| `scripts/` | PowerShell helpers for entity disambiguation and fastText checks | `run_final_entity_disambiguation.ps1` |
 
 Prompts are in `../prompts/`, with the reference annotations they were scored against
 in `../prompts/gold_standards/`. The reader and graph builders are under
 `../konbaung_reader_app/`. Construction and evaluation records are under `../research/`.
 
-## The shape of the work
+## Extraction passes
 
-Two stages carry most of the difficulty.
-
-**Extraction development was iterative.** The retained multi-pass workflow applies open coding, then
-gap-filling for claims the first pass missed, then a quantitative pass, then predicate
-grounding, then metadata enrichment — with an audit between passes deciding what still
-needs work. `extraction/` and `audit/` are interleaved by design. Seven superseded
-generations of the annotator are in
-[`../research/experiments/annotator-generations/`](../research/experiments/annotator-generations/),
-and the sequence of what each one fixed is the clearest statement of why the current
-schema looks the way it does.
+Extraction runs in several passes: open coding, gap-filling for claims the first pass
+missed, a quantitative pass, predicate grounding, and metadata enrichment, with an
+audit between passes (`audit/`) identifying records that need repair. Earlier annotator
+versions are in [`../research/experiments/annotator-generations/`](../research/experiments/annotator-generations/).
 
 The [translated-sentence batch driver](translation/translated_sentence_triples_batch.py)
-combined batch requests with explicit prefix caching. One recorded pass processed
-31.5 million tokens, including retries and salvage, at an estimated historical cost
-of $13.73. The [annotation-cost record](../research/annotation_cost.json) retains
-the token accounting, pricing assumptions, and source hash.
+used batch requests with prefix caching. One pass processed 31.5 million tokens,
+including retries, at an estimated cost of $13.73
+([token record](../research/annotation_cost.json)).
 
-**Resolution is a wave process.** The earlier extraction snapshot has an open vocabulary of 5,667
-entity labels and 13,727 relation labels, most occurring once
-([distributions](../research/datasets/)). Canonicalising it runs in frequency-ordered
-waves: the most frequent labels first, where the evidence is richest and a wrong merge
-is most costly, then non-singleton labels, then the singleton tail. `resolution/` holds
-the wave drivers, the embedding and regex candidate generators, the pair classifier,
-and the manual adjudication path. `run_binary_resolution_production.py` is the
-production driver and imports the frequency-prioritised trial module, which is why that
-module is published here rather than treated as an experiment.
+## Entity resolution
 
-Each stage declares its inputs, transformations and outputs. Request orchestration,
-validation and saved run records connect the extraction, translation, embedding
-and classification work to the resulting graph and dataset.
+The earlier extraction snapshot has 5,667 entity labels and 13,727 relation labels;
+2,685 of the entity labels and most relation labels occur once
+([distributions](../research/datasets/)). Resolution runs in
+frequency-ordered waves: the most frequent labels first, then non-singleton labels,
+then the singletons. `resolution/` holds the wave drivers, the embedding and regex
+candidate generators, the pair classifier and the manual adjudication path.
+`run_binary_resolution_production.py` is the production driver.

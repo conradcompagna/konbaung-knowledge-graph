@@ -36,8 +36,8 @@ flowchart TB
 
 Offline builds create the data used by the reader; opening the graph does not
 rerun extraction or embedding generation. The
-[construction and version guide](docs/BUILD_PROCESS.md) connects the served
-artifacts to their builders and verified input hashes.
+[build summary](docs/BUILD_PROCESS.md) lists the snapshots the deployed graph uses
+and the scripts that built them.
 
 ## Engineering highlights
 
@@ -98,7 +98,7 @@ extraction, embeddings, and entity review to the published graph and dataset.
 
 | Record | Contents |
 |---|---|
-| [Construction and selected artifacts](docs/BUILD_PROCESS.md) | Served V3 snapshots, final categories, and evidence by stage. |
+| [Served snapshots](docs/BUILD_PROCESS.md) | The claim, category, embedding and graph snapshots behind the deployed graph. |
 | [Methodology](research/notes/METHODOLOGY.md) | Corpus construction, extraction design, eight embedding views, and validation. |
 | [Pipeline guide](pipeline/README.md) | The stages from page images to the graph. |
 | [Entity-resolution evaluation](research/notes/ENTITY_RESOLUTION.md) | Candidate retrieval, learned ranking, and manual review. |
