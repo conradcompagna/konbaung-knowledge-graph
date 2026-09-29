@@ -48,7 +48,7 @@ and the scripts that built them.
 
 ## Extraction evaluation
 
-**Provisional LLM-as-judge evaluation** of Gemini annotations across two non-overlapping 5% tranches: **122 pages (10.04% of the corpus), 1,201 sentences and 2,808 triples**. Manual review is in progress.
+An LLM-judged evaluation of the Gemini extraction over two independent random 5% samples: **122 pages (10.04% of the corpus), 1,201 sentences and 2,808 triples**. ChatGPT (OpenAI) judged each triple against the Burmese sentence and its narrative context, and listed the relationships each sentence states to measure recall. Every judgment, with the Burmese and English text, is in the [evaluation workbook](research/evaluation/).
 
 | Metric | First tranche | Second tranche | Combined |
 |---|---:|---:|---:|

@@ -4,6 +4,7 @@ Records of how the graph and dataset were built.
 
 | Path | Contents |
 |---|---|
+| [evaluation/](evaluation/) | Extraction evaluation: every judged triple and source relationship, with Burmese and English text |
 | [notes/METHODOLOGY.md](notes/METHODOLOGY.md) | Textual units, translation, canonical claims, categories, embeddings and validation |
 | [notes/ENTITY_RESOLUTION.md](notes/ENTITY_RESOLUTION.md) | Entity resolution: candidate retrieval, supervised ranking and manual review |
 | [entity_resolution/](entity_resolution/) | Classifier results, cross-validation folds and review decisions |
