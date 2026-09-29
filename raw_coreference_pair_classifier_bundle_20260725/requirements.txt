@@ -1,0 +1,6 @@
+joblib
+numpy
+pandas
+rapidfuzz
+scikit-learn>=1.8
+Unidecode

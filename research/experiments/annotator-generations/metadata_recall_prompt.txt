@@ -1,0 +1,18 @@
+Thoroughly augment the existing Burmese chronicle triples with missing metadata and secondary arguments.
+
+Read EXISTING_TRIPLES_READ_ONLY first, then read the complete TARGET_PAGE_TEXT supplied last. Return one compact record for every existing triple in the same order. Copy only its `id`; do not reprint the triple, evidence, endpoints, labels, predicate, or existing metadata.
+
+Every record must contain all six fields. `time`, `place`, `quantity`, `othersubjects`, and `otherobjects` are each a single field: return the single most informative applicable addition, or `null` when absent. Do not return multiple values in these fields. Only `auxiliaryarguments` may contain multiple entries; use `[]` when none apply. For each triple, search its evidence and surrounding page context for:
+
+1. `time`: additional dates, relative dates, time of day, sequence, duration, deadlines, or completion periods.
+2. `place`: additional sites, origins, destinations, routes, cities, palaces, camps, ritual sites, jurisdictions, offices, or source locations.
+3. `quantity`: additional counts, dimensions, distances, durations, money, rates, troops, animals, objects, materials, losses, payments, tiers, or approximate measurements.
+4. `othersubjects`: additional authorizers, co-agents, officials, builders, delegates, messengers, representatives, inspectors, witnesses, intermediaries, petitioners, or implementers in the same relation.
+5. `otherobjects`: additional affected people, recipients, beneficiaries, message contents, documents, resources, transferred or inspected items, named list members, offices, titles, territories, structures, or targets governed by the same relation.
+6. `auxiliaryarguments`: causes, reasons, purposes, conditions, commands, authority, legal or ritual bases, evidence, methods, instruments, vehicles, materials, procedures, routes, meaningful message contents, results, or consequences. Give each only a short `type` such as `reason`, `purpose`, `method`, `instrument`, `condition`, `evidence`, or `result`.
+
+For time, place, quantity, other subjects, and other objects, return only one object containing the exact Burmese span in `my` and a short English gloss in `en`, or `null`. If several candidates exist, choose the one that adds the most historically useful information beyond the existing triple. Auxiliary arguments contain only `my`, `en`, and `type`, and may contain multiple objects.
+
+Maximize useful recall, but keep every entry minimal. Do not explain decisions. Do not output audits, evidence blocks, roles, measurements, notes, status fields, confidence, or prose.
+
+Burmese chronicle prose often omits subjects and shares context across clauses. Use the whole page to resolve clear connections. Every Burmese addition must nevertheless occur verbatim in TARGET_PAGE_TEXT. Do not repeat the main subject, main object, or unchanged existing metadata. Do not create new triples or attach unrelated events.

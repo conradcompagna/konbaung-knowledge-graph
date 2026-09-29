@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+type: dataset
+message: "If you use this dataset, please cite this release."
+title: "Konbaung Chronicle V3: Canonical Claims, Source Sentences and Embeddings"
+authors:
+  - family-names: Compagna
+    given-names: Conrad
+version: 3.0.0
+date-released: 2026-09-25
+doi: 10.5281/zenodo.22949204
+url: "https://doi.org/10.5281/zenodo.22949204"
+repository-code: "https://github.com/conradcompagna/konbaung-knowledge-graph"
+license-url: "https://github.com/conradcompagna/konbaung-knowledge-graph/blob/data-v3-2026-09-25/research/data-release/LICENSE.txt"
+keywords:
+  - Konbaung
+  - Burmese chronicles
+  - knowledge graph
+  - historical research
+  - embeddings

@@ -1,0 +1,17 @@
+[Unit]
+Description=Konbaung Chronicle Reader, Knowledge Graph, and Public API
+After=network.target
+
+[Service]
+Type=simple
+User=burmese
+Group=burmese
+WorkingDirectory=/home/burmese/konbaung_reader_app
+EnvironmentFile=/home/burmese/konbaung_reader_app/.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/home/burmese/app/venv/bin/gunicorn app:app --workers 1 --threads 4 --bind 127.0.0.1:5077 --timeout 600 --access-logfile /home/burmese/konbaung_reader_app/logs/access.log --error-logfile /home/burmese/konbaung_reader_app/logs/error.log
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

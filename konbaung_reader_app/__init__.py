@@ -1,0 +1,1 @@
+"""Standalone Konbaung Chronicle reader."""

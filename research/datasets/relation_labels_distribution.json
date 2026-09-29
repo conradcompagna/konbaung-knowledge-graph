@@ -1,0 +1,17 @@
+{
+  "header": [
+    "tag",
+    "frequency"
+  ],
+  "distinct_labels": 13727,
+  "total_occurrences": 23413,
+  "frequency_buckets": {
+    "1": 11332,
+    "2-5": 1992,
+    "6-20": 338,
+    "21-100": 61,
+    "101-1000": 3,
+    ">1000": 1
+  },
+  "note": "Full label inventory is not published; it is substantially the extracted data. The distribution and the most frequent labels are published so the scale and shape of the inventory are legible."
+}
